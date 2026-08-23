@@ -17,7 +17,6 @@ function ValiderCreationMissions() {
     resetMissionDraft,
   } = useMission();
 
-  const oaResponsableMissionId = "";
   const { compagnies, loading: compagniesLoading } = useCompagnies();
   const { vehicules, loading: vehiculesLoading } = useVehicules();
 
@@ -36,16 +35,31 @@ function ValiderCreationMissions() {
     const compagnie = compagnies.find((c) => c.id === compagnieId);
     return compagnie?.nom ?? compagnieId ?? "Non définie";
   };
-
+  
   const allUsers = allSections.flatMap((section) => section.users ?? []);
-
+  
   const getUserName = (userId) => {
     const user = allUsers.find((u) => u.id === userId);
-
+  
     if (!user) return userId;
-
+  
     return [user.grade, user.lastName].filter(Boolean).join(" ");
   };
+  
+  const oaResponsableMissionId =
+    groupesMission
+      .map((groupe) => {
+        const compagnie = compagnies.find(
+          (compagnie) => compagnie.id === groupe.compagnieId
+        );
+  
+        return compagnie?.oaId ?? null;
+      })
+      .find(Boolean) ?? null;
+  
+  const oaResponsableNom = oaResponsableMissionId
+    ? getUserName(oaResponsableMissionId)
+    : "Non défini";
   console.log("Véhicules :", vehicules);
   console.log("Véhicules sélectionnés :", vehiculesSelectionnes);
   const vehiculesSelectionnesData = Array.isArray(vehiculesSelectionnes)
@@ -106,7 +120,6 @@ function ValiderCreationMissions() {
         typeMission: mission.typeMission ?? "",
         lieuMission: mission.lieuMission ?? "",
         StatutMission: mission.StatutMission ?? "En préparation",
-        oaResponsableMissionId,
         groupesMission: groupesMission.map((groupe, index) =>
         ({
           id: groupe.id,
@@ -197,7 +210,7 @@ function ValiderCreationMissions() {
           </div>
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-xs font-semibold uppercase text-gray-400">OA responsable</p>
-            <p className="mt-2 font-bold text-gray-900">{oaResponsableMissionId || "Non défini"}</p>
+            <p className="mt-2 font-bold text-gray-900">{oaResponsableNom || "Non défini"}</p>
           </div>
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-xs font-semibold uppercase text-gray-400">Statut</p>
@@ -235,7 +248,7 @@ function ValiderCreationMissions() {
         </div>
 
         {/* Personnel sélectionné */}
-        {(groupesMission.length > 0 || oaResponsableMissionId) && (
+        {(groupesMission.length > 0 && (
           <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-bold text-gray-900">Personnel sélectionné</h2>
@@ -244,7 +257,7 @@ function ValiderCreationMissions() {
             <div className="mb-6">
               <p className="text-xs font-semibold uppercase text-gray-400">OA responsable de la mission</p>
               <p className="mt-1 font-semibold text-gray-900">
-                {oaResponsableMissionId ? oaResponsableMissionId : <span className="text-gray-400">Non défini</span>}
+              {oaResponsableNom}
               </p>
             </div>
             {groupesMission.length > 0 && (
@@ -304,7 +317,7 @@ function ValiderCreationMissions() {
               </div>
             )}
           </div>
-        )}
+        ))}
 
         {/* Véhicules affectés */}
         <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
