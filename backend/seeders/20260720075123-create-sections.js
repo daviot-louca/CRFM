@@ -17,15 +17,15 @@ export default {
 
     // Définit les sections selon le type de compagnie
     const getSectionNames = (compagnieNom) => {
-      const nom = compagnieNom.trim().toLowerCase();
+      const nom = compagnieNom.trim();
 
       if (
-        nom === "compagnie de commandement et de logistique" ||
+        nom === "COMPAGNIE DE COMMANDEMENT ET DE LOGISTIQUE" ||
         nom === "ccl"
       ) {
         return [
-          "Section CDT REGIMENTAIRE",
-          "Section CDT de CCL",
+          "SECTION CDT REGIMENTAIRE",
+          "SECTION CDT DE CCL",
           "BOI",
           "BML",
           "SCAB",
@@ -33,26 +33,32 @@ export default {
       }
 
       if (
-        nom === "cea: compagnie d'éclairage et d'appui" ||
+        nom === "COMPAGNIE D' ECLAIRAGE ET D' APPUI" ||
         nom === "cea"
       ) {
         return [
-          "Section commandement et de logistique",
-          "Section d'aide à l'engagement débarqué",
-          "Section anti-char",
-          "Section TELD",
+          "SECTION DE COMMANDEMENT ET DE LOGISTIQUE",
+          "SECTION D'AIDE A L'ENGAGEMENT DEBARQUE",
+          "MDA - SECTION ANTI CHAR",
+          "MDA - SECTION TELD",
           "SRGE",
-          "Section appui mortier 120",
+          "SECTION APPUI MORTIER 120",
+        ];
+      }
+      if (
+        nom === "16E BCP - RESERVES" 
+      ) {
+        return [
+          "UNITES OPERATIONNELLES",
         ];
       }
 
       return [
-        "Section de commandement et de logistique",
-        "1ère section",
-        "2ème section",
-        "3ème section",
-        "MDA",
-        "Section appui",
+        "SECTION DE COMMANDEMENT ET DE LOGISTIQUE",
+        "1RE SECTION DE COMBAT",
+        "2E SECTION DE COMBAT",
+        "3E SECTION DE COMBAT",
+        "MDA - SECTION D'APPUI",
       ];
     };
 

@@ -5,7 +5,7 @@ export default {
     await queryInterface.bulkInsert('compagnies', [
       {
         id: Sequelize.literal('gen_random_uuid()'),
-        nom: "CEA: Compagnie d'Éclairage et d'Appui",
+        nom: "COMPAGNIE D' ECLAIRAGE ET D' APPUI",
         imageUrl:"/images/logoCompagnie/CEA.webp",
         ordre:8,
         createdAt: new Date(),
@@ -13,7 +13,7 @@ export default {
       },
       {
         id: Sequelize.literal('gen_random_uuid()'),
-        nom: "1ère Compagnie de Combat",
+        nom: "1RE COMPAGNIE DE COMBAT VBCI",
         imageUrl:"/images/logoCompagnie/1ereCompagnie.webp",
         ordre:1,
         createdAt: new Date(),
@@ -21,7 +21,7 @@ export default {
       },
       {
         id: Sequelize.literal('gen_random_uuid()'),
-        nom: "2ème Compagnie de Combat",
+        nom: "2E COMPAGNIE DE COMBAT VBCI",
         imageUrl:"/images/logoCompagnie/2emeCompagnie.webp",
         ordre:2,
         createdAt: new Date(),
@@ -29,7 +29,7 @@ export default {
       },
       {
         id: Sequelize.literal('gen_random_uuid()'),
-        nom: "3ème Compagnie de Combat",
+        nom: "3E COMPAGNIE DE COMBAT VBCI",
         imageUrl:"/images/logoCompagnie/3emeCompagnie.webp",
         ordre:3,
         createdAt: new Date(),
@@ -37,7 +37,7 @@ export default {
       },
       {
         id: Sequelize.literal('gen_random_uuid()'),
-        nom: "4ème Compagnie de Combat",
+        nom: "4E COMPAGNIE DE COMBAT VBCI",
         imageUrl:"/images/logoCompagnie/4emeCompagnie.webp",
         ordre:4,
         createdAt: new Date(),
@@ -45,7 +45,7 @@ export default {
       },
       {
         id: Sequelize.literal('gen_random_uuid()'),
-        nom: "Compagnie de Commandement et de Logistique",
+        nom: "COMPAGNIE DE COMMANDEMENT ET DE LOGISTIQUE",
         imageUrl:"/images/logoCompagnie/CCL.webp",
         ordre:7,
         createdAt: new Date(),
@@ -61,7 +61,7 @@ export default {
       },
       {
         id: Sequelize.literal('gen_random_uuid()'),
-        nom: "6ème Compagnie de Combat",
+        nom: "16E BCP - RESERVES",
         imageUrl:"/images/logoCompagnie/6emeCompagnie.webp",
         ordre:6,
         createdAt: new Date(),

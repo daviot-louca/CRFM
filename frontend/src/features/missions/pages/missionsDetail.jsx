@@ -59,7 +59,9 @@ export default function MissionDetail() {
       </MainLayout>
     );
   }
-
+  const oaResponsable = mission?.oa
+  ? `${mission.oa.grade || ""} ${mission.oa.lastName || mission.oa.nom || ""}`.trim()
+  : mission?.oaResponsable || "N/A";
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto p-6 bg-gray-100 min-h-screen space-y-10">
@@ -92,7 +94,7 @@ export default function MissionDetail() {
             </div>
             <div>
               <span className="block font-semibold text-slate-900 mb-1">OA Responsable</span>
-              <span>{mission.oaResponsable}</span>
+              <span>{oaResponsable}</span>
             </div>
             <div>
               <span className="block font-semibold text-slate-900 mb-1">ID Mission</span>
@@ -110,7 +112,7 @@ export default function MissionDetail() {
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-xl border bg-slate-50 p-4">
                 <p className="text-xs uppercase text-slate-500 font-semibold">OA Responsable</p>
-                <p className="text-lg font-bold text-slate-900 mt-1">{mission.oaResponsable || "N/A"}</p>
+                <p className="text-lg font-bold text-slate-900 mt-1">{oaResponsable || "N/A"}</p>
               </div>
 
               <div className="rounded-xl border bg-slate-50 p-4">
@@ -180,7 +182,7 @@ export default function MissionDetail() {
           {mission?.compagnies?.map((c, idx) => (
             <div key={idx} className="bg-white rounded-2xl border border-gray-300 shadow p-6 mb-8">
               <h3 className="text-3xl font-bold text-slate-900 mb-2">{c.nom || "N/A"}</h3>
-              <div className="text-slate-700 mb-6 font-semibold">OA: {c.oa || "N/A"}</div>
+              <div className="text-slate-700 mb-6 font-semibold">OA: {oaResponsable || "N/A"}</div>
               <div className="space-y-6">
                 {mission?.groupes
                   ?.filter((g) => g.compagnie === c.nom)

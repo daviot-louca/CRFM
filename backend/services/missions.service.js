@@ -31,7 +31,7 @@ const missionIncludes = [
         model: User,
         as: "user",
         attributes: userAttributes,
-        include: userWithRoleInclude,
+        
       },
       {
         model: Section,
@@ -44,7 +44,7 @@ const missionIncludes = [
     model: User,
     as: "oa",
     attributes: userAttributes,
-    include: userWithRoleInclude,
+    
   },
 
   {
@@ -55,7 +55,7 @@ const missionIncludes = [
         model: User,
         as: "soa",
         attributes: userAttributes,
-        include: userWithRoleInclude,
+        
       },
       {
         model: MissionsUsers,
@@ -65,7 +65,7 @@ const missionIncludes = [
             model: User,
             as: "user",
             attributes: userAttributes,
-            include: userWithRoleInclude,
+            
           },
           {
             model: Section,
@@ -95,14 +95,6 @@ const missionIncludes = [
       {
         model: Compagnie,
         as: "compagnie",
-        include: [
-          {
-            model: User,
-            as: "oa",
-            attributes: userAttributes,
-            include: userWithRoleInclude,
-          },
-        ],
       },
 
       {
@@ -118,12 +110,12 @@ const missionIncludes = [
       {
         model: MissionsEquipages,
         as: "equipages",
+        separate: true,
         include: [
           {
             model: User,
             as: "user",
             attributes: userAttributes,
-            include: userWithRoleInclude,
           },
         ],
       },
@@ -338,7 +330,7 @@ const validateMissionCommandement = async ({
       usersById.get(oaIdFromPayload) ??
       (await User.findByPk(oaIdFromPayload, {
         attributes: userAttributes,
-        include: userWithRoleInclude,
+        
         transaction,
       }));
 
