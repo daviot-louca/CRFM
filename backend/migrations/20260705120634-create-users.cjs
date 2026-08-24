@@ -24,7 +24,7 @@ module.exports = {
         unique: true,
       },
       phoneNumber:{
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull:true,
         unique:true
       },
