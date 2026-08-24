@@ -46,3 +46,5 @@ Thumbs.db
 # Uploads
 backend/uploads/
 backend/public/uploads/
+backend/data
+backnend/scripts
