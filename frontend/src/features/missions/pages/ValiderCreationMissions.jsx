@@ -66,16 +66,35 @@ function ValiderCreationMissions() {
       .join(" ");
   };
 
+  const getOaIdForCompagnie = (compagnieId) => {
+    const compagnie = compagnies.find(
+      (item) => item.id === compagnieId
+    );
+  
+    if (!compagnie) return null;
+  
+    // Cas normal : l'API renvoie directement l'oaId.
+    if (compagnie.oaId) {
+      return compagnie.oaId;
+    }
+  
+    // Si l'API renvoie l'OA comme objet.
+    if (compagnie.oa?.id) {
+      return compagnie.oa.id;
+    }
+  
+    return null;
+  };
+  
+  // L'OA de la mission est automatiquement
+  // l'OA de la compagnie du premier SOA.
   const oaResponsableMissionId =
     groupesMission
-      .map((groupe) => {
-        const compagnie = compagnies.find(
-          (compagnie) =>
-            compagnie.id === groupe.compagnieId
-        );
-
-        return compagnie?.oaId ?? null;
-      })
+      .map((groupe) =>
+        getOaIdForCompagnie(
+          groupe.compagnieId
+        )
+      )
       .find(Boolean) ?? null;
 
   const oaResponsableNom = oaResponsableMissionId
@@ -210,8 +229,12 @@ function ValiderCreationMissions() {
       };
 
       console.log(
-        "Payload envoyé :",
-        JSON.stringify(payload, null, 2)
+        "SOA sélectionnés :",
+        groupesMission.map((groupe) => ({
+          groupe: groupe.nom,
+          soaId: groupe.soaId,
+          compagnieId: groupe.compagnieId,
+        }))
       );
 
       await createMission(payload);

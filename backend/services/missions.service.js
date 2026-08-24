@@ -282,6 +282,13 @@ const validateMissionCommandement = async ({
     if (soaId) {
       const soa = usersById.get(soaId);
 
+console.log("DEBUG OA MISSION");
+console.log("SOA ID :", soaId);
+console.log("SOA :", soa);
+console.log("SECTION :", soa?.section);
+console.log("COMPAGNIE :", soa?.section?.compagnie);
+console.log("OA :", soa?.section?.compagnie?.oa);
+
       if (roleNameOf(soa) !== "SOA") {
         const error = new Error(
           `${getNomUtilisateur(soa, soaId)} doit avoir le rôle SOA.`,
@@ -427,48 +434,110 @@ const validateMissionCommandement = async ({
   }
 
   /*
-   * Si aucun OA responsable n'est fourni,
-   * on essaie de le récupérer depuis le SOA.
-   */
+
+  * Si aucun OA responsable n'est fourni,
+
+  * on récupère automatiquement l'OA de la
+
+  * compagnie du SOA.
+
+  */
+
   const firstSoaId = groupesMission
+
     .map((groupe) => normalizeId(groupe.soaId))
+
     .find(Boolean);
 
   if (firstSoaId) {
     const soa = usersById.get(firstSoaId);
 
-    const oaId = soa?.section?.compagnie?.oaId ?? null;
+    /*
 
-    if (oaId) {
-      return {
-        oaId,
-        usersById,
-      };
+    * Le SOA appartient à une section.
+
+    * La section appartient à une compagnie.
+
+    * La compagnie possède un OA.
+
+    */
+
+    const compagnieId = soa?.section?.compagnieId;
+
+    if (compagnieId) {
+      const compagnie = await Compagnie.findByPk(
+        compagnieId,
+
+        {
+          include: [
+            {
+              model: User,
+
+              as: "oa",
+
+              attributes: userAttributes,
+            },
+          ],
+
+          transaction,
+        },
+      );
+
+      if (compagnie?.oa) {
+        return {
+          oaId: compagnie.oa.id,
+
+          usersById,
+        };
+      }
     }
   }
 
   /*
-   * Dernier fallback :
-   * récupérer l'OA directement depuis
-   * la compagnie du premier groupe.
-   */
+
+  * Fallback :
+
+  * si on ne retrouve pas la compagnie via le SOA,
+
+  * on utilise la compagnie indiquée dans le groupe.
+
+  */
+
   const firstCompagnieId = groupesMission
+
     .map((groupe) => normalizeId(groupe.compagnieId))
+
     .find(Boolean);
 
   if (firstCompagnieId) {
-    const compagnie = await Compagnie.findByPk(firstCompagnieId, {
-      transaction,
-    });
+    const compagnie = await Compagnie.findByPk(
+      firstCompagnieId,
+
+      {
+        include: [
+          {
+            model: User,
+
+            as: "oa",
+
+            attributes: userAttributes,
+          },
+        ],
+
+        transaction,
+      },
+    );
 
     return {
-      oaId: compagnie?.oaId ?? null,
+      oaId: compagnie?.oa?.id ?? null,
+
       usersById,
     };
   }
 
   return {
     oaId: null,
+
     usersById,
   };
 };
