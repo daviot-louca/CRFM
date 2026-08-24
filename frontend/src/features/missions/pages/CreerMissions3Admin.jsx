@@ -6,8 +6,6 @@ import { useMissions2 } from '../hooks/useMissions2';
 function CreerMissions3Admin() {
   const navigate = useNavigate()
   const missions = useMissions2();
-  console.log("Compagnies groupes :", missions.compagniesSelectionneesGroupes);
-  console.log("Compagnies sélectionnées :", missions.compagniesSelectionnees);
   return (
     <MainLayout>
       <div className="h-[calc(100vh-2rem)] bg-slate-50 overflow-hidden">

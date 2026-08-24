@@ -37,8 +37,21 @@ function CreerMission4Admin() {
   }, [vehicules, vehiculesSelectionnes]);
 
   const getUserLabel = (user) => {
-    return `${user.grade ? `${user.grade} ` : ""}${user.nom ?? user.lastname ?? ""
-      } ${user.prenom ?? user.firstname ?? ""}`.trim();
+    const grade = user.grade ?? "";
+
+    const nom =
+      user.nom ??
+      user.lastName ??
+      user.lastname ??
+      "";
+
+    const prenom =
+      user.prenom ??
+      user.firstName ??
+      user.firstname ??
+      "";
+
+    return `${grade} ${prenom} ${nom}`.trim();
   };
 
   const getVehiculeLabel = (vehicule) => {
