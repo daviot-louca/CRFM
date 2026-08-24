@@ -31,7 +31,6 @@ const missionIncludes = [
         model: User,
         as: "user",
         attributes: userAttributes,
-        
       },
       {
         model: Section,
@@ -44,7 +43,6 @@ const missionIncludes = [
     model: User,
     as: "oa",
     attributes: userAttributes,
-    
   },
 
   {
@@ -55,7 +53,6 @@ const missionIncludes = [
         model: User,
         as: "soa",
         attributes: userAttributes,
-        
       },
       {
         model: MissionsUsers,
@@ -65,7 +62,6 @@ const missionIncludes = [
             model: User,
             as: "user",
             attributes: userAttributes,
-            
           },
           {
             model: Section,
@@ -235,6 +231,7 @@ const validateMissionCommandement = async ({
   groupesMission,
   idsUtilisateurs,
   oaResponsableMissionId,
+  affectationsVehicules = [],
   transaction,
 }) => {
   const idsCommandement = groupesMission.flatMap((groupe) => [
@@ -242,8 +239,21 @@ const validateMissionCommandement = async ({
     ...asArray(groupe.conducteurIds),
   ]);
 
+  // Conducteurs associés directement aux véhicules
+  const idsConducteursVehicules = affectationsVehicules.flatMap((affectation) =>
+    asArray(affectation?.vehicules).map((vehicule) =>
+      normalizeId(vehicule?.conducteurId),
+    ),
+  );
+
   const idsACharger = [
-    ...new Set([...idsUtilisateurs, ...idsCommandement].filter(Boolean)),
+    ...new Set(
+      [
+        ...idsUtilisateurs,
+        ...idsCommandement,
+        ...idsConducteursVehicules,
+      ].filter(Boolean),
+    ),
   ];
 
   const usersById = await fetchMissionUsers(idsACharger, transaction);
@@ -258,11 +268,17 @@ const validateMissionCommandement = async ({
     throw error;
   }
 
+  /*
+   * Validation des groupes
+   */
   for (const groupe of groupesMission) {
     const userIdsGroupe = new Set(asArray(groupe.userIds));
 
     const soaId = normalizeId(groupe.soaId);
 
+    /*
+     * Validation du SOA
+     */
     if (soaId) {
       const soa = usersById.get(soaId);
 
@@ -295,15 +311,27 @@ const validateMissionCommandement = async ({
       }
     }
 
+    /*
+     * Validation des conducteurs du groupe
+     *
+     * Un conducteur peut être :
+     * - conducteur
+     * - SOA
+     * - OA
+     */
     for (const conducteurId of asArray(groupe.conducteurIds).filter(Boolean)) {
       const conducteur = usersById.get(conducteurId);
 
-      if (roleNameOf(conducteur) !== "conducteur" && roleNameOf(conducteur) !== "SOA" && roleNameOf(conducteur) !== "OA") {
+      if (
+        roleNameOf(conducteur) !== "conducteur" &&
+        roleNameOf(conducteur) !== "SOA" &&
+        roleNameOf(conducteur) !== "OA"
+      ) {
         const error = new Error(
           `${getNomUtilisateur(
             conducteur,
             conducteurId,
-          )} doit avoir le rôle conducteur.`,
+          )} doit avoir le rôle conducteur, SOA ou OA.`,
         );
 
         error.statusCode = 400;
@@ -323,6 +351,47 @@ const validateMissionCommandement = async ({
     }
   }
 
+  /*
+   * Validation des conducteurs associés
+   * directement aux véhicules.
+   *
+   * Un véhicule peut être conduit par :
+   * - conducteur
+   * - SOA
+   * - OA
+   */
+  for (const affectation of affectationsVehicules) {
+    for (const vehicule of asArray(affectation?.vehicules)) {
+      const conducteurId = normalizeId(vehicule?.conducteurId);
+
+      if (!conducteurId) {
+        continue;
+      }
+
+      const conducteur = usersById.get(conducteurId);
+
+      if (
+        roleNameOf(conducteur) !== "conducteur" &&
+        roleNameOf(conducteur) !== "SOA" &&
+        roleNameOf(conducteur) !== "OA"
+      ) {
+        const error = new Error(
+          `${getNomUtilisateur(
+            conducteur,
+            conducteurId,
+          )} doit avoir le rôle conducteur, SOA ou OA pour conduire ce véhicule.`,
+        );
+
+        error.statusCode = 400;
+
+        throw error;
+      }
+    }
+  }
+
+  /*
+   * Validation de l'OA responsable
+   */
   const oaIdFromPayload = normalizeId(oaResponsableMissionId);
 
   if (oaIdFromPayload) {
@@ -330,7 +399,6 @@ const validateMissionCommandement = async ({
       usersById.get(oaIdFromPayload) ??
       (await User.findByPk(oaIdFromPayload, {
         attributes: userAttributes,
-        
         transaction,
       }));
 
@@ -358,6 +426,10 @@ const validateMissionCommandement = async ({
     };
   }
 
+  /*
+   * Si aucun OA responsable n'est fourni,
+   * on essaie de le récupérer depuis le SOA.
+   */
   const firstSoaId = groupesMission
     .map((groupe) => normalizeId(groupe.soaId))
     .find(Boolean);
@@ -375,6 +447,11 @@ const validateMissionCommandement = async ({
     }
   }
 
+  /*
+   * Dernier fallback :
+   * récupérer l'OA directement depuis
+   * la compagnie du premier groupe.
+   */
   const firstCompagnieId = groupesMission
     .map((groupe) => normalizeId(groupe.compagnieId))
     .find(Boolean);
@@ -423,39 +500,45 @@ export const getMissionByIdService = async (id) => {
 
   await synchroniserStatutMission(mission);
 
-  const militairesDuRang = [
-    "Soldat",
-    "Soldat de première classe",
-    "Caporal",
-    "Caporal-chef",
-  ];
+  // IMPORTANT :
+  // À partir d'ici, on travaille uniquement avec un objet simple.
+  // On ne modifie plus mission.dataValues.
+  const missionData = mission.toJSON();
 
-  const sousOfficiers = [
-    "Sergent",
-    "Sergent-chef",
-    "Adjudant",
-    "Adjudant-chef",
-    "Major",
-  ];
+  /*
+   * ==========================================
+   * GRADES X / Y / Z
+   * ==========================================
+   */
 
-  const Officiers = [
-    "Capitaine",
-    "sous-lieutenant",
-    "Lieutenant",
-    "Commandant",
-  ];
+  const militairesDuRang = ["SDT", "1CL", "CPL", "CCH", "CC1"];
+
+  const sousOfficiers = ["SGT", "SCH", "ADJ", "ADC", "MAJ"];
+
+  const Officiers = ["SLT", "LTN", "CNE", "CDT", "LCL", "COL"];
+
+  /*
+   * ==========================================
+   * STATISTIQUES GLOBALES
+   * ==========================================
+   */
 
   const statistiques = {
     x: 0,
     y: 0,
     z: 0,
-    statut: mission.StatutMission,
+    statut: missionData.StatutMission,
     compagnies: 0,
-    groupes: mission.groupes?.length ?? 0,
+    groupes: missionData.groupes?.length ?? 0,
     conducteurs: 0,
   };
 
-  mission.missionsUsers.forEach(({ user }) => {
+  /*
+   * X / Y / Z de tous les utilisateurs
+   * de la mission
+   */
+
+  (missionData.missionsUsers ?? []).forEach(({ user }) => {
     if (!user?.grade) return;
 
     if (militairesDuRang.includes(user.grade)) {
@@ -464,45 +547,111 @@ export const getMissionByIdService = async (id) => {
       statistiques.y++;
     } else if (Officiers.includes(user.grade)) {
       statistiques.z++;
-    } else {
-      console.error(404, "ce grade n'existe pas");
     }
   });
 
+  /*
+   * ==========================================
+   * COMPAGNIES
+   * ==========================================
+   */
+
   const compagniesMission = [
     ...new Map(
-      mission.missionsVehicules
+      (missionData.missionsVehicules ?? [])
         .filter(({ compagnie }) => compagnie)
-        .map(({ compagnie }) => [compagnie.id, compagnie]),
+        .map((item) => [item.compagnie.id, item.compagnie]),
     ).values(),
   ];
 
   statistiques.compagnies = compagniesMission.length;
 
-  statistiques.conducteurs = mission.missionsVehicules.reduce(
+  /*
+   * ==========================================
+   * CONDUCTEURS
+   * ==========================================
+   */
+
+  statistiques.conducteurs = (missionData.missionsVehicules ?? []).reduce(
     (total, mv) =>
       total +
-      mv.equipages.filter((equipage) => equipage.fonction === "conducteur")
-        .length,
+      (mv.equipages ?? []).filter(
+        (equipage) => equipage.fonction === "conducteur",
+      ).length,
     0,
   );
 
-  mission.dataValues.statistiques = statistiques;
+  /*
+   * ==========================================
+   * STATISTIQUES X / Y / Z PAR GROUPE
+   * ==========================================
+   */
 
-  mission.dataValues.oaResponsable = mission.oa
-    ? getNomUtilisateur(mission.oa, mission.oaId)
+  const groupesAvecStatistiques = (missionData.groupes ?? []).map((groupe) => {
+    const statistiquesGroupe = {
+      x: 0,
+      y: 0,
+      z: 0,
+    };
+
+    const utilisateursDuGroupe = (missionData.missionsUsers ?? []).filter(
+      (missionUser) => missionUser.missionGroupeId === groupe.id,
+    );
+
+    utilisateursDuGroupe.forEach(({ user }) => {
+      if (!user?.grade) return;
+
+      if (militairesDuRang.includes(user.grade)) {
+        statistiquesGroupe.x++;
+      } else if (sousOfficiers.includes(user.grade)) {
+        statistiquesGroupe.y++;
+      } else if (Officiers.includes(user.grade)) {
+        statistiquesGroupe.z++;
+      }
+    });
+
+    return {
+      ...groupe,
+      x: statistiquesGroupe.x,
+      y: statistiquesGroupe.y,
+      z: statistiquesGroupe.z,
+    };
+  });
+
+  /*
+   * ==========================================
+   * DONNÉES DE LA MISSION
+   * ==========================================
+   */
+
+  missionData.statistiques = statistiques;
+
+  missionData.oaResponsable = missionData.oa
+    ? getNomUtilisateur(missionData.oa, missionData.oaId)
     : null;
 
-  mission.dataValues.compagnies = compagniesMission;
+  missionData.compagnies = compagniesMission;
 
-  mission.dataValues.vehicules = mission.missionsVehicules.map((mv) => {
+  missionData.groupes = groupesAvecStatistiques;
+
+  /*
+   * ==========================================
+   * VÉHICULES
+   * ==========================================
+   */
+
+  missionData.vehicules = (missionData.missionsVehicules ?? []).map((mv) => {
     const statistiquesEquipage = {
       x: 0,
       y: 0,
       z: 0,
     };
 
-    mv.equipages.forEach(({ user }) => {
+    /*
+     * Statistiques de l'équipage
+     */
+
+    (mv.equipages ?? []).forEach(({ user }) => {
       if (!user?.grade) return;
 
       if (militairesDuRang.includes(user.grade)) {
@@ -514,38 +663,67 @@ export const getMissionByIdService = async (id) => {
       }
     });
 
-    const conducteur = mv.equipages.find(
+    /*
+     * Conducteur
+     */
+
+    const conducteur = (mv.equipages ?? []).find(
       (equipage) => equipage.fonction === "conducteur",
     )?.user;
 
     return {
       id: mv.vehicule?.id,
+
       nom: mv.vehicule?.vehiculeName,
+
       type: mv.vehicule?.vehiculeType?.typeName,
+
       immatriculation: mv.vehicule?.immatriculation,
+
       compagnie: mv.compagnie,
+
       section: mv.section,
+
       groupe: mv.groupe?.nom ?? null,
 
       conducteur: conducteur
         ? getNomUtilisateur(conducteur, conducteur.id)
         : null,
 
-      passagers: mv.equipages
+      passagers: (mv.equipages ?? [])
         .filter((equipage) => equipage.fonction !== "conducteur")
         .map((equipage) => getNomUtilisateur(equipage.user, equipage.userId)),
 
-      equipages: mv.equipages,
+      equipages: mv.equipages ?? [],
 
       x: statistiquesEquipage.x,
+
       y: statistiquesEquipage.y,
+
       z: statistiquesEquipage.z,
     };
   });
 
-  mission.dataValues.militaires = mission.missionsUsers.map(({ user }) => user);
+  /*
+   * ==========================================
+   * MILITAIRES
+   * ==========================================
+   */
 
-  return mission;
+  missionData.militaires = (missionData.missionsUsers ?? []).map(
+    ({ user }) => user,
+  );
+
+  /*
+   * ==========================================
+   * IMPORTANT
+   * ==========================================
+   *
+   * On retourne l'objet simple.
+   * On ne retourne PAS `mission`.
+   */
+
+  return missionData;
 };
 
 export const createMissionService = async (missionData) => {
@@ -622,6 +800,7 @@ export const createMissionService = async (missionData) => {
       groupesMission,
       idsUtilisateurs,
       oaResponsableMissionId,
+      affectationsVehicules,
       transaction,
     });
 
@@ -783,8 +962,14 @@ export const createMissionService = async (missionData) => {
     const vehiculesDejaAffectes = new Set();
 
     affectationsVehicules.forEach((affectation) => {
-      if (!affectation?.compagnieId || !Array.isArray(affectation.vehiculesIds))
-        return;
+      if (!affectation?.compagnieId) return;
+
+      const vehiculesAffectation = Array.isArray(affectation.vehicules)
+        ? affectation.vehicules
+        : asArray(affectation.vehiculesIds).map((vehiculeId) => ({
+            vehiculeId,
+            conducteurId: null,
+          }));
 
       const groupeId =
         normalizeId(affectation.groupeId) ??
@@ -802,8 +987,12 @@ export const createMissionService = async (missionData) => {
         ? (groupeIdMap.get(groupeId) ?? null)
         : null;
 
-      affectation.vehiculesIds.filter(Boolean).forEach((vehiculeId) => {
-        if (vehiculesDejaAffectes.has(vehiculeId)) return;
+      vehiculesAffectation.forEach((vehiculeAffectation) => {
+        const vehiculeId = normalizeId(vehiculeAffectation?.vehiculeId);
+
+        if (!vehiculeId || vehiculesDejaAffectes.has(vehiculeId)) {
+          return;
+        }
 
         vehiculesDejaAffectes.add(vehiculeId);
 
@@ -813,6 +1002,9 @@ export const createMissionService = async (missionData) => {
           compagnieId: affectation.compagnieId,
           sectionId: affectation.sectionId || null,
           missionGroupeId,
+
+          // Conducteur choisi à l'étape 4
+          conducteurId: normalizeId(vehiculeAffectation?.conducteurId),
         });
       });
     });
@@ -888,33 +1080,20 @@ export const createMissionService = async (missionData) => {
         },
       );
 
-      const conducteurIdsParGroupeMission = new Map();
-
-      groupesMission.forEach((groupe) => {
-        const missionGroupeId = groupeIdMap.get(groupe.id);
-
-        if (!missionGroupeId) return;
-
-        conducteurIdsParGroupeMission.set(
-          missionGroupeId,
-          asArray(groupe.conducteurIds).filter(Boolean),
-        );
-      });
-
-      const lignesEquipages = missionsVehicules.flatMap((missionVehicule) => {
-        const conducteurIds =
-          conducteurIdsParGroupeMission.get(missionVehicule.missionGroupeId) ??
-          [];
-
-        return conducteurIds.map((userId) => ({
+      // Création du conducteur associé
+      // à chaque véhicule.
+      const lignesEquipages = missionsVehicules
+        .filter((missionVehicule) => missionVehicule.conducteurId)
+        .map((missionVehicule) => ({
           missionVehiculeId: missionVehicule.id,
-          userId,
+          userId: missionVehicule.conducteurId,
           fonction: "conducteur",
         }));
-      });
 
       if (lignesEquipages.length > 0) {
-        await MissionsEquipages.bulkCreate(lignesEquipages, { transaction });
+        await MissionsEquipages.bulkCreate(lignesEquipages, {
+          transaction,
+        });
       }
 
       if (missionPayload.StatutMission === "En cours") {

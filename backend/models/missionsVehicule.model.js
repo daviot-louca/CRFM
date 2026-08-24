@@ -50,6 +50,14 @@ const MissionsVehicule = sequelize.define(
         key: "id",
       },
     },
+    conducteurId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: "users",
+        key: "id",
+      },
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,

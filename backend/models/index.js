@@ -190,6 +190,16 @@ MissionsVehicule.belongsTo(Mission, {
   foreignKey: "missionId",
   as: "mission",
 });
+User.hasMany(MissionsVehicule, {
+  foreignKey: "conducteurId",
+  as: "missionsVehiculesConduites",
+  onDelete: "RESTRICT",
+});
+
+MissionsVehicule.belongsTo(User, {
+  foreignKey: "conducteurId",
+  as: "conducteur",
+});
 Vehicule.hasMany(MissionsVehicule, {
   foreignKey: "vehiculeId",
   as: "missionsVehicules",

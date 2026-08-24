@@ -1,94 +1,370 @@
+import { useMemo } from "react";
 import { useMissions2 } from "../hooks/useMissions2";
 import MainLayout from "@/components/layout/MainLayout";
 import { useNavigate } from "react-router-dom";
 
 function CreerMission4Admin() {
   const navigate = useNavigate();
+
   const {
     groupesManuels = [],
     creerGroupeManuel,
     setSoa,
     toggleConducteur,
     usersDisponibles = [],
+    vehiculesSelectionnes = [],
+    vehicules = [],
+    setConducteurVehicule,
   } = useMissions2();
+
+  const vehiculesDisponibles = useMemo(() => {
+    const selectionIds = new Set(
+      (vehiculesSelectionnes ?? []).map((selection) =>
+        typeof selection === "string"
+          ? selection
+          : selection.vehiculeId
+      )
+    );
+
+    if (selectionIds.size === 0) {
+      return [];
+    }
+
+    return (vehicules ?? []).filter((vehicule) =>
+      selectionIds.has(vehicule.id)
+    );
+  }, [vehicules, vehiculesSelectionnes]);
+
+  const getUserLabel = (user) => {
+    return `${user.grade ? `${user.grade} ` : ""}${
+      user.nom ?? user.lastname ?? ""
+    } ${user.prenom ?? user.firstname ?? ""}`.trim();
+  };
+
+  const getVehiculeLabel = (vehicule) => {
+    const type =
+      vehicule.vehiculeType?.nom ??
+      vehicule.vehiculeType?.name ??
+      vehicule.type?.nom ??
+      vehicule.type?.name ??
+      vehicule.vehiculeName ??
+      vehicule.nom ??
+      vehicule.name ??
+      "Véhicule";
+
+    const immatriculation =
+      vehicule.immatriculation ??
+      vehicule.registration ??
+      vehicule.plaque ??
+      "";
+
+    return immatriculation
+      ? `${type} - ${immatriculation}`
+      : type;
+  };
+
+  const getConducteursDisponibles = (groupe) => {
+    const ids = new Set(groupe.users ?? []);
+
+    return usersDisponibles.filter((user) =>
+      ids.has(user.id)
+    );
+  };
+
+  const getVehiculesDuGroupe = (groupe) => {
+    if (!groupe.vehiculeIds?.length) {
+      return vehiculesDisponibles;
+    }
+
+    const ids = new Set(groupe.vehiculeIds);
+
+    return vehiculesDisponibles.filter((vehicule) =>
+      ids.has(vehicule.id)
+    );
+  };
+
+  const getConducteurId = (vehiculeId) => {
+    const selection = (
+      vehiculesSelectionnes ?? []
+    ).find(
+      (item) =>
+        item.vehiculeId === vehiculeId
+    );
+
+    return selection?.conducteurId ?? "";
+  };
+
+  const handleConducteurChange = (
+    vehiculeId,
+    conducteurId
+  ) => {
+    setConducteurVehicule(
+      vehiculeId,
+      conducteurId
+    );
+  };
 
   return (
     <MainLayout>
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Commandement</h1>
+        <h1 className="mb-6 text-2xl font-bold">
+          Commandement
+        </h1>
+
         <div className="flex gap-4 overflow-x-auto pb-4">
+          {groupesManuels.map((groupe, index) => {
+            const conducteursDuGroupe =
+              getConducteursDisponibles(groupe);
 
-          {groupesManuels.map((groupe, index) => (
-            <div
-              key={groupe.id}
-              className="w-80 shrink-0 border rounded-lg p-4 flex flex-col gap-2"
-            >
-              <h2 className="font-semibold text-lg">{groupe.nom}</h2>
-              {(groupe.societe || groupe.section) && (
-                <p className="text-sm text-gray-600">
-                  {groupe.societe ? `Société: ${groupe.societe}` : ""}
-                  {groupe.societe && groupe.section ? " - " : ""}
-                  {groupe.section ? `Section: ${groupe.section}` : ""}
-                </p>
-              )}
-              <p className="text-sm font-medium">SOA</p>
-              <select
-                className="w-full rounded border p-2"
-                value={groupe.soaId ?? ""}
-                onChange={(e) => setSoa(index, e.target.value)}
+            const vehiculesDuGroupe =
+              getVehiculesDuGroupe(groupe);
+
+            return (
+              <div
+                key={groupe.id}
+                className="flex w-80 shrink-0 flex-col gap-2 rounded-lg border p-4"
               >
-                <option value="">Sélectionner un SOA</option>
-                {(groupe.users ?? []).map((userId) => {
-                  const user = usersDisponibles.find((u) => u.id === userId);
-                  if (!user) return null;
+                <h2 className="text-lg font-semibold">
+                  {groupe.nom}
+                </h2>
 
-                  const memeCompagnie =
-                    !groupe.societe ||
-                    user.compagnieName === groupe.societe ||
-                    user.compagnie?.compagnieName === groupe.societe;
+                {(groupe.societe ||
+                  groupe.section) && (
+                  <p className="text-sm text-gray-600">
+                    {groupe.societe
+                      ? `Société: ${groupe.societe}`
+                      : ""}
 
-                  const estSOA = user.roleName === "SOA" || user.role?.roleName === "SOA";
+                    {groupe.societe &&
+                    groupe.section
+                      ? " - "
+                      : ""}
 
-                  if (!memeCompagnie || !estSOA) return null;
+                    {groupe.section
+                      ? `Section: ${groupe.section}`
+                      : ""}
+                  </p>
+                )}
 
-                  return (
-                    <option key={user.id} value={user.id}>
-                      {`${user.grade ? `${user.grade} ` : ""}${user.nom ?? user.lastname ?? ""} ${user.prenom ?? user.firstname ?? ""}`.trim()}
-                    </option>
-                  );
-                })}
-              </select>
+                {/* SOA */}
 
-              <p className="mt-4 text-sm font-medium">Conducteurs</p>
-              <div className="space-y-2">
-                {(groupe.users ?? []).map((userId) => {
-                  const user = usersDisponibles.find((u) => u.id === userId);
-                  if (!user) return null;
+                <p className="text-sm font-medium">
+                  SOA
+                </p>
 
-                  return (
-                    <label key={user.id} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={(groupe.conducteurIds ?? []).includes(user.id)}
-                        onChange={() => toggleConducteur(index, user.id)}
-                      />
-                      {`${user.grade ? `${user.grade} ` : ""}${user.nom ?? user.lastname ?? ""} ${user.prenom ?? user.firstname ?? ""}`.trim()}
-                    </label>
-                  );
-                })}
+                <select
+                  className="w-full rounded border p-2"
+                  value={groupe.soaId ?? ""}
+                  onChange={(e) =>
+                    setSoa(
+                      index,
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Sélectionner un SOA
+                  </option>
+
+                  {(groupe.users ?? []).map(
+                    (userId) => {
+                      const user =
+                        usersDisponibles.find(
+                          (u) =>
+                            u.id === userId
+                        );
+
+                      if (!user) {
+                        return null;
+                      }
+
+                      const memeCompagnie =
+                        !groupe.societe ||
+                        user.compagnieName ===
+                          groupe.societe ||
+                        user.compagnie
+                          ?.compagnieName ===
+                          groupe.societe;
+
+                      const estSOA =
+                        user.roleName ===
+                          "SOA" ||
+                        user.role?.roleName ===
+                          "SOA";
+
+                      if (
+                        !memeCompagnie ||
+                        !estSOA
+                      ) {
+                        return null;
+                      }
+
+                      return (
+                        <option
+                          key={user.id}
+                          value={user.id}
+                        >
+                          {getUserLabel(user)}
+                        </option>
+                      );
+                    }
+                  )}
+                </select>
+
+                {/* Conducteurs */}
+
+                <p className="mt-4 text-sm font-medium">
+                  Conducteurs disponibles
+                </p>
+
+                <div className="space-y-2">
+                  {(groupe.users ?? []).map(
+                    (userId) => {
+                      const user =
+                        usersDisponibles.find(
+                          (u) =>
+                            u.id === userId
+                        );
+
+                      if (!user) {
+                        return null;
+                      }
+
+                      return (
+                        <label
+                          key={user.id}
+                          className="flex items-center gap-2 text-sm"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={(
+                              groupe.conducteurIds ??
+                              []
+                            ).includes(
+                              user.id
+                            )}
+                            onChange={() =>
+                              toggleConducteur(
+                                index,
+                                user.id
+                              )
+                            }
+                          />
+
+                          {getUserLabel(user)}
+                        </label>
+                      );
+                    }
+                  )}
+                </div>
+
+                {/* Véhicules */}
+
+                <div className="mt-5 border-t pt-4">
+                  <p className="mb-3 text-sm font-medium">
+                    Véhicules / conducteurs
+                  </p>
+
+                  {vehiculesDuGroupe.length ===
+                  0 ? (
+                    <p className="text-sm text-gray-500">
+                      Aucun véhicule sélectionné
+                      pour ce groupe.
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {vehiculesDuGroupe.map(
+                        (vehicule) => {
+                          const conducteurId =
+                            getConducteurId(
+                              vehicule.id
+                            );
+
+                          return (
+                            <div
+                              key={vehicule.id}
+                              className="rounded-lg border bg-gray-50 p-3"
+                            >
+                              <p className="mb-2 text-sm font-semibold text-gray-900">
+                                {getVehiculeLabel(
+                                  vehicule
+                                )}
+                              </p>
+
+                              <select
+                                className="w-full rounded border bg-white p-2 text-sm"
+                                value={
+                                  conducteurId
+                                }
+                                onChange={(e) =>
+                                  handleConducteurChange(
+                                    vehicule.id,
+                                    e.target.value
+                                  )
+                                }
+                              >
+                                <option value="">
+                                  Choisir le conducteur
+                                </option>
+
+                                {conducteursDuGroupe.map(
+                                  (
+                                    conducteur
+                                  ) => (
+                                    <option
+                                      key={
+                                        conducteur.id
+                                      }
+                                      value={
+                                        conducteur.id
+                                      }
+                                    >
+                                      {getUserLabel(
+                                        conducteur
+                                      )}
+                                    </option>
+                                  )
+                                )}
+                              </select>
+
+                              {conducteurId && (
+                                <p className="mt-2 text-xs font-medium text-green-700">
+                                  Conducteur affecté :{" "}
+                                  {getUserLabel(
+                                    conducteursDuGroupe.find(
+                                      (user) =>
+                                        user.id ===
+                                        conducteurId
+                                    ) ?? {}
+                                  )}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
-          <div className="w-80 shrink-0 border-2 border-dashed rounded-lg p-4 flex items-start justify-center min-h-[600px]">
+          {/* Ajouter un groupe */}
+
+          <div className="flex min-h-[600px] w-80 shrink-0 items-start justify-center rounded-lg border-2 border-dashed p-4">
             <button
+              type="button"
               onClick={creerGroupeManuel}
-              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+              className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
             >
               + Ajouter un groupe
             </button>
           </div>
         </div>
+
+        {/* Navigation */}
+
         <div className="mt-8 flex justify-between">
           <button
             type="button"
@@ -100,7 +376,11 @@ function CreerMission4Admin() {
 
           <button
             type="button"
-            onClick={() => navigate("/admin/validation-missions")}
+            onClick={() =>
+              navigate(
+                "/admin/validation-missions"
+              )
+            }
             className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
           >
             Suivant
