@@ -1,9 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useMission } from "../context/useMission";
-import {
-  getMissionGroupes,
-  createMissionGroupe,
-} from "../api/missions.api";
+import { getMissionGroupes, createMissionGroupe } from "../api/missions.api";
 
 const asArray = (value) => {
   if (Array.isArray(value)) return value;
@@ -12,7 +9,10 @@ const asArray = (value) => {
 };
 
 const createGroupId = () => {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
     return crypto.randomUUID();
   }
 
@@ -34,7 +34,12 @@ export function useGroupesMissions2({
   sectionsSelectionnees = [],
   getUsersSection,
 } = {}) {
-  const { groupesManuels, setGroupesManuels, sectionsIgnorees, setSectionsIgnorees } = useMission();
+  const {
+    groupesManuels,
+    setGroupesManuels,
+    sectionsIgnorees,
+    setSectionsIgnorees,
+  } = useMission();
 
   useEffect(() => {
     if (!missionId) return;
@@ -53,7 +58,7 @@ export function useGroupesMissions2({
 
   const usersSelectionnesSet = useMemo(
     () => new Set(asArray(usersSelectionnesIds)),
-    [usersSelectionnesIds]
+    [usersSelectionnesIds],
   );
 
   useEffect(() => {
@@ -63,7 +68,7 @@ export function useGroupesMissions2({
       const groupesNettoyes = asArray(groupesActuels).map((groupe, index) => {
         const groupeNormalise = normalizeGroupe(groupe, index);
         const usersValides = groupeNormalise.users.filter((userId) =>
-          usersSelectionnesSet.has(userId)
+          usersSelectionnesSet.has(userId),
         );
 
         if (
@@ -92,18 +97,18 @@ export function useGroupesMissions2({
     setGroupesManuels((groupesActuels) => {
       const groupesNormalises = asArray(groupesActuels).map(normalizeGroupe);
       const groupesManuelsExistants = groupesNormalises.filter(
-        (groupe) => !groupe.automatique
+        (groupe) => !groupe.automatique,
       );
 
       const usersGroupesManuels = new Set(
-        groupesManuelsExistants.flatMap((groupe) => groupe.users)
+        groupesManuelsExistants.flatMap((groupe) => groupe.users),
       );
 
       const nouveauxGroupesAutomatiques = [];
       const sectionsAPlat = Array.isArray(sectionsSelectionnees)
         ? sectionsSelectionnees
         : Object.values(sectionsSelectionnees || {}).flatMap((sections) =>
-            asArray(sections)
+            asArray(sections),
           );
 
       console.log("sectionsSelectionnees", sectionsSelectionnees);
@@ -122,7 +127,8 @@ export function useGroupesMissions2({
           .map((user) => (typeof user === "object" ? user.id : user))
           .filter(
             (userId) =>
-              usersSelectionnesSet.has(userId) && !usersGroupesManuels.has(userId)
+              usersSelectionnesSet.has(userId) &&
+              !usersGroupesManuels.has(userId),
           );
         console.log("section", sectionId);
         console.log("usersInSection", usersInSection);
@@ -136,12 +142,12 @@ export function useGroupesMissions2({
           automatique: true,
           nom:
             (typeof section === "object"
-              ? section.sectionName ?? section.nom
+              ? (section.sectionName ?? section.nom)
               : null) ?? `Section ${sectionId}`,
           sectionId,
           compagnieId:
             typeof section === "object"
-              ? section.compagnieId ?? section.compagnie?.id ?? null
+              ? (section.compagnieId ?? section.compagnie?.id ?? null)
               : null,
           users: selectedUsersInSection,
           soaId: null,
@@ -149,7 +155,10 @@ export function useGroupesMissions2({
         });
       });
 
-      const resultat = [...groupesManuelsExistants, ...nouveauxGroupesAutomatiques];
+      const resultat = [
+        ...groupesManuelsExistants,
+        ...nouveauxGroupesAutomatiques,
+      ];
       console.log("Groupes générés :", resultat);
 
       const identiques =
@@ -171,7 +180,14 @@ export function useGroupesMissions2({
 
       return identiques ? groupesActuels : resultat;
     });
-  }, [missionId, sectionsSelectionnees, getUsersSection, usersSelectionnesSet, setGroupesManuels, sectionsIgnorees]);
+  }, [
+    missionId,
+    sectionsSelectionnees,
+    getUsersSection,
+    usersSelectionnesSet,
+    setGroupesManuels,
+    sectionsIgnorees,
+  ]);
 
   const creerGroupeManuel = () => {
     setGroupesManuels((groupesActuels) => {
@@ -210,8 +226,10 @@ export function useGroupesMissions2({
   const renommerGroupe = (groupeIndex, nom) => {
     setGroupesManuels((groupesActuels) =>
       asArray(groupesActuels).map((groupe, index) =>
-        index === groupeIndex ? { ...normalizeGroupe(groupe, index), nom } : normalizeGroupe(groupe, index)
-      )
+        index === groupeIndex
+          ? { ...normalizeGroupe(groupe, index), nom }
+          : normalizeGroupe(groupe, index),
+      ),
     );
   };
 
@@ -223,8 +241,8 @@ export function useGroupesMissions2({
               ...normalizeGroupe(groupe, index),
               soaId: userId,
             }
-          : normalizeGroupe(groupe, index)
-      )
+          : normalizeGroupe(groupe, index),
+      ),
     );
   };
 
@@ -249,7 +267,7 @@ export function useGroupesMissions2({
           ...groupeNormalise,
           conducteurIds: [...conducteurIds],
         };
-      })
+      }),
     );
   };
 
@@ -273,14 +291,23 @@ export function useGroupesMissions2({
       });
     });
   };
+  const groupesNormalises = asArray(groupesManuels).map(normalizeGroupe);
 
   return {
-    groupesManuels: asArray(groupesManuels).map(normalizeGroupe),
+    groupes: groupesNormalises,
+
+    groupesManuels: groupesNormalises,
+
     creerGroupeManuel,
+
     supprimerGroupeManuel,
+
     renommerGroupe,
+
     setSoa,
+
     toggleConducteur,
+
     toggleUserDansGroupe,
   };
 }

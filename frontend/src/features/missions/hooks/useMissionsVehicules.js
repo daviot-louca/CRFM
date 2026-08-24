@@ -9,36 +9,77 @@ export function useMissionsVehicules(vehicules = []) {
   const vehiculesFiltres = useMemo(() => {
     const recherche = rechercheVehicule.toLowerCase().trim();
 
-    if (!recherche) return vehicules;
+    if (!recherche) {
+      return vehicules;
+    }
 
     return vehicules.filter((vehicule) => {
-      const texte = `${vehicule.immatriculation ?? ""} ${
-        vehicule?.vehiculeName ?? ""
-      } ${vehicule.type ?? ""}`.toLowerCase();
+      const texte = `
+        ${vehicule.immatriculation ?? ""}
+        ${vehicule?.vehiculeName ?? ""}
+        ${vehicule.type ?? ""}
+      `.toLowerCase();
 
       return texte.includes(recherche);
     });
   }, [vehicules, rechercheVehicule]);
 
-  const toggleVehicule = (vehiculeId, compagnieId) => {
+  /*
+   * ==========================================
+   * SÉLECTION D'UN VÉHICULE
+   * ==========================================
+   *
+   * Un véhicule est maintenant associé à :
+   *
+   * - une compagnie
+   * - un groupe
+   * - éventuellement un conducteur
+   *
+   * Un véhicule ne peut être affecté qu'à
+   * un seul groupe à la fois.
+   */
+
+  const toggleVehicule = (vehiculeId, compagnieId, groupeId) => {
     setVehiculesSelectionnes((precedent) => {
-      const liste = Array.isArray(precedent) ? [...precedent] : [...precedent];
+      const liste = Array.isArray(precedent) ? [...precedent] : [];
 
       const index = liste.findIndex((v) => v.vehiculeId === vehiculeId);
 
+      /*
+       * Le véhicule est déjà sélectionné.
+       */
       if (index !== -1) {
-        if (liste[index].compagnieId === compagnieId) {
+        /*
+         * Il appartient déjà à ce groupe :
+         * on le désélectionne.
+         */
+        if (
+          liste[index].compagnieId === compagnieId &&
+          liste[index].groupeId === groupeId
+        ) {
           liste.splice(index, 1);
         } else {
+          /*
+           * Le véhicule était affecté à un
+           * autre groupe.
+           *
+           * On déplace donc son affectation
+           * vers le nouveau groupe.
+           */
           liste[index] = {
             ...liste[index],
             compagnieId,
+            groupeId,
           };
         }
       } else {
+        /*
+         * Nouveau véhicule sélectionné.
+         */
         liste.push({
           vehiculeId,
           compagnieId,
+          groupeId,
           conducteurId: null,
         });
       }
@@ -47,10 +88,15 @@ export function useMissionsVehicules(vehicules = []) {
     });
   };
 
-  // Associe un conducteur à un véhicule déjà sélectionné
+  /*
+   * ==========================================
+   * CONDUCTEUR D'UN VÉHICULE
+   * ==========================================
+   */
+
   const setConducteurVehicule = (vehiculeId, conducteurId) => {
     setVehiculesSelectionnes((precedent) => {
-      const liste = Array.isArray(precedent) ? [...precedent] : [...precedent];
+      const liste = Array.isArray(precedent) ? [...precedent] : [];
 
       const index = liste.findIndex((v) => v.vehiculeId === vehiculeId);
 
@@ -67,16 +113,27 @@ export function useMissionsVehicules(vehicules = []) {
     });
   };
 
+  /*
+   * ==========================================
+   * VIDER LES VÉHICULES
+   * ==========================================
+   */
+
   const viderSelection = () => {
     setVehiculesSelectionnes([]);
   };
 
+  /*
+   * ==========================================
+   * IDS DES VÉHICULES SÉLECTIONNÉS
+   * ==========================================
+   */
+
   const tousVehiculesSelectionnesIds = useMemo(
     () =>
-      (Array.isArray(vehiculesSelectionnes)
-        ? vehiculesSelectionnes
-        : [...vehiculesSelectionnes]
-      ).map((v) => v.vehiculeId),
+      (Array.isArray(vehiculesSelectionnes) ? vehiculesSelectionnes : []).map(
+        (v) => v.vehiculeId,
+      ),
     [vehiculesSelectionnes],
   );
 
