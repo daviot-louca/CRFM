@@ -298,7 +298,7 @@ const validateMissionCommandement = async ({
     for (const conducteurId of asArray(groupe.conducteurIds).filter(Boolean)) {
       const conducteur = usersById.get(conducteurId);
 
-      if (roleNameOf(conducteur) !== "conducteur") {
+      if (roleNameOf(conducteur) !== "conducteur" && roleNameOf(conducteur) !== "SOA" && roleNameOf(conducteur) !== "OA") {
         const error = new Error(
           `${getNomUtilisateur(
             conducteur,
