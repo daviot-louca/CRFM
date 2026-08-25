@@ -10,50 +10,185 @@ function CreerMissions3Admin() {
 
   const handleContinuer = async () => {
     if (!missions.missionId) {
-      alert("Aucune mission n'est actuellement sélectionnée.");
+      alert(
+        "Aucune mission n'est actuellement sélectionnée."
+      );
       return;
     }
   
     try {
-      const affectationsVehicules = (
-        missions.vehiculesSelectionnes ?? []
-      ).map((vehicule) => ({
-        vehiculeId: vehicule.vehiculeId,
-        compagnieId: vehicule.compagnieId,
-        groupeId:
-          vehicule.groupeId ??
-          vehicule.missionGroupeId ??
-          null,
-        sectionId:
-          vehicule.sectionId ??
-          null,
-      }));
+      /*
+       * Les véhicules peuvent actuellement contenir un groupe
+       * temporaire du frontend :
+       *
+       * auto-section-xxxxxxxx
+       *
+       * Le backend attend obligatoirement le véritable
+       * missions_groupes.id.
+       */
+  
+      const groupesMission =
+        missions.compagniesSelectionneesGroupes ?? [];
+  
+      console.group(
+        "========== [ÉTAPE 3] PRÉPARATION =========="
+      );
   
       console.log(
-        "[ÉTAPE 3] Sauvegarde des véhicules :",
-        affectationsVehicules,
+        "[ÉTAPE 3] Groupes disponibles :",
+        groupesMission
       );
+  
+      console.log(
+        "[ÉTAPE 3] Véhicules sélectionnés :",
+        missions.vehiculesSelectionnes
+      );
+  
+      const affectationsVehicules = (
+        missions.vehiculesSelectionnes ?? []
+      ).map((vehicule) => {
+  
+        /*
+         * ID actuellement présent sur le véhicule.
+         */
+        const groupeIdActuel =
+          vehicule.groupeId ??
+          vehicule.missionGroupeId ??
+          null;
+  
+        /*
+         * Recherche du véritable groupe de mission.
+         *
+         * On accepte plusieurs noms possibles afin de rester
+         * compatible avec les différentes structures retournées
+         * par le contexte.
+         */
+        const groupeMission = groupesMission.find(
+          (groupe) => {
+  
+            const vraisIds = [
+              groupe?.missionGroupeId,
+              groupe?.groupeId,
+              groupe?.id,
+            ].filter(Boolean);
+  
+            return vraisIds.includes(
+              groupeIdActuel
+            );
+          }
+        );
+  
+        /*
+         * Si l'ID actuel est déjà un véritable UUID de groupe,
+         * on le conserve.
+         *
+         * Si c'est un auto-section, on essaie de retrouver
+         * le véritable ID du groupe.
+         */
+        let groupeIdFinal =
+          groupeMission?.missionGroupeId ??
+          groupeMission?.groupeId ??
+          groupeMission?.id ??
+          null;
+  
+        /*
+         * Si aucun groupe n'a été trouvé mais que l'ID
+         * ressemble à un véritable UUID, on le conserve.
+         *
+         * On refuse explicitement les auto-section.
+         */
+        if (
+          !groupeIdFinal &&
+          groupeIdActuel &&
+          !String(groupeIdActuel).startsWith(
+            "auto-section-"
+          )
+        ) {
+          groupeIdFinal = groupeIdActuel;
+        }
+  
+        console.log(
+          "[ÉTAPE 3] Véhicule :",
+          vehicule.vehiculeId
+        );
+  
+        console.log(
+          "[ÉTAPE 3] Groupe actuel :",
+          groupeIdActuel
+        );
+  
+        console.log(
+          "[ÉTAPE 3] Groupe mission trouvé :",
+          groupeMission
+        );
+  
+        console.log(
+          "[ÉTAPE 3] Groupe final envoyé :",
+          groupeIdFinal
+        );
+  
+        if (!groupeIdFinal) {
+          throw new Error(
+            `Impossible de déterminer le groupe de mission du véhicule ${vehicule.vehiculeId}.`
+          );
+        }
+  
+        if (
+          String(groupeIdFinal).startsWith(
+            "auto-section-"
+          )
+        ) {
+          throw new Error(
+            `Le véhicule ${vehicule.vehiculeId} possède encore un groupe temporaire (${groupeIdFinal}).`
+          );
+        }
+  
+        return {
+          vehiculeId:
+            vehicule.vehiculeId,
+  
+          compagnieId:
+            vehicule.compagnieId ?? null,
+  
+          groupeId:
+            groupeIdFinal,
+  
+          sectionId:
+            vehicule.sectionId ?? null,
+        };
+      });
+  
+      console.log(
+        "[ÉTAPE 3] Affectations finales :",
+        affectationsVehicules
+      );
+  
+      console.groupEnd();
   
       await updateMissionVehicules(
         missions.missionId,
-        affectationsVehicules,
+        affectationsVehicules
       );
   
       console.log(
-        "[ÉTAPE 3] Véhicules sauvegardés avec succès",
+        "[ÉTAPE 3] Véhicules sauvegardés avec succès"
       );
   
-      navigate('/admin/creer-missions-4');
+      navigate(
+        `/admin/creer-missions-4?missionId=${missions.missionId}`
+      );
+  
     } catch (error) {
+  
       console.error(
         "[ÉTAPE 3] Erreur lors de la sauvegarde :",
-        error,
+        error
       );
   
       alert(
         error?.response?.data?.message ??
         error?.message ??
-        "Impossible de sauvegarder les véhicules.",
+        "Impossible de sauvegarder les véhicules."
       );
     }
   };

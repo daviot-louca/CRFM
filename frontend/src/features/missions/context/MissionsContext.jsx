@@ -4,9 +4,11 @@ import {
   useMemo,
   useState,
 } from "react";
+
 import {
   Outlet,
   useSearchParams,
+  useLocation,
 } from "react-router-dom";
 
 import { MissionsContext } from "./MissionsContextValue";
@@ -109,7 +111,7 @@ const normalizeGroupes = (
 
       users: asArray(
         groupe.users ??
-          groupe.userIds,
+        groupe.userIds,
       ),
     }),
   );
@@ -185,7 +187,7 @@ const deserializeDraft = (
     asArray(
       draft?.vehiculesSelectionnes,
     ),
-  
+
   sectionsIgnorees:
     asArray(
       draft?.sectionsIgnorees,
@@ -247,9 +249,13 @@ const writeStoredDraft = (
 export function MissionsProvider({
   children,
 }) {
+  console.log(
+    "[MISSIONS CONTEXT] PROVIDER MONTÉ",
+  );
+
   const [searchParams] =
     useSearchParams();
-
+    const location = useLocation();
   const missionIdFromUrl =
     searchParams.get("missionId");
 
@@ -356,17 +362,14 @@ export function MissionsProvider({
    * ==========================================
    * CHARGEMENT D'UNE MISSION EXISTANTE
    * ==========================================
-   *
-   * Lorsqu'on arrive depuis MissionDetail avec :
-   *
-   * ?missionId=XXXXXXXX
-   *
-   * on récupère la mission depuis la BDD
-   * et on recharge le contexte.
    */
 
   useEffect(() => {
     if (!missionIdFromUrl) {
+      console.warn(
+        "[MISSIONS CONTEXT] ARRÊT : missionIdFromUrl est vide/null",
+      );
+
       return;
     }
 
@@ -381,6 +384,56 @@ export function MissionsProvider({
           await getMissionById(
             missionIdFromUrl,
           );
+
+        console.log(
+          "========== [MISSIONS CONTEXT] MISSION API ==========",
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] mission complète :",
+          mission,
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] mission JSON :",
+          JSON.parse(
+            JSON.stringify(
+              mission,
+            ),
+          ),
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] mission.vehicules :",
+          mission?.vehicules,
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] mission.vehicules JSON :",
+          JSON.parse(
+            JSON.stringify(
+              mission?.vehicules ?? [],
+            ),
+          ),
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] mission.missionsVehicules :",
+          mission?.missionsVehicules,
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] mission.missionsVehicules JSON :",
+          JSON.parse(
+            JSON.stringify(
+              mission?.missionsVehicules ?? [],
+            ),
+          ),
+        );
+
+        console.log(
+          "====================================================",
+        );
 
         if (!mission) {
           console.warn(
@@ -451,7 +504,7 @@ export function MissionsProvider({
         const groupes =
           normalizeGroupes(
             mission.groupes ??
-              [],
+            [],
           );
 
         setGroupesManuels(
@@ -460,47 +513,366 @@ export function MissionsProvider({
 
         /*
          * ==========================================
+         * PERSONNEL + SECTIONS
+         * ==========================================
+         */
+
+        const missionsUsers =
+          asArray(
+            mission.missionsUsers,
+          );
+
+        const usersParSection =
+          {};
+
+        const sectionsParCompagnie =
+          {};
+
+        missionsUsers.forEach(
+          (missionUser) => {
+            /*
+             * IMPORTANT :
+             *
+             * missionsUsers contient :
+             *
+             * {
+             *   id: ID de missions_users,
+             *   userId: ID du vrai User
+             * }
+             *
+             * On utilise toujours userId.
+             */
+
+            const userId =
+              missionUser?.userId ??
+              missionUser?.user?.id ??
+              null;
+
+            const sectionId =
+              missionUser?.sectionId ??
+              missionUser?.section?.id ??
+              missionUser?.user
+                ?.sectionId ??
+              missionUser?.user
+                ?.section?.id ??
+              null;
+
+            const compagnieId =
+              missionUser?.compagnieId ??
+              missionUser?.compagnie?.id ??
+              missionUser?.section
+                ?.compagnieId ??
+              missionUser?.section
+                ?.compagnie?.id ??
+              missionUser?.user
+                ?.compagnieId ??
+              missionUser?.user
+                ?.compagnie?.id ??
+              null;
+
+            if (
+              userId &&
+              sectionId
+            ) {
+              if (
+                !usersParSection[
+                  sectionId
+                ]
+              ) {
+                usersParSection[
+                  sectionId
+                ] =
+                  new Set();
+              }
+
+              usersParSection[
+                sectionId
+              ].add(
+                userId,
+              );
+            }
+
+            if (
+              sectionId &&
+              compagnieId
+            ) {
+              if (
+                !sectionsParCompagnie[
+                  compagnieId
+                ]
+              ) {
+                sectionsParCompagnie[
+                  compagnieId
+                ] = [];
+              }
+
+              if (
+                !sectionsParCompagnie[
+                  compagnieId
+                ].includes(
+                  sectionId,
+                )
+              ) {
+                sectionsParCompagnie[
+                  compagnieId
+                ].push(
+                  sectionId,
+                );
+              }
+            }
+          },
+        );
+
+        setUsersSelectionnes(
+          usersParSection,
+        );
+
+        setSectionsSelectionnees(
+          sectionsParCompagnie,
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] Personnel restauré :",
+          Object.fromEntries(
+            Object.entries(
+              usersParSection,
+            ).map(
+              ([
+                sectionId,
+                userIds,
+              ]) => [
+                sectionId,
+                [...userIds],
+              ],
+            ),
+          ),
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] Sections restaurées :",
+          sectionsParCompagnie,
+        );
+
+        /*
+         * ==========================================
          * ÉTAPE 3 + 4
          * ==========================================
          *
-         * On récupère les véhicules déjà
-         * affectés à la mission.
+         * IMPORTANT :
+         *
+         * mission.vehicules contient les véhicules.
+         *
+         * mission.missionsVehicules contient les relations
+         * entre la mission et les véhicules.
+         *
+         * C'est cette seconde source qui contient notamment
+         * le véritable missionGroupeId.
+         */
+
+        const vehiculesApi =
+          asArray(
+            mission.vehicules,
+          );
+
+        const missionsVehiculesApi =
+          asArray(
+            mission.missionsVehicules,
+          );
+
+        console.log(
+          "[MISSIONS CONTEXT] Véhicules API :",
+          vehiculesApi,
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] MissionsVehicules API :",
+          missionsVehiculesApi,
+        );
+
+        /*
+         * Index des relations missions_vehicules
+         * par ID du véhicule.
+         */
+
+        const missionsVehiculesByVehiculeId =
+          new Map(
+            missionsVehiculesApi.map(
+              (
+                missionVehicule,
+              ) => [
+                missionVehicule?.vehiculeId ??
+                  missionVehicule
+                    ?.vehicule
+                    ?.id ??
+                  missionVehicule?.id,
+
+                missionVehicule,
+              ],
+            ),
+          );
+
+        console.log(
+          "[MISSIONS CONTEXT] Index missionsVehicules :",
+          missionsVehiculesByVehiculeId,
+        );
+
+        /*
+         * Reconstruction des véhicules.
          */
 
         const vehicules =
-          asArray(
-            mission.vehicules,
-          ).map(
-            (vehicule) => ({
-              vehiculeId:
-                vehicule.vehiculeId ??
-                vehicule.id ??
-                null,
+          vehiculesApi.map(
+            (vehicule) => {
+              const vehiculeId =
+                vehicule?.vehiculeId ??
+                vehicule?.id ??
+                null;
 
-              compagnieId:
-                vehicule.compagnieId ??
-                vehicule.compagnie?.id ??
-                null,
+              const missionVehicule =
+                missionsVehiculesByVehiculeId.get(
+                  vehiculeId,
+                );
 
-              groupeId:
-                vehicule.groupeId ??
-                vehicule.missionGroupeId ??
-                vehicule.groupe?.id ??
-                null,
+              /*
+               * Récupération du vrai groupe.
+               */
 
-              sectionId:
-                vehicule.sectionId ??
-                vehicule.section?.id ??
-                null,
+              const groupeIdApi =
+                missionVehicule
+                  ?.missionGroupeId ??
+                missionVehicule
+                  ?.groupeId ??
+                vehicule
+                  ?.missionGroupeId ??
+                vehicule
+                  ?.groupeId ??
+                null;
 
-              conducteurId:
-                vehicule.conducteurId ??
-                vehicule.conducteur?.id ??
-                null,
-            }),
+              /*
+               * Recherche du groupe correspondant.
+               */
+
+              const groupeCorrespondant =
+                groupes.find(
+                  (groupe) =>
+                    String(
+                      groupe?.id ??
+                      "",
+                    ) ===
+                    String(
+                      groupeIdApi ??
+                      "",
+                    ),
+                ) ??
+                groupes.find(
+                  (groupe) =>
+                    String(
+                      groupe?.nom ??
+                      "",
+                    )
+                      .trim()
+                      .toLowerCase() ===
+                    String(
+                      vehicule?.groupe ??
+                      "",
+                    )
+                      .trim()
+                      .toLowerCase(),
+                );
+
+              /*
+               * Construction de l'objet utilisé
+               * par les étapes 3 et 4.
+               */
+
+              const vehiculeNormalise =
+                {
+                  vehiculeId,
+
+                  compagnieId:
+                    missionVehicule
+                      ?.compagnieId ??
+                    vehicule
+                      ?.compagnieId ??
+                    vehicule
+                      ?.compagnie
+                      ?.id ??
+                    null,
+
+                  groupeId:
+                    groupeIdApi ??
+                    groupeCorrespondant
+                      ?.id ??
+                    null,
+
+                  groupeNom:
+                    typeof vehicule
+                      ?.groupe ===
+                    "string"
+                      ? vehicule.groupe
+                      : vehicule
+                          ?.groupe
+                          ?.nom ??
+                        groupeCorrespondant
+                          ?.nom ??
+                        null,
+
+                  sectionId:
+                    missionVehicule
+                      ?.sectionId ??
+                    vehicule
+                      ?.sectionId ??
+                    vehicule
+                      ?.section
+                      ?.id ??
+                    null,
+
+                  conducteurId:
+                    missionVehicule
+                      ?.conducteurId ??
+                    vehicule
+                      ?.conducteurId ??
+                    vehicule
+                      ?.conducteur
+                      ?.id ??
+                    null,
+
+                  vehicule,
+                };
+
+              console.log(
+                "[MISSIONS CONTEXT] Véhicule restauré :",
+                {
+                  vehiculeId,
+
+                  missionVehicule,
+
+                  groupeIdApi,
+
+                  groupeCorrespondant,
+
+                  vehiculeNormalise,
+                },
+              );
+
+              return vehiculeNormalise;
+            },
           );
 
+        /*
+         * IMPORTANT :
+         *
+         * On conserve les véhicules dans le contexte
+         * même si certaines informations de relation
+         * sont nulles.
+         */
+
         setVehiculesSelectionnes(
+          vehicules,
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] Véhicules restaurés dans le contexte :",
           vehicules,
         );
 
@@ -528,7 +900,7 @@ export function MissionsProvider({
 
         /*
          * ==========================================
-         * LOG
+         * FIN CHARGEMENT
          * ==========================================
          */
 
@@ -557,6 +929,7 @@ export function MissionsProvider({
     chargerMission();
   }, [
     missionIdFromUrl,
+    location.pathname
   ]);
 
   /*
@@ -608,44 +981,49 @@ export function MissionsProvider({
    */
 
   const resetMissionDraft =
-    useCallback(() => {
-      const emptyDraft =
-        createEmptyDraft();
+    useCallback(
+      () => {
+        const emptyDraft =
+          createEmptyDraft();
 
-      setMissionId(
-        emptyDraft.missionId,
-      );
+        setMissionId(
+          emptyDraft.missionId,
+        );
 
-      setInformations(
-        emptyDraft.informations,
-      );
+        setInformations(
+          emptyDraft.informations,
+        );
 
-      setCompagniesSelectionneesIds(
-        emptyDraft.compagniesSelectionneesIds,
-      );
+        setCompagniesSelectionneesIds(
+          emptyDraft
+            .compagniesSelectionneesIds,
+        );
 
-      setSectionsSelectionnees(
-        emptyDraft.sectionsSelectionnees,
-      );
+        setSectionsSelectionnees(
+          emptyDraft.sectionsSelectionnees,
+        );
 
-      setSectionsIgnorees(
-        emptyDraft.sectionsIgnorees,
-      );
+        setSectionsIgnorees(
+          emptyDraft.sectionsIgnorees,
+        );
 
-      setUsersSelectionnes(
-        emptyDraft.usersSelectionnes,
-      );
+        setUsersSelectionnes(
+          emptyDraft.usersSelectionnes,
+        );
 
-      setGroupesManuels(
-        emptyDraft.groupesManuels,
-      );
+        setGroupesManuels(
+          emptyDraft.groupesManuels,
+        );
 
-      setVehiculesSelectionnes(
-        emptyDraft.vehiculesSelectionnes,
-      );
+        setVehiculesSelectionnes(
+          emptyDraft
+            .vehiculesSelectionnes,
+        );
 
-      clearMissionCreationDraftStorage();
-    }, []);
+        clearMissionCreationDraftStorage();
+      },
+      [],
+    );
 
   /*
    * ==========================================
@@ -653,94 +1031,95 @@ export function MissionsProvider({
    * ==========================================
    */
 
-  const value = useMemo(
-    () => ({
-      /*
-       * Mission
-       */
+  const value =
+    useMemo(
+      () => ({
+        /*
+         * Mission
+         */
 
-      missionId,
+        missionId,
 
-      setMissionId,
+        setMissionId,
 
-      /*
-       * Informations étape 1
-       */
+        /*
+         * Informations
+         */
 
-      informations,
+        informations,
 
-      setInformations,
+        setInformations,
 
-      /*
-       * Compagnies
-       */
+        /*
+         * Compagnies
+         */
 
-      compagniesSelectionneesIds,
+        compagniesSelectionneesIds,
 
-      setCompagniesSelectionneesIds,
+        setCompagniesSelectionneesIds,
 
-      /*
-       * Sections
-       */
+        /*
+         * Sections
+         */
 
-      sectionsSelectionnees,
+        sectionsSelectionnees,
 
-      setSectionsSelectionnees,
+        setSectionsSelectionnees,
 
-      sectionsIgnorees,
+        sectionsIgnorees,
 
-      setSectionsIgnorees,
+        setSectionsIgnorees,
 
-      /*
-       * Personnel
-       */
+        /*
+         * Personnel
+         */
 
-      usersSelectionnes,
+        usersSelectionnes,
 
-      setUsersSelectionnes,
+        setUsersSelectionnes,
 
-      /*
-       * Groupes
-       */
+        /*
+         * Groupes
+         */
 
-      groupesManuels,
+        groupesManuels,
 
-      setGroupesManuels,
+        setGroupesManuels,
 
-      /*
-       * Véhicules
-       */
+        /*
+         * Véhicules
+         */
 
-      vehiculesSelectionnes,
+        vehiculesSelectionnes,
 
-      setVehiculesSelectionnes,
+        setVehiculesSelectionnes,
 
-      /*
-       * Reset
-       */
+        /*
+         * Reset
+         */
 
-      resetMissionDraft,
-    }),
-    [
-      missionId,
+        resetMissionDraft,
+      }),
+      [
+        missionId,
 
-      informations,
+        informations,
 
-      compagniesSelectionneesIds,
+        compagniesSelectionneesIds,
 
-      sectionsSelectionnees,
+        sectionsSelectionnees,
 
-      sectionsIgnorees,
+        sectionsIgnorees,
 
-      usersSelectionnes,
+        usersSelectionnes,
 
-      groupesManuels,
+        groupesManuels,
 
-      vehiculesSelectionnes,
+        vehiculesSelectionnes,
 
-      resetMissionDraft,
-    ],
-  );
+        resetMissionDraft,
+      ],
+    );
 
   return (
     <MissionsContext.Provider

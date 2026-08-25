@@ -13,7 +13,6 @@ import MessagerieAdmin from "./pages/admin/MessagerieAdmin"
 import PageContactMessagerieAdmin from "./pages/admin/PageContactMessagerieAdmin"
 import SectionsAdmin from "./features/sections/pages/SectionsAdmin"
 import Utilisateurs from "./features/users/page/Utilisateurs"
-import ValiderCreationMissions from "./features/missions/pages/ValiderCreationMissions"
 import VehiculesAdmin from "./features/vehicules/pages/VehiculesPage"
 import AjouterVehiculeAdmin from "./features/vehicules/pages/AjouterVehiculeAdmin"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
@@ -29,7 +28,6 @@ function App() {
         <Route path="/admin/creer-missions-2" element={<CreerMissions2Admin />} />
         <Route path="/admin/creer-missions-3" element={<CreerMissions3Admin />} />
         <Route path="/admin/creer-missions-4" element={<CreerMission4Admin />} />
-        <Route path="/admin/validation-missions" element={<ValiderCreationMissions />} />
       </Route>
       <Route path="/admin/vehicules/:id" element={<DetailVehiculesAdmin />} />
       <Route path="/admin/messages" element={<MessagerieAdmin />} />

@@ -3,6 +3,7 @@ import { useMissions2 } from "../hooks/useMissions2";
 import MainLayout from "@/components/layout/MainLayout";
 import { useNavigate } from "react-router-dom";
 import { updateMissionConducteurs } from "../api/missions.api";
+
 function CreerMission4Admin() {
   const navigate = useNavigate();
 
@@ -15,30 +16,25 @@ function CreerMission4Admin() {
     toggleConducteur,
     usersDisponibles = [],
     vehiculesSelectionnes = [],
-    vehicules = [],
+    vehiculesSelectionnesComplets = [],
     setConducteurVehicule,
   } = useMissions2();
 
-  const vehiculesDisponibles = useMemo(() => {
-    const selectionIds = new Set(
-      (vehiculesSelectionnes ?? []).map((selection) =>
-        typeof selection === "string"
-          ? selection
-          : selection.vehiculeId
-      )
-    );
-
-    if (selectionIds.size === 0) {
-      return [];
-    }
-
-    return (vehicules ?? []).filter((vehicule) =>
-      selectionIds.has(vehicule.id)
-    );
-  }, [vehicules, vehiculesSelectionnes]);
+  /*
+   * ==========================================
+   * UTILISATEURS
+   * ==========================================
+   */
 
   const getUserLabel = (user) => {
-    const grade = user.grade ?? "";
+    if (!user) {
+      return "Utilisateur";
+    }
+
+    const grade =
+      user.grade ??
+      user.gradeName ??
+      "";
 
     const nom =
       user.nom ??
@@ -55,33 +51,123 @@ function CreerMission4Admin() {
     return `${grade} ${prenom} ${nom}`.trim();
   };
 
-  const getVehiculeLabel = (vehicule) => {
-    const type =
-      vehicule.vehiculeType?.nom ??
-      vehicule.vehiculeType?.name ??
-      vehicule.type?.nom ??
-      vehicule.type?.name ??
-      vehicule.vehiculeName ??
-      vehicule.nom ??
-      vehicule.name ??
-      "Véhicule";
+  /*
+   * ==========================================
+   * UTILISATEURS DU GROUPE
+   * ==========================================
+   */
 
-    const immatriculation =
-      vehicule.immatriculation ??
-      vehicule.registration ??
-      vehicule.plaque ??
-      "";
+  const getGroupeUsers = (groupe) => {
+    const normaliserUtilisateur = (user) => {
+      if (!user) {
+        return null;
+      }
 
-    return immatriculation
-      ? `${type} - ${immatriculation}`
-      : type;
+      if (
+        typeof user === "object" &&
+        user !== null &&
+        user.user
+      ) {
+        return user.user;
+      }
+
+      if (
+        typeof user === "object" &&
+        user !== null
+      ) {
+        return user;
+      }
+
+      return (
+        usersDisponibles.find(
+          (item) =>
+            String(item?.id) ===
+            String(user),
+        ) ?? null
+      );
+    };
+
+    if (
+      Array.isArray(groupe?.utilisateurs) &&
+      groupe.utilisateurs.length > 0
+    ) {
+      return groupe.utilisateurs
+        .map(normaliserUtilisateur)
+        .filter(Boolean);
+    }
+
+    if (
+      Array.isArray(groupe?.users) &&
+      groupe.users.length > 0
+    ) {
+      return groupe.users
+        .map(normaliserUtilisateur)
+        .filter(Boolean);
+    }
+
+    return [];
   };
 
   const getConducteursDisponibles = (groupe) => {
-    const ids = new Set(groupe.users ?? []);
+    return getGroupeUsers(groupe);
+  };
 
-    return usersDisponibles.filter((user) =>
-      ids.has(user.id)
+  /*
+   * ==========================================
+   * VÉHICULES
+   * ==========================================
+   */
+
+  const getVehiculeLabel = (vehicule) => {
+    if (!vehicule) {
+      return "Véhicule";
+    }
+
+    const nom =
+      vehicule?.nom ??
+      vehicule?.vehiculeName ??
+      vehicule?.name ??
+      vehicule?.type ??
+      vehicule?.vehicule?.nom ??
+      vehicule?.vehicule?.vehiculeName ??
+      vehicule?.vehicule?.name ??
+      vehicule?.vehicule?.type ??
+      "Véhicule";
+
+    const immatriculation =
+      vehicule?.immatriculation ??
+      vehicule?.registration ??
+      vehicule?.plaque ??
+      vehicule?.vehicule?.immatriculation ??
+      "";
+
+    if (immatriculation) {
+      return `${nom} - ${immatriculation}`;
+    }
+
+    return nom;
+  };
+
+  /*
+   * ==========================================
+   * ID VÉHICULE
+   * ==========================================
+   */
+
+  const getVehiculeId = (selection) => {
+    if (!selection) {
+      return null;
+    }
+
+    if (typeof selection === "string") {
+      return selection;
+    }
+
+    return (
+      selection?.vehiculeId ??
+      selection?.vehicule?.id ??
+      selection?.id ??
+      null
     );
   };
 
@@ -89,195 +175,488 @@ function CreerMission4Admin() {
    * ==========================================
    * VÉHICULES DU GROUPE
    * ==========================================
-   *
-   * On récupère uniquement les véhicules dont
-   * l'affectation possède le même groupeId.
-   *
-   * Ainsi :
-   *
-   * Groupe 1 → véhicules du groupe 1
-   * Groupe 2 → véhicules du groupe 2
-   *
-   * Même si les deux groupes appartiennent
-   * à la même compagnie, leurs véhicules
-   * restent séparés.
    */
 
   const getVehiculesDuGroupe = (groupe) => {
-    const groupeId =
-      groupe.id ??
-      groupe.groupeId;
+    const sourceVehicules = Array.isArray(
+      vehiculesSelectionnesComplets,
+    )
+      ? vehiculesSelectionnesComplets
+      : [];
 
-    if (!groupeId) {
-      return [];
+    const groupeId =
+      groupe?.id ??
+      groupe?.groupeId ??
+      null;
+
+    const groupeNom = String(
+      groupe?.nom ??
+      groupe?.nomGroupe ??
+      "",
+    )
+      .trim()
+      .toLowerCase();
+
+    const selections = Array.isArray(
+      vehiculesSelectionnes,
+    )
+      ? vehiculesSelectionnes
+      : [];
+
+    /*
+     * ==========================================
+     * SÉLECTIONS DU GROUPE
+     * ==========================================
+     */
+
+    const selectionsDuGroupe =
+      selections.filter((selection) => {
+        if (
+          !selection ||
+          typeof selection !== "object"
+        ) {
+          return false;
+        }
+
+        const selectionGroupeId =
+          selection?.groupeId ??
+          selection?.missionGroupeId ??
+          null;
+
+        const selectionGroupeNom =
+          String(
+            selection?.groupeNom ??
+            selection?.groupe?.nom ??
+            "",
+          )
+            .trim()
+            .toLowerCase();
+
+        /*
+         * Priorité à l'ID.
+         */
+
+        if (
+          selectionGroupeId &&
+          groupeId
+        ) {
+          return (
+            String(selectionGroupeId) ===
+            String(groupeId)
+          );
+        }
+
+        /*
+         * Fallback sur le nom.
+         */
+
+        if (
+          selectionGroupeNom &&
+          groupeNom
+        ) {
+          return (
+            selectionGroupeNom ===
+            groupeNom
+          );
+        }
+
+        /*
+         * S'il n'y a qu'un groupe,
+         * on considère que les véhicules
+         * lui appartiennent.
+         */
+
+        return groupes.length === 1;
+      });
+
+    console.log(
+      "[ÉTAPE 4] Sélections du groupe :",
+      selectionsDuGroupe,
+    );
+
+    /*
+     * ==========================================
+     * VÉHICULES COMPLETS
+     * ==========================================
+     */
+
+    const vehiculesCompletsDuGroupe =
+      sourceVehicules.filter(
+        (vehicule) => {
+          const vehiculeId = String(
+            vehicule?.id ??
+            vehicule?.vehiculeId ??
+            vehicule?.vehicule?.id ??
+            "",
+          );
+
+          return selectionsDuGroupe.some(
+            (selection) =>
+              String(
+                selection?.vehiculeId ??
+                selection?.vehicule?.id ??
+                selection?.id ??
+                "",
+              ) === vehiculeId,
+          );
+        },
+      );
+
+    if (
+      vehiculesCompletsDuGroupe.length > 0
+    ) {
+      console.log(
+        "[ÉTAPE 4] VÉHICULES COMPLETS RÉSOLUS :",
+        vehiculesCompletsDuGroupe,
+      );
+
+      return vehiculesCompletsDuGroupe;
     }
 
-    const idsDuGroupe = new Set(
-      (vehiculesSelectionnes ?? [])
-        .filter(
-          (selection) =>
-            typeof selection !== "string" &&
-            selection.groupeId === groupeId
-        )
-        .map(
-          (selection) =>
-            selection.vehiculeId
-        )
-    );
+    /*
+     * ==========================================
+     * FALLBACK
+     * ==========================================
+     */
 
-    return vehiculesDisponibles.filter(
-      (vehicule) =>
-        idsDuGroupe.has(vehicule.id)
-    );
+    return selectionsDuGroupe
+      .map((selection) => {
+        const id =
+          getVehiculeId(selection);
+
+        if (!id) {
+          return null;
+        }
+
+        return {
+          ...selection,
+
+          id,
+
+          vehiculeId: id,
+
+          nom:
+            selection?.nom ??
+            selection?.vehiculeNom ??
+            selection?.type ??
+            "Véhicule",
+
+          type:
+            selection?.type ??
+            "",
+
+          immatriculation:
+            selection?.immatriculation ??
+            "",
+        };
+      })
+      .filter(Boolean);
   };
 
   /*
    * ==========================================
-   * CONDUCTEUR DU VÉHICULE
+   * CONDUCTEUR D'UN VÉHICULE
    * ==========================================
-   *
-   * On cherche également avec le groupeId
-   * afin qu'un conducteur affecté dans un
-   * groupe ne soit pas affiché dans un autre.
    */
 
   const getConducteurId = (
     vehiculeId,
-    groupeId
+    groupeId,
   ) => {
-    const selection = (
-      vehiculesSelectionnes ?? []
-    ).find(
-      (item) =>
-        typeof item !== "string" &&
-        item.vehiculeId === vehiculeId &&
-        item.groupeId === groupeId
-    );
+    const selection =
+      (
+        vehiculesSelectionnes ?? []
+      ).find((item) => {
+        if (
+          typeof item === "string"
+        ) {
+          return false;
+        }
 
-    return selection?.conducteurId ?? "";
-  };
+        const id =
+          getVehiculeId(item);
 
-  const handleConducteurChange = (
-    vehiculeId,
-    conducteurId
-  ) => {
-    setConducteurVehicule(
-      vehiculeId,
-      conducteurId
+        if (
+          String(id) !==
+          String(vehiculeId)
+        ) {
+          return false;
+        }
+
+        const itemGroupeId =
+          item?.groupeId ??
+          item?.missionGroupeId ??
+          null;
+
+        if (
+          !itemGroupeId ||
+          !groupeId
+        ) {
+          return true;
+        }
+
+        return (
+          String(itemGroupeId) ===
+          String(groupeId)
+        );
+      });
+
+    return (
+      selection?.conducteurId ??
+      selection?.conducteur?.id ??
+      ""
     );
   };
 
   /*
-   * On utilise les groupes complets si
-   * disponibles.
-   *
-   * Fallback sur groupesManuels pour
-   * conserver la compatibilité.
+   * ==========================================
+   * CHANGEMENT CONDUCTEUR
+   * ==========================================
    */
 
-  const handleContinuer = async () => {
-    if (!missionId) {
-      alert(
-        "Aucune mission n'est actuellement sélectionnée."
-      );
-      return;
-    }
+  const handleConducteurChange = (
+    vehiculeId,
+    conducteurId,
+  ) => {
+    console.log(
+      "[ÉTAPE 4] Changement conducteur :",
+      {
+        vehiculeId,
+        conducteurId,
+      },
+    );
 
-    const affectationsVehicules = (
-      vehiculesSelectionnes ?? []
-    )
-      .filter(
-        (selection) =>
-          typeof selection !== "string" &&
-          selection.vehiculeId
-      )
-      .map((selection) => ({
-        vehiculeId: selection.vehiculeId,
-        compagnieId:
-          selection.compagnieId ?? null,
-        groupeId:
-          selection.groupeId ??
-          selection.missionGroupeId ??
-          null,
-        conducteurId:
-          selection.conducteurId ?? null,
-      }));
-
-    const affectationsSansConducteur =
-      affectationsVehicules.filter(
-        (affectation) =>
-          !affectation.conducteurId
-      );
-
-    if (
-      affectationsSansConducteur.length > 0
-    ) {
-      alert(
-        "Chaque véhicule doit avoir un conducteur avant de continuer."
-      );
-      return;
-    }
-
-    try {
-      console.log(
-        "[ÉTAPE 4] Sauvegarde des conducteurs :",
-        affectationsVehicules
-      );
-
-      await updateMissionConducteurs(
-        missionId,
-        affectationsVehicules
-      );
-
-      console.log(
-        "[ÉTAPE 4] Conducteurs sauvegardés avec succès"
-      );
-
-      navigate(
-        "/admin/validation-missions"
-      );
-    } catch (error) {
-      console.error(
-        "[ÉTAPE 4] Erreur lors de la sauvegarde :",
-        error
-      );
-
-      alert(
-        error?.response?.data?.message ??
-        error?.message ??
-        "Impossible de sauvegarder les conducteurs."
-      );
-    }
+    setConducteurVehicule(
+      vehiculeId,
+      conducteurId,
+    );
   };
+
+  /*
+   * ==========================================
+   * GROUPES
+   * ==========================================
+   */
 
   const groupesAAfficher =
     groupes.length > 0
       ? groupes
       : groupesManuels;
 
+  /*
+   * ==========================================
+   * VÉRIFICATION
+   * ==========================================
+   */
+
+  const peutContinuer = useMemo(() => {
+    if (
+      !Array.isArray(
+        vehiculesSelectionnes,
+      )
+    ) {
+      return false;
+    }
+
+    const vehicules =
+      vehiculesSelectionnes.filter(
+        (selection) =>
+          typeof selection !==
+            "string" &&
+          getVehiculeId(selection),
+      );
+
+    if (
+      vehicules.length === 0
+    ) {
+      return true;
+    }
+
+    return vehicules.every(
+      (selection) =>
+        Boolean(
+          selection?.conducteurId ??
+          selection?.conducteur?.id,
+        ),
+    );
+  }, [
+    vehiculesSelectionnes,
+  ]);
+
+  /*
+   * ==========================================
+   * CONTINUER
+   * ==========================================
+   */
+
+  const handleContinuer = async () => {
+    if (!missionId) {
+      alert(
+        "Aucune mission n'est actuellement sélectionnée.",
+      );
+
+      return;
+    }
+
+    const affectationsVehicules =
+      (
+        vehiculesSelectionnes ?? []
+      )
+        .filter(
+          (selection) =>
+            typeof selection !==
+              "string" &&
+            getVehiculeId(selection),
+        )
+        .map((selection) => ({
+          vehiculeId:
+            getVehiculeId(
+              selection,
+            ),
+
+          compagnieId:
+            selection?.compagnieId ??
+            null,
+
+          groupeId:
+            selection?.groupeId ??
+            selection?.missionGroupeId ??
+            null,
+
+          conducteurId:
+            selection?.conducteurId ??
+            selection?.conducteur?.id ??
+            null,
+        }));
+
+    const sansConducteur =
+      affectationsVehicules.filter(
+        (affectation) =>
+          !affectation.conducteurId,
+      );
+
+    if (
+      sansConducteur.length > 0
+    ) {
+      alert(
+        "Chaque véhicule doit avoir un conducteur avant de continuer.",
+      );
+
+      return;
+    }
+
+    try {
+      console.log(
+        "[ÉTAPE 4] Affectations envoyées :",
+        affectationsVehicules,
+      );
+
+      await updateMissionConducteurs(
+        missionId,
+        affectationsVehicules,
+      );
+
+      console.log(
+        "[ÉTAPE 4] Conducteurs sauvegardés.",
+      );
+
+      navigate(
+        `/admin/missions`,
+      );
+    } catch (error) {
+      console.error(
+        "[ÉTAPE 4] Erreur :",
+        error,
+      );
+
+      alert(
+        error?.response?.data
+          ?.message ??
+        error?.message ??
+        "Impossible de sauvegarder les conducteurs.",
+      );
+    }
+  };
+
+  /*
+   * ==========================================
+   * DEBUG
+   * ==========================================
+   */
+
+  console.log(
+    "[ÉTAPE 4] GROUPES :",
+    groupesAAfficher,
+  );
+
+  console.log(
+    "[ÉTAPE 4] VÉHICULES SÉLECTIONNÉS :",
+    vehiculesSelectionnes,
+  );
+
+  console.log(
+    "[ÉTAPE 4] VÉHICULES COMPLETS :",
+    vehiculesSelectionnesComplets,
+  );
+
+  groupesAAfficher.forEach(
+    (groupe, index) => {
+      console.log(
+        `[ÉTAPE 4] GROUPE ${index + 1} :`,
+        {
+          id:
+            groupe?.id ??
+            groupe?.groupeId,
+
+          nom:
+            groupe?.nom ??
+            groupe?.nomGroupe,
+
+          utilisateurs:
+            getGroupeUsers(
+              groupe,
+            ),
+
+          vehicules:
+            getVehiculesDuGroupe(
+              groupe,
+            ),
+        },
+      );
+    },
+  );
+
+  /*
+   * ==========================================
+   * RENDER
+   * ==========================================
+   */
+
   return (
     <MainLayout>
       <div className="p-6">
+
         <h1 className="mb-6 text-2xl font-bold">
           Commandement
         </h1>
 
         <div className="flex gap-4 overflow-x-auto pb-4">
+
           {groupesAAfficher.map(
             (groupe, index) => {
-              const conducteursDuGroupe =
+              const conducteurs =
                 getConducteursDisponibles(
-                  groupe
+                  groupe,
                 );
 
               const vehiculesDuGroupe =
                 getVehiculesDuGroupe(
-                  groupe
+                  groupe,
                 );
 
               const groupeId =
-                groupe.id ??
-                groupe.groupeId;
+                groupe?.id ??
+                groupe?.groupeId;
 
               return (
                 <div
@@ -287,33 +666,14 @@ function CreerMission4Admin() {
                   }
                   className="flex w-80 shrink-0 flex-col gap-2 rounded-lg border p-4"
                 >
+
                   <h2 className="text-lg font-semibold">
-                    {groupe.nom ??
-                      groupe.nomGroupe ??
-                      `Groupe ${index + 1}`}
+                    {groupe?.nom ??
+                      groupe?.nomGroupe ??
+                      `Groupe ${
+                        index + 1
+                      }`}
                   </h2>
-
-                  {(groupe.societe ||
-                    groupe.section ||
-                    groupe.nomCompagnie) && (
-                      <p className="text-sm text-gray-600">
-                        {groupe.societe
-                          ? `Société: ${groupe.societe}`
-                          : groupe.nomCompagnie
-                            ? `Compagnie: ${groupe.nomCompagnie}`
-                            : ""}
-
-                        {(groupe.societe ||
-                          groupe.nomCompagnie) &&
-                          groupe.section
-                          ? " - "
-                          : ""}
-
-                        {groupe.section
-                          ? `Section: ${groupe.section}`
-                          : ""}
-                      </p>
-                    )}
 
                   {/* SOA */}
 
@@ -324,12 +684,13 @@ function CreerMission4Admin() {
                   <select
                     className="w-full rounded border p-2"
                     value={
-                      groupe.soaId ?? ""
+                      groupe?.soaId ??
+                      ""
                     }
-                    onChange={(e) =>
+                    onChange={(event) =>
                       setSoa(
                         index,
-                        e.target.value
+                        event.target.value,
                       )
                     }
                   >
@@ -337,137 +698,113 @@ function CreerMission4Admin() {
                       Sélectionner un SOA
                     </option>
 
-                    {(groupe.users ?? []).map(
-                      (userId) => {
-                        const user =
-                          usersDisponibles.find(
-                            (u) =>
-                              u.id ===
-                              userId
-                          );
-
-                        if (!user) {
-                          return null;
-                        }
-
-                        const memeCompagnie =
-                          !groupe.societe ||
-                          user.compagnieName ===
-                          groupe.societe ||
-                          user.compagnie
-                            ?.compagnieName ===
-                          groupe.societe;
-
-                        const estSOA =
-                          user.roleName ===
-                          "SOA" ||
-                          user.role?.roleName ===
-                          "SOA";
-
-                        if (
-                          !memeCompagnie ||
-                          !estSOA
-                        ) {
-                          return null;
-                        }
-
-                        return (
-                          <option
-                            key={user.id}
-                            value={user.id}
-                          >
-                            {getUserLabel(
-                              user
-                            )}
-                          </option>
-                        );
-                      }
+                    {conducteurs.map(
+                      (user) => (
+                        <option
+                          key={
+                            user.id
+                          }
+                          value={
+                            user.id
+                          }
+                        >
+                          {getUserLabel(
+                            user,
+                          )}
+                        </option>
+                      ),
                     )}
                   </select>
 
-                  {/* Conducteurs */}
+                  {/* UTILISATEURS */}
 
                   <p className="mt-4 text-sm font-medium">
-                    Conducteurs disponibles
+                    Utilisateurs du groupe
                   </p>
 
                   <div className="space-y-2">
-                    {(groupe.users ?? []).map(
-                      (userId) => {
-                        const user =
-                          usersDisponibles.find(
-                            (u) =>
-                              u.id ===
-                              userId
-                          );
 
-                        if (!user) {
-                          return null;
-                        }
-
-                        return (
-                          <label
-                            key={user.id}
-                            className="flex items-center gap-2 text-sm"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={(
-                                groupe.conducteurIds ??
-                                []
-                              ).includes(
-                                user.id
-                              )}
-                              onChange={() =>
-                                toggleConducteur(
-                                  index,
-                                  user.id
-                                )
-                              }
-                            />
-
-                            {getUserLabel(
-                              user
+                    {conducteurs.map(
+                      (user) => (
+                        <label
+                          key={
+                            user.id
+                          }
+                          className="flex items-center gap-2 text-sm"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={(
+                              groupe?.conducteurIds ??
+                              groupe?.conducteursIds ??
+                              []
+                            ).includes(
+                              user.id,
                             )}
-                          </label>
-                        );
-                      }
+                            onChange={() =>
+                              toggleConducteur(
+                                index,
+                                user.id,
+                              )
+                            }
+                          />
+
+                          {getUserLabel(
+                            user,
+                          )}
+                        </label>
+                      ),
                     )}
+
+                    {conducteurs.length ===
+                      0 && (
+                      <p className="text-sm text-gray-500">
+                        Aucun utilisateur
+                        détecté dans ce
+                        groupe.
+                      </p>
+                    )}
+
                   </div>
 
-                  {/* Véhicules */}
+                  {/* VÉHICULES */}
 
                   <div className="mt-5 border-t pt-4">
+
                     <p className="mb-3 text-sm font-medium">
-                      Véhicules / conducteurs
+                      Véhicules /
+                      conducteurs
                     </p>
 
                     {vehiculesDuGroupe.length ===
                       0 ? (
                       <p className="text-sm text-gray-500">
-                        Aucun véhicule sélectionné
-                        pour ce groupe.
+                        Aucun véhicule
+                        sélectionné pour
+                        ce groupe.
                       </p>
                     ) : (
                       <div className="space-y-3">
+
                         {vehiculesDuGroupe.map(
                           (vehicule) => {
                             const conducteurId =
                               getConducteurId(
-                                vehicule.id,
-                                groupeId
+                                vehicule?.id,
+                                groupeId,
                               );
 
                             return (
                               <div
                                 key={
-                                  vehicule.id
+                                  vehicule?.id
                                 }
                                 className="rounded-lg border bg-gray-50 p-3"
                               >
-                                <p className="mb-2 text-sm font-semibold text-gray-900">
+
+                                <p className="mb-2 text-sm font-semibold">
                                   {getVehiculeLabel(
-                                    vehicule
+                                    vehicule,
                                   )}
                                 </p>
 
@@ -477,22 +814,22 @@ function CreerMission4Admin() {
                                     conducteurId
                                   }
                                   onChange={(
-                                    e
+                                    event,
                                   ) =>
                                     handleConducteurChange(
-                                      vehicule.id,
-                                      e.target
-                                        .value
+                                      vehicule?.id,
+                                      event.target.value,
                                     )
                                   }
                                 >
                                   <option value="">
-                                    Choisir le conducteur
+                                    Choisir le
+                                    conducteur
                                   </option>
 
-                                  {conducteursDuGroupe.map(
+                                  {conducteurs.map(
                                     (
-                                      conducteur
+                                      conducteur,
                                     ) => (
                                       <option
                                         key={
@@ -503,10 +840,10 @@ function CreerMission4Admin() {
                                         }
                                       >
                                         {getUserLabel(
-                                          conducteur
+                                          conducteur,
                                         )}
                                       </option>
-                                    )
+                                    ),
                                   )}
                                 </select>
 
@@ -515,31 +852,38 @@ function CreerMission4Admin() {
                                     Conducteur
                                     affecté :{" "}
                                     {getUserLabel(
-                                      conducteursDuGroupe.find(
-                                        (
-                                          user
-                                        ) =>
-                                          user.id ===
-                                          conducteurId
-                                      ) ?? {}
+                                      conducteurs.find(
+                                        (user) =>
+                                          String(
+                                            user.id,
+                                          ) ===
+                                          String(
+                                            conducteurId,
+                                          ),
+                                      ),
                                     )}
                                   </p>
                                 )}
+
                               </div>
                             );
-                          }
+                          },
                         )}
+
                       </div>
                     )}
+
                   </div>
+
                 </div>
               );
-            }
+            },
           )}
 
-          {/* Ajouter un groupe */}
+          {/* AJOUTER UN GROUPE */}
 
           <div className="flex min-h-[600px] w-80 shrink-0 items-start justify-center rounded-lg border-2 border-dashed p-4">
+
             <button
               type="button"
               onClick={
@@ -549,15 +893,20 @@ function CreerMission4Admin() {
             >
               + Ajouter un groupe
             </button>
+
           </div>
+
         </div>
 
-        {/* Navigation */}
+        {/* NAVIGATION */}
 
         <div className="mt-8 flex justify-between">
+
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={() =>
+              navigate(-1)
+            }
             className="rounded border px-4 py-2 hover:bg-gray-100"
           >
             Précédent
@@ -565,12 +914,17 @@ function CreerMission4Admin() {
 
           <button
             type="button"
-            onClick={handleContinuer}
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            onClick={
+              handleContinuer
+            }
+            disabled={!peutContinuer}
+            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Suivant
           </button>
+
         </div>
+
       </div>
     </MainLayout>
   );

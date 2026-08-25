@@ -32,7 +32,7 @@ module.exports = {
           model: "compagnies",
           key: "id",
         },
-        allowNull: false,
+        allowNull: true,
       },
       sectionId: {
         type: Sequelize.UUID,

@@ -1643,73 +1643,184 @@ export const updateMissionVehiculesService = async (
     const error = new Error(
       "Les affectations de véhicules doivent être un tableau.",
     );
+
     error.statusCode = 400;
+
     throw error;
   }
 
   await sequelize.transaction(async (transaction) => {
+    /*
+     * ==========================================
+     * 1. RÉCUPÉRATION DES GROUPES DE LA MISSION
+     * ==========================================
+     */
+
     const groupes = await MissionsGroupes.findAll({
       where: {
         missionId: mission.id,
       },
+
       transaction,
     });
 
     const groupesById = new Map(groupes.map((groupe) => [groupe.id, groupe]));
 
+    /*
+     * ==========================================
+     * 2. NORMALISATION DES AFFECTATIONS
+     * ==========================================
+     *
+     * Format accepté :
+     *
+     * {
+     *   vehiculeId,
+     *   compagnieId,
+     *   sectionId,
+     *   groupeId
+     * }
+     *
+     * ou :
+     *
+     * {
+     *   compagnieId,
+     *   sectionId,
+     *   groupeId,
+     *   vehicules: [
+     *     {
+     *       vehiculeId
+     *     }
+     *   ]
+     * }
+     */
+
+    const affectationsNormalisees = affectationsVehicules.flatMap(
+      (affectation) => {
+        /*
+         * Nouveau format :
+         * un véhicule directement dans
+         * l'affectation.
+         */
+
+        if (affectation?.vehiculeId) {
+          return [
+            {
+              vehiculeId: normalizeId(affectation.vehiculeId),
+
+              compagnieId: normalizeId(affectation.compagnieId),
+
+              sectionId: normalizeId(affectation.sectionId),
+
+              groupeId: normalizeId(
+                affectation.groupeId ?? affectation.missionGroupeId,
+              ),
+            },
+          ];
+        }
+
+        /*
+         * Ancien format :
+         * plusieurs véhicules dans
+         * affectation.vehicules.
+         */
+
+        return asArray(affectation?.vehicules).map((vehicule) => ({
+          vehiculeId: normalizeId(vehicule?.vehiculeId ?? vehicule),
+
+          compagnieId: normalizeId(affectation?.compagnieId),
+
+          sectionId: normalizeId(affectation?.sectionId),
+
+          groupeId: normalizeId(
+            affectation?.groupeId ?? affectation?.missionGroupeId,
+          ),
+        }));
+      },
+    );
+
+    console.log(
+      "[MISSIONS VEHICULES] Affectations reçues :",
+      affectationsVehicules,
+    );
+
+    console.log(
+      "[MISSIONS VEHICULES] Affectations normalisées :",
+      affectationsNormalisees,
+    );
+
+    /*
+     * ==========================================
+     * 3. CONSTRUCTION DES LIGNES
+     * ==========================================
+     */
+
     const lignesMissionsVehicules = [];
+
     const vehiculesDejaAffectes = new Set();
 
-    for (const affectation of affectationsVehicules) {
-      const compagnieId = normalizeId(affectation?.compagnieId);
-
-      if (!compagnieId) {
-        continue;
-      }
-
+    for (const affectation of affectationsNormalisees) {
       const groupeId = normalizeId(affectation?.groupeId);
+
+      /*
+       * Si un groupe est fourni,
+       * il doit appartenir à la mission.
+       */
 
       if (groupeId && !groupesById.has(groupeId)) {
         const error = new Error(
           "Le groupe sélectionné n'appartient pas à cette mission.",
         );
+
         error.statusCode = 400;
+
         throw error;
       }
 
-      const vehiculesAffectation = Array.isArray(affectation?.vehicules)
-        ? affectation.vehicules
-        : asArray(affectation?.vehiculesIds).map((vehiculeId) => ({
-            vehiculeId,
-          }));
+      const vehiculeId = normalizeId(affectation?.vehiculeId);
 
-      for (const vehiculeAffectation of vehiculesAffectation) {
-        const vehiculeId = normalizeId(vehiculeAffectation?.vehiculeId);
-
-        if (!vehiculeId) {
-          continue;
-        }
-
-        if (vehiculesDejaAffectes.has(vehiculeId)) {
-          const error = new Error(
-            "Un même véhicule ne peut pas être affecté plusieurs fois à la même mission.",
-          );
-          error.statusCode = 400;
-          throw error;
-        }
-
-        vehiculesDejaAffectes.add(vehiculeId);
-
-        lignesMissionsVehicules.push({
-          missionId: mission.id,
-          vehiculeId,
-          compagnieId,
-          sectionId: normalizeId(affectation?.sectionId),
-          missionGroupeId: groupeId,
-          conducteurId: null,
-        });
+      if (!vehiculeId) {
+        continue;
       }
+
+      /*
+       * Un véhicule ne peut être affecté
+       * qu'une seule fois à la mission.
+       */
+
+      if (vehiculesDejaAffectes.has(vehiculeId)) {
+        const error = new Error(
+          "Un même véhicule ne peut pas être affecté plusieurs fois à la même mission.",
+        );
+
+        error.statusCode = 400;
+
+        throw error;
+      }
+
+      vehiculesDejaAffectes.add(vehiculeId);
+
+      lignesMissionsVehicules.push({
+        missionId: mission.id,
+
+        vehiculeId,
+
+        sectionId: normalizeId(affectation?.sectionId),
+
+        missionGroupeId: groupeId,
+
+        /*
+         * Le conducteur sera choisi
+         * à l'étape 4.
+         */
+        conducteurId: null,
+      });
     }
+
+    /*
+     * ==========================================
+     * 4. VALIDATION DES VÉHICULES
+     * ==========================================
+     */
 
     if (lignesMissionsVehicules.length > 0) {
       const vehiculeIds = lignesMissionsVehicules.map(
@@ -1718,43 +1829,51 @@ export const updateMissionVehiculesService = async (
 
       const compagnieIds = [
         ...new Set(
-          lignesMissionsVehicules.map(({ compagnieId }) => compagnieId),
+          lignesMissionsVehicules
+            .map(({ compagnieId }) => compagnieId)
+            .filter(Boolean),
         ),
       ];
 
-      const [vehicules, compagnies] = await Promise.all([
-        Vehicule.findAll({
-          where: {
-            id: {
-              [Op.in]: vehiculeIds,
-            },
+      const vehicules = await Vehicule.findAll({
+        where: {
+          id: {
+            [Op.in]: vehiculeIds,
           },
-          transaction,
-        }),
+        },
 
-        Compagnie.findAll({
+        transaction,
+      });
+
+      let compagnies = [];
+
+      if (compagnieIds.length > 0) {
+        compagnies = await Compagnie.findAll({
           where: {
             id: {
               [Op.in]: compagnieIds,
             },
           },
+
           transaction,
-        }),
-      ]);
+        });
+      }
+
+      /*
+       * Vérification des véhicules.
+       */
 
       if (vehicules.length !== vehiculeIds.length) {
         const error = new Error("Un ou plusieurs véhicules sont introuvables.");
+
         error.statusCode = 404;
+
         throw error;
       }
 
-      if (compagnies.length !== compagnieIds.length) {
-        const error = new Error(
-          "Une ou plusieurs compagnies sont introuvables.",
-        );
-        error.statusCode = 404;
-        throw error;
-      }
+      /*
+       * Vérification de disponibilité.
+       */
 
       const vehiculeIndisponible = vehicules.find(
         (vehicule) => vehicule.disponibilite === false,
@@ -1764,15 +1883,24 @@ export const updateMissionVehiculesService = async (
         const error = new Error(
           "Un ou plusieurs véhicules sélectionnés sont indisponibles.",
         );
+
         error.statusCode = 409;
+
         throw error;
       }
     }
+
+    /*
+     * ==========================================
+     * 5. LIBÉRATION DES ANCIENS VÉHICULES
+     * ==========================================
+     */
 
     const anciennesAffectations = await MissionsVehicule.findAll({
       where: {
         missionId: mission.id,
       },
+
       transaction,
     });
 
@@ -1783,16 +1911,24 @@ export const updateMissionVehiculesService = async (
         {
           disponibilite: true,
         },
+
         {
           where: {
             id: {
               [Op.in]: anciensVehiculeIds,
             },
           },
+
           transaction,
         },
       );
     }
+
+    /*
+     * ==========================================
+     * 6. SUPPRESSION DES ANCIENS ÉQUIPAGES
+     * ==========================================
+     */
 
     const anciennesMissionVehiculeIds = anciennesAffectations.map(
       (mv) => mv.id,
@@ -1805,39 +1941,72 @@ export const updateMissionVehiculesService = async (
             [Op.in]: anciennesMissionVehiculeIds,
           },
         },
+
         transaction,
       });
     }
+
+    /*
+     * ==========================================
+     * 7. SUPPRESSION DES ANCIENNES AFFECTATIONS
+     * ==========================================
+     */
 
     await MissionsVehicule.destroy({
       where: {
         missionId: mission.id,
       },
+
       transaction,
     });
+
+    /*
+     * ==========================================
+     * 8. CRÉATION DES NOUVELLES AFFECTATIONS
+     * ==========================================
+     */
 
     if (lignesMissionsVehicules.length > 0) {
       await MissionsVehicule.bulkCreate(lignesMissionsVehicules, {
         transaction,
       });
 
+      console.log(
+        "[MISSIONS VEHICULES] Véhicules enregistrés :",
+        lignesMissionsVehicules,
+      );
+
+      /*
+       * Si la mission est actuellement
+       * en cours, les véhicules deviennent
+       * indisponibles.
+       */
+
       if (mission.StatutMission === "En cours") {
         await Vehicule.update(
           {
             disponibilite: false,
           },
+
           {
             where: {
               id: {
                 [Op.in]: [...vehiculesDejaAffectes],
               },
             },
+
             transaction,
           },
         );
       }
     }
   });
+
+  /*
+   * ==========================================
+   * 9. RETOUR DE LA MISSION
+   * ==========================================
+   */
 
   const missionUpdated = await Mission.findByPk(mission.id, {
     include: missionIncludes,
@@ -1854,9 +2023,7 @@ export const updateMissionConducteursService = async (
 
   if (!mission) {
     const error = new Error("Mission introuvable.");
-
     error.statusCode = 404;
-
     throw error;
   }
 
@@ -1866,14 +2033,13 @@ export const updateMissionConducteursService = async (
     );
 
     error.statusCode = 400;
-
     throw error;
   }
 
-  await sequelize.transaction(async (transaction) => {
+  return sequelize.transaction(async (transaction) => {
     /*
      * ==========================================
-     * 1. Récupération des véhicules de la mission
+     * 1. VÉHICULES DE LA MISSION
      * ==========================================
      */
 
@@ -1891,46 +2057,162 @@ export const updateMissionConducteursService = async (
       ]),
     );
 
+    console.log(
+      "[ÉTAPE 4 BACKEND] Véhicules de la mission :",
+      missionsVehicules.map((mv) => ({
+        id: mv.id,
+        vehiculeId: mv.vehiculeId,
+        missionGroupeId: mv.missionGroupeId,
+      })),
+    );
+
     /*
      * ==========================================
-     * 2. Validation des affectations
+     * 2. CONDUCTEURS DEMANDÉS
      * ==========================================
      */
 
-    const conducteurIds = affectationsVehicules
-      .map((affectation) => normalizeId(affectation?.conducteurId))
-      .filter(Boolean);
+    const conducteurIds = [
+      ...new Set(
+        affectationsVehicules
+          .map((affectation) =>
+            normalizeId(affectation?.conducteurId),
+          )
+          .filter(Boolean),
+      ),
+    ];
 
-    const usersById = await fetchMissionUsers(
-      [...new Set(conducteurIds)],
+    console.log(
+      "[ÉTAPE 4 BACKEND] Conducteurs demandés :",
+      conducteurIds,
+    );
+
+    /*
+     * ==========================================
+     * 3. RÉCUPÉRATION DES UTILISATEURS
+     * ==========================================
+     *
+     * IMPORTANT :
+     *
+     * On récupère TOUS les utilisateurs de la
+     * mission depuis MissionsUsers.
+     *
+     * La BDD confirme que c'est ici que les
+     * utilisateurs sont affectés à la mission.
+     */
+
+    const missionsUsers = await MissionsUsers.findAll({
+      where: {
+        missionId: mission.id,
+      },
+
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: userAttributes,
+
+          include: [
+            ...userWithRoleInclude,
+          ],
+        },
+      ],
+
       transaction,
+    });
+
+    console.log(
+      "[ÉTAPE 4 BACKEND] MissionsUsers de la mission :",
+      missionsUsers.map((missionUser) => ({
+        id: missionUser.id,
+        missionId: missionUser.missionId,
+        missionGroupeId: missionUser.missionGroupeId,
+        userId: missionUser.userId,
+
+        user: missionUser.user
+          ? {
+              id: missionUser.user.id,
+              grade: missionUser.user.grade,
+              lastName: missionUser.user.lastName,
+              role: missionUser.user.role?.roleName,
+            }
+          : null,
+      })),
     );
 
-    const conducteurIntrouvable = conducteurIds.find(
-      (conducteurId) => !usersById.has(conducteurId),
+    /*
+     * On indexe par userId.
+     */
+
+    const missionsUsersByUserId = new Map(
+      missionsUsers.map((missionUser) => [
+        missionUser.userId,
+        missionUser,
+      ]),
     );
 
-    if (conducteurIntrouvable) {
-      const error = new Error(
-        `Conducteur introuvable : ${conducteurIntrouvable}.`,
+    console.log(
+      "[ÉTAPE 4 BACKEND] IDs présents dans missions_users :",
+      [...missionsUsersByUserId.keys()],
+    );
+
+    /*
+     * ==========================================
+     * 4. VÉRIFICATION DES CONDUCTEURS
+     * ==========================================
+     */
+
+    for (const conducteurId of conducteurIds) {
+      const missionUser =
+        missionsUsersByUserId.get(conducteurId);
+
+      console.log(
+        "[ÉTAPE 4 BACKEND] Recherche conducteur :",
+        {
+          conducteurId,
+          trouve: Boolean(missionUser),
+          missionUser:
+            missionUser?.toJSON?.() ?? missionUser,
+        },
       );
 
-      error.statusCode = 404;
+      if (!missionUser) {
+        const error = new Error(
+          `Le conducteur ${conducteurId} n'est pas affecté à cette mission.`,
+        );
 
-      throw error;
+        error.statusCode = 404;
+
+        throw error;
+      }
+
+      if (!missionUser.user) {
+        const error = new Error(
+          `L'utilisateur ${conducteurId} existe dans missions_users mais son utilisateur est introuvable.`,
+        );
+
+        error.statusCode = 404;
+
+        throw error;
+      }
     }
 
     /*
-     * Un conducteur ne peut conduire
-     * qu'un seul véhicule dans cette mission.
+     * ==========================================
+     * 5. VALIDATION DES AFFECTATIONS
+     * ==========================================
      */
 
     const conducteursDejaAffectes = new Set();
 
     for (const affectation of affectationsVehicules) {
-      const vehiculeId = normalizeId(affectation?.vehiculeId);
+      const vehiculeId = normalizeId(
+        affectation?.vehiculeId,
+      );
 
-      const conducteurId = normalizeId(affectation?.conducteurId);
+      const conducteurId = normalizeId(
+        affectation?.conducteurId,
+      );
 
       if (!vehiculeId) {
         continue;
@@ -1938,14 +2220,17 @@ export const updateMissionConducteursService = async (
 
       /*
        * Le véhicule doit appartenir
-       * à cette mission.
+       * à la mission.
        */
 
-      const missionVehicule = missionsVehiculesByVehiculeId.get(vehiculeId);
+      const missionVehicule =
+        missionsVehiculesByVehiculeId.get(
+          vehiculeId,
+        );
 
       if (!missionVehicule) {
         const error = new Error(
-          "Un des véhicules sélectionnés n'appartient pas à cette mission.",
+          `Le véhicule ${vehiculeId} n'appartient pas à cette mission.`,
         );
 
         error.statusCode = 400;
@@ -1958,7 +2243,9 @@ export const updateMissionConducteursService = async (
        */
 
       if (!conducteurId) {
-        const error = new Error("Chaque véhicule doit avoir un conducteur.");
+        const error = new Error(
+          "Chaque véhicule doit avoir un conducteur.",
+        );
 
         error.statusCode = 400;
 
@@ -1966,16 +2253,50 @@ export const updateMissionConducteursService = async (
       }
 
       /*
-       * Vérification du rôle.
-       *
-       * Conducteur / SOA / OA autorisés.
+       * Récupération depuis missions_users.
        */
 
-      const conducteur = usersById.get(conducteurId);
+      const missionUser =
+        missionsUsersByUserId.get(conducteurId);
+
+      const conducteur =
+        missionUser?.user;
+
+      if (!conducteur) {
+        const error = new Error(
+          `Conducteur introuvable : ${conducteurId}.`,
+        );
+
+        error.statusCode = 404;
+
+        throw error;
+      }
+
+      /*
+       * ==========================================
+       * RÔLE
+       * ==========================================
+       *
+       * conducteur / SOA / OA autorisés.
+       */
 
       const role = roleNameOf(conducteur);
 
-      if (role !== "conducteur" && role !== "SOA" && role !== "OA") {
+      console.log(
+        "[ÉTAPE 4 BACKEND] Conducteur trouvé :",
+        {
+          id: conducteur.id,
+          grade: conducteur.grade,
+          lastName: conducteur.lastName,
+          role,
+        },
+      );
+
+      if (
+        role !== "conducteur" &&
+        role !== "SOA" &&
+        role !== "OA"
+      ) {
         const error = new Error(
           `${getNomUtilisateur(
             conducteur,
@@ -1989,11 +2310,16 @@ export const updateMissionConducteursService = async (
       }
 
       /*
-       * Vérification qu'un conducteur
-       * n'est pas affecté à plusieurs véhicules.
+       * ==========================================
+       * UN CONDUCTEUR = UN VÉHICULE
+       * ==========================================
        */
 
-      if (conducteursDejaAffectes.has(conducteurId)) {
+      if (
+        conducteursDejaAffectes.has(
+          conducteurId,
+        )
+      ) {
         const error = new Error(
           `${getNomUtilisateur(
             conducteur,
@@ -2006,26 +2332,50 @@ export const updateMissionConducteursService = async (
         throw error;
       }
 
-      conducteursDejaAffectes.add(conducteurId);
+      conducteursDejaAffectes.add(
+        conducteurId,
+      );
 
       /*
-       * Vérification du groupe.
-       *
-       * Le conducteur doit appartenir
-       * au groupe du véhicule.
+       * ==========================================
+       * GROUPE
+       * ==========================================
        */
 
       const groupeId =
-        normalizeId(affectation?.groupeId) ?? missionVehicule.missionGroupeId;
+        normalizeId(
+          affectation?.groupeId,
+        ) ??
+        normalizeId(
+          missionVehicule.missionGroupeId,
+        );
+
+      console.log(
+        "[ÉTAPE 4 BACKEND] Vérification groupe :",
+        {
+          conducteurId,
+          groupeId,
+          groupeDuConducteur:
+            missionUser.missionGroupeId,
+          groupeDuVehicule:
+            missionVehicule.missionGroupeId,
+        },
+      );
 
       if (groupeId) {
-        const missionGroupe = await MissionsGroupes.findOne({
-          where: {
-            id: groupeId,
-            missionId: mission.id,
-          },
-          transaction,
-        });
+        /*
+         * Le groupe doit appartenir
+         * à cette mission.
+         */
+
+        const missionGroupe =
+          await MissionsGroupes.findOne({
+            where: {
+              id: groupeId,
+              missionId: mission.id,
+            },
+            transaction,
+          });
 
         if (!missionGroupe) {
           const error = new Error(
@@ -2037,19 +2387,15 @@ export const updateMissionConducteursService = async (
           throw error;
         }
 
-        const conducteurDansGroupe = await MissionsUsers.findOne({
-          where: {
-            missionId: mission.id,
+        /*
+         * Le conducteur doit appartenir
+         * au même groupe.
+         */
 
-            userId: conducteurId,
-
-            missionGroupeId: groupeId,
-          },
-
-          transaction,
-        });
-
-        if (!conducteurDansGroupe) {
+        if (
+          missionUser.missionGroupeId !==
+          groupeId
+        ) {
           const error = new Error(
             `${getNomUtilisateur(
               conducteur,
@@ -2062,31 +2408,48 @@ export const updateMissionConducteursService = async (
           throw error;
         }
       }
+
+      console.log(
+        "[ÉTAPE 4 BACKEND] Affectation validée :",
+        {
+          vehiculeId,
+          conducteurId,
+          groupeId,
+          conducteur:
+            getNomUtilisateur(
+              conducteur,
+              conducteurId,
+            ),
+        },
+      );
     }
 
     /*
      * ==========================================
-     * 3. Suppression des anciens conducteurs
+     * 6. SUPPRESSION DES ANCIENS CONDUCTEURS
      * ==========================================
      *
-     * On supprime uniquement les équipages
-     * "conducteur".
-     *
-     * Les éventuels passagers restent intacts.
+     * On ne touche PAS aux passagers.
      */
 
-    const missionVehiculeIds = missionsVehicules.map(
-      (missionVehicule) => missionVehicule.id,
-    );
+    const missionVehiculeIds =
+      missionsVehicules.map(
+        (missionVehicule) =>
+          missionVehicule.id,
+      );
 
-    if (missionVehiculeIds.length > 0) {
+    if (
+      missionVehiculeIds.length > 0
+    ) {
       await MissionsEquipages.destroy({
         where: {
           missionVehiculeId: {
-            [Op.in]: missionVehiculeIds,
+            [Op.in]:
+              missionVehiculeIds,
           },
 
-          fonction: "conducteur",
+          fonction:
+            "conducteur",
         },
 
         transaction,
@@ -2095,54 +2458,92 @@ export const updateMissionConducteursService = async (
 
     /*
      * ==========================================
-     * 4. Création des nouveaux conducteurs
+     * 7. CRÉATION DES CONDUCTEURS
      * ==========================================
      */
 
-    const lignesEquipages = affectationsVehicules
-      .map((affectation) => {
-        const vehiculeId = normalizeId(affectation?.vehiculeId);
+    const lignesEquipages =
+      affectationsVehicules
+        .map((affectation) => {
+          const vehiculeId =
+            normalizeId(
+              affectation?.vehiculeId,
+            );
 
-        const conducteurId = normalizeId(affectation?.conducteurId);
+          const conducteurId =
+            normalizeId(
+              affectation?.conducteurId,
+            );
 
-        if (!vehiculeId || !conducteurId) {
-          return null;
-        }
+          if (
+            !vehiculeId ||
+            !conducteurId
+          ) {
+            return null;
+          }
 
-        const missionVehicule = missionsVehiculesByVehiculeId.get(vehiculeId);
+          const missionVehicule =
+            missionsVehiculesByVehiculeId.get(
+              vehiculeId,
+            );
 
-        if (!missionVehicule) {
-          return null;
-        }
+          if (!missionVehicule) {
+            return null;
+          }
 
-        return {
-          missionVehiculeId: missionVehicule.id,
+          return {
+            missionVehiculeId:
+              missionVehicule.id,
 
-          userId: conducteurId,
+            userId:
+              conducteurId,
 
-          fonction: "conducteur",
-        };
-      })
-      .filter(Boolean);
+            fonction:
+              "conducteur",
+          };
+        })
+        .filter(Boolean);
 
-    if (lignesEquipages.length > 0) {
-      await MissionsEquipages.bulkCreate(lignesEquipages, {
-        transaction,
-      });
+    console.log(
+      "[ÉTAPE 4 BACKEND] Équipages à créer :",
+      lignesEquipages,
+    );
+
+    if (
+      lignesEquipages.length > 0
+    ) {
+      await MissionsEquipages.bulkCreate(
+        lignesEquipages,
+        {
+          transaction,
+        },
+      );
     }
-  });
 
-  /*
-   * ==========================================
-   * 5. Retour de la mission
-   * ==========================================
-   */
+    console.log(
+      "[ÉTAPE 4 BACKEND] Conducteurs enregistrés avec succès.",
+    );
 
-  const missionUpdated = await Mission.findByPk(mission.id, {
-    include: missionIncludes,
-  });
+    /*
+     * ==========================================
+     * 8. RETOUR
+     * ==========================================
+     */
 
-  return missionUpdated.toJSON();
+    const missionUpdated =
+      await Mission.findByPk(
+        mission.id,
+        {
+          include:
+            missionIncludes,
+          transaction,
+        },
+      );
+
+    return missionUpdated;
+  }).then((missionUpdated) =>
+    missionUpdated.toJSON(),
+  );
 };
 
 export const deleteMissionService = async (id) => {

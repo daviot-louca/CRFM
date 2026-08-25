@@ -28,7 +28,7 @@ const MissionsVehicule = sequelize.define(
     },
     compagnieId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "compagnies",
         key: "id",
