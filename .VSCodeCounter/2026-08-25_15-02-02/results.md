@@ -1,10 +1,10 @@
 # Summary
 
-Date : 2026-08-24 18:24:29
+Date : 2026-08-25 15:02:02
 
 Directory /Users/loucadaviot/Desktop/crfm
 
-Total : 160 files,  24052 codes, 562 comments, 2163 blanks, all 26777 lines
+Total : 159 files,  26253 codes, 1221 comments, 2910 blanks, all 30384 lines
 
 Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
@@ -12,8 +12,8 @@ Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-
 | language | files | code | comment | blank | total |
 | :--- | ---: | ---: | ---: | ---: | ---: |
 | JSON | 5 | 10,935 | 0 | 5 | 10,940 |
-| JavaScript | 117 | 8,187 | 402 | 1,469 | 10,058 |
-| JavaScript JSX | 34 | 4,770 | 160 | 674 | 5,604 |
+| JavaScript | 117 | 9,592 | 817 | 1,899 | 12,308 |
+| JavaScript JSX | 33 | 5,566 | 404 | 991 | 6,961 |
 | PostCSS | 1 | 130 | 0 | 6 | 136 |
 | HTML | 1 | 13 | 0 | 1 | 14 |
 | Markdown | 1 | 9 | 0 | 8 | 17 |
@@ -22,45 +22,45 @@ Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-
 ## Directories
 | path | files | code | comment | blank | total |
 | :--- | ---: | ---: | ---: | ---: | ---: |
-| . | 160 | 24,052 | 562 | 2,163 | 26,777 |
-| backend | 90 | 11,261 | 327 | 1,211 | 12,799 |
+| . | 159 | 26,253 | 1,221 | 2,910 | 30,384 |
+| backend | 90 | 12,113 | 584 | 1,525 | 14,222 |
 | backend (Files) | 3 | 4,250 | 0 | 5 | 4,255 |
 | backend/config | 2 | 42 | 0 | 4 | 46 |
-| backend/controller | 12 | 951 | 0 | 157 | 1,108 |
+| backend/controller | 12 | 1,014 | 0 | 182 | 1,196 |
 | backend/middlewares | 2 | 47 | 0 | 15 | 62 |
 | backend/migrations | 13 | 685 | 13 | 57 | 755 |
-| backend/models | 13 | 861 | 0 | 76 | 937 |
-| backend/routes | 13 | 216 | 0 | 49 | 265 |
+| backend/models | 13 | 866 | 0 | 76 | 942 |
+| backend/routes | 13 | 222 | 0 | 58 | 280 |
 | backend/scripts | 1 | 140 | 14 | 47 | 201 |
 | backend/seeders | 13 | 1,101 | 101 | 119 | 1,321 |
-| backend/services | 12 | 2,750 | 193 | 640 | 3,583 |
+| backend/services | 12 | 3,528 | 450 | 920 | 4,898 |
 | backend/src | 2 | 49 | 6 | 16 | 71 |
 | backend/test | 2 | 146 | 0 | 19 | 165 |
 | backend/utils | 2 | 23 | 0 | 7 | 30 |
-| frontend | 70 | 12,791 | 235 | 952 | 13,978 |
+| frontend | 69 | 14,140 | 637 | 1,385 | 16,162 |
 | frontend (Files) | 8 | 6,789 | 0 | 15 | 6,804 |
-| frontend/src | 62 | 6,002 | 235 | 937 | 7,174 |
-| frontend/src (Files) | 3 | 182 | 2 | 13 | 197 |
+| frontend/src | 61 | 7,351 | 637 | 1,370 | 9,358 |
+| frontend/src (Files) | 3 | 180 | 2 | 13 | 195 |
 | frontend/src/api | 1 | 8 | 0 | 7 | 15 |
 | frontend/src/components | 5 | 165 | 1 | 21 | 187 |
 | frontend/src/components/layout | 2 | 57 | 0 | 7 | 64 |
 | frontend/src/components/layout (Files) | 1 | 20 | 0 | 5 | 25 |
 | frontend/src/components/layout/admin | 1 | 37 | 0 | 2 | 39 |
 | frontend/src/components/ui | 3 | 108 | 1 | 14 | 123 |
-| frontend/src/features | 49 | 5,619 | 232 | 884 | 6,735 |
+| frontend/src/features | 48 | 6,970 | 634 | 1,317 | 8,921 |
 | frontend/src/features/compagnies | 4 | 298 | 0 | 38 | 336 |
 | frontend/src/features/compagnies/api | 1 | 21 | 0 | 5 | 26 |
 | frontend/src/features/compagnies/components | 1 | 238 | 0 | 25 | 263 |
 | frontend/src/features/compagnies/hooks | 1 | 28 | 0 | 5 | 33 |
 | frontend/src/features/compagnies/pages | 1 | 11 | 0 | 3 | 14 |
-| frontend/src/features/missions | 31 | 3,957 | 230 | 680 | 4,867 |
-| frontend/src/features/missions/api | 1 | 62 | 2 | 11 | 75 |
+| frontend/src/features/missions | 30 | 5,308 | 632 | 1,113 | 7,053 |
+| frontend/src/features/missions/api | 1 | 92 | 2 | 17 | 111 |
 | frontend/src/features/missions/components | 8 | 688 | 22 | 46 | 756 |
 | frontend/src/features/missions/components/etape2 | 4 | 355 | 0 | 24 | 379 |
 | frontend/src/features/missions/components/etape3 | 4 | 333 | 22 | 22 | 377 |
-| frontend/src/features/missions/context | 3 | 178 | 0 | 32 | 210 |
-| frontend/src/features/missions/hooks | 6 | 683 | 73 | 150 | 906 |
-| frontend/src/features/missions/pages | 7 | 2,315 | 133 | 423 | 2,871 |
+| frontend/src/features/missions/context | 3 | 770 | 160 | 218 | 1,148 |
+| frontend/src/features/missions/hooks | 6 | 1,206 | 231 | 260 | 1,697 |
+| frontend/src/features/missions/pages | 6 | 2,521 | 217 | 554 | 3,292 |
 | frontend/src/features/missions/services | 1 | 0 | 0 | 1 | 1 |
 | frontend/src/features/missions/utils | 5 | 31 | 0 | 17 | 48 |
 | frontend/src/features/sections | 3 | 295 | 0 | 35 | 330 |

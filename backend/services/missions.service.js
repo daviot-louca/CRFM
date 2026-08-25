@@ -62,6 +62,13 @@ const missionIncludes = [
             model: User,
             as: "user",
             attributes: userAttributes,
+            include: [
+              {
+                model: Role,
+                as: "role",
+                attributes: ["id", "roleName"],
+              },
+            ],
           },
           {
             model: Section,
@@ -1827,14 +1834,6 @@ export const updateMissionVehiculesService = async (
         ({ vehiculeId }) => vehiculeId,
       );
 
-      const compagnieIds = [
-        ...new Set(
-          lignesMissionsVehicules
-            .map(({ compagnieId }) => compagnieId)
-            .filter(Boolean),
-        ),
-      ];
-
       const vehicules = await Vehicule.findAll({
         where: {
           id: {
@@ -1844,21 +1843,6 @@ export const updateMissionVehiculesService = async (
 
         transaction,
       });
-
-      let compagnies = [];
-
-      if (compagnieIds.length > 0) {
-        compagnies = await Compagnie.findAll({
-          where: {
-            id: {
-              [Op.in]: compagnieIds,
-            },
-          },
-
-          transaction,
-        });
-      }
-
       /*
        * Vérification des véhicules.
        */
@@ -2082,11 +2066,6 @@ export const updateMissionConducteursService = async (
       ),
     ];
 
-    console.log(
-      "[ÉTAPE 4 BACKEND] Conducteurs demandés :",
-      conducteurIds,
-    );
-
     /*
      * ==========================================
      * 3. RÉCUPÉRATION DES UTILISATEURS
@@ -2111,34 +2090,19 @@ export const updateMissionConducteursService = async (
           model: User,
           as: "user",
           attributes: userAttributes,
-
+      
           include: [
-            ...userWithRoleInclude,
+            {
+              model: Role,
+              as: "role",
+              attributes: ["id", "roleName"],
+            },
           ],
         },
       ],
 
       transaction,
     });
-
-    console.log(
-      "[ÉTAPE 4 BACKEND] MissionsUsers de la mission :",
-      missionsUsers.map((missionUser) => ({
-        id: missionUser.id,
-        missionId: missionUser.missionId,
-        missionGroupeId: missionUser.missionGroupeId,
-        userId: missionUser.userId,
-
-        user: missionUser.user
-          ? {
-              id: missionUser.user.id,
-              grade: missionUser.user.grade,
-              lastName: missionUser.user.lastName,
-              role: missionUser.user.role?.roleName,
-            }
-          : null,
-      })),
-    );
 
     /*
      * On indexe par userId.
@@ -2150,12 +2114,6 @@ export const updateMissionConducteursService = async (
         missionUser,
       ]),
     );
-
-    console.log(
-      "[ÉTAPE 4 BACKEND] IDs présents dans missions_users :",
-      [...missionsUsersByUserId.keys()],
-    );
-
     /*
      * ==========================================
      * 4. VÉRIFICATION DES CONDUCTEURS
@@ -2165,16 +2123,6 @@ export const updateMissionConducteursService = async (
     for (const conducteurId of conducteurIds) {
       const missionUser =
         missionsUsersByUserId.get(conducteurId);
-
-      console.log(
-        "[ÉTAPE 4 BACKEND] Recherche conducteur :",
-        {
-          conducteurId,
-          trouve: Boolean(missionUser),
-          missionUser:
-            missionUser?.toJSON?.() ?? missionUser,
-        },
-      );
 
       if (!missionUser) {
         const error = new Error(
@@ -2268,43 +2216,6 @@ export const updateMissionConducteursService = async (
         );
 
         error.statusCode = 404;
-
-        throw error;
-      }
-
-      /*
-       * ==========================================
-       * RÔLE
-       * ==========================================
-       *
-       * conducteur / SOA / OA autorisés.
-       */
-
-      const role = roleNameOf(conducteur);
-
-      console.log(
-        "[ÉTAPE 4 BACKEND] Conducteur trouvé :",
-        {
-          id: conducteur.id,
-          grade: conducteur.grade,
-          lastName: conducteur.lastName,
-          role,
-        },
-      );
-
-      if (
-        role !== "conducteur" &&
-        role !== "SOA" &&
-        role !== "OA"
-      ) {
-        const error = new Error(
-          `${getNomUtilisateur(
-            conducteur,
-            conducteurId,
-          )} ne peut pas conduire ce véhicule.`,
-        );
-
-        error.statusCode = 400;
 
         throw error;
       }
