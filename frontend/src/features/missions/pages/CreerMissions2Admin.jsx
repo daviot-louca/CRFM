@@ -6,11 +6,81 @@ import Etapes2Groupes from '../components/etape2/Etapes2Groupes';
 import { filtrerPersonnel, getNomComplet } from '../utils/personnel.utils';
 import MainLayout from '@/components/layout/MainLayout';
 import { useNavigate } from 'react-router-dom';
-
+import { updateMissionGroupes } from '../api/missions.api';
 export default function CreerMissions2Admin() {
   const missions = useMissions2();
   const navigate = useNavigate();
-  const peutContinuer = (missions.groupesManuels?.length ?? 0) > 0;
+  const peutContinuer =
+    (missions.groupesManuels?.length ?? 0) > 0 &&
+    Boolean(missions.missionId);
+  const handleContinuer = async () => {
+    if (!missions.missionId) {
+      alert("Aucune mission n'est actuellement sélectionnée.");
+      return;
+    }
+
+    if (!peutContinuer) {
+      return;
+    }
+
+    try {
+      const groupesMission = (
+        missions.groupesManuels ?? []
+      ).map((groupe, index) => ({
+        id: groupe.id,
+        nom:
+          groupe.nom ??
+          groupe.nomGroupe ??
+          `Groupe ${index + 1}`,
+        ordre:
+          groupe.ordre ??
+          index + 1,
+        compagnieId:
+          groupe.compagnieId ??
+          null,
+        sectionId:
+          groupe.sectionId ??
+          null,
+        soaId:
+          groupe.soaId ??
+          null,
+        userIds:
+          groupe.userIds ??
+          groupe.users ??
+          [],
+        conducteurIds:
+          groupe.conducteurIds ??
+          [],
+      }));
+
+      console.log(
+        "[ÉTAPE 2] Sauvegarde des groupes :",
+        groupesMission
+      );
+
+      await updateMissionGroupes(
+        missions.missionId,
+        groupesMission
+      );
+
+      console.log(
+        "[ÉTAPE 2] Groupes sauvegardés avec succès"
+      );
+
+      navigate("/admin/creer-missions-3");
+    } catch (error) {
+      console.error(
+        "[ÉTAPE 2] Erreur lors de la sauvegarde :",
+        error
+      );
+
+      alert(
+        error?.response?.data?.message ??
+        error?.message ??
+        "Impossible de sauvegarder l'étape 2."
+      );
+    }
+  };
   return (
     <MainLayout>
       <div className="min-h-screen bg-slate-50">
@@ -110,10 +180,10 @@ export default function CreerMissions2Admin() {
                 type="button"
                 disabled={!peutContinuer}
                 className={`px-8 py-3 rounded-xl text-white font-semibold transition ${peutContinuer
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'bg-slate-300 cursor-not-allowed'
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "bg-slate-300 cursor-not-allowed"
                   }`}
-                onClick={() => navigate('/admin/creer-missions-3')}
+                onClick={handleContinuer}
               >
                 Suivant
               </button>

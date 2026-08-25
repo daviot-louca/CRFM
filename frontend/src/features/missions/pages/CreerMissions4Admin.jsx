@@ -2,11 +2,12 @@ import { useMemo } from "react";
 import { useMissions2 } from "../hooks/useMissions2";
 import MainLayout from "@/components/layout/MainLayout";
 import { useNavigate } from "react-router-dom";
-
+import { updateMissionConducteurs } from "../api/missions.api";
 function CreerMission4Admin() {
   const navigate = useNavigate();
 
   const {
+    missionId,
     groupes = [],
     groupesManuels = [],
     creerGroupeManuel,
@@ -173,6 +174,81 @@ function CreerMission4Admin() {
    * Fallback sur groupesManuels pour
    * conserver la compatibilité.
    */
+
+  const handleContinuer = async () => {
+    if (!missionId) {
+      alert(
+        "Aucune mission n'est actuellement sélectionnée."
+      );
+      return;
+    }
+
+    const affectationsVehicules = (
+      vehiculesSelectionnes ?? []
+    )
+      .filter(
+        (selection) =>
+          typeof selection !== "string" &&
+          selection.vehiculeId
+      )
+      .map((selection) => ({
+        vehiculeId: selection.vehiculeId,
+        compagnieId:
+          selection.compagnieId ?? null,
+        groupeId:
+          selection.groupeId ??
+          selection.missionGroupeId ??
+          null,
+        conducteurId:
+          selection.conducteurId ?? null,
+      }));
+
+    const affectationsSansConducteur =
+      affectationsVehicules.filter(
+        (affectation) =>
+          !affectation.conducteurId
+      );
+
+    if (
+      affectationsSansConducteur.length > 0
+    ) {
+      alert(
+        "Chaque véhicule doit avoir un conducteur avant de continuer."
+      );
+      return;
+    }
+
+    try {
+      console.log(
+        "[ÉTAPE 4] Sauvegarde des conducteurs :",
+        affectationsVehicules
+      );
+
+      await updateMissionConducteurs(
+        missionId,
+        affectationsVehicules
+      );
+
+      console.log(
+        "[ÉTAPE 4] Conducteurs sauvegardés avec succès"
+      );
+
+      navigate(
+        "/admin/validation-missions"
+      );
+    } catch (error) {
+      console.error(
+        "[ÉTAPE 4] Erreur lors de la sauvegarde :",
+        error
+      );
+
+      alert(
+        error?.response?.data?.message ??
+        error?.message ??
+        "Impossible de sauvegarder les conducteurs."
+      );
+    }
+  };
 
   const groupesAAfficher =
     groupes.length > 0
@@ -489,11 +565,7 @@ function CreerMission4Admin() {
 
           <button
             type="button"
-            onClick={() =>
-              navigate(
-                "/admin/validation-missions"
-              )
-            }
+            onClick={handleContinuer}
             className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
           >
             Suivant

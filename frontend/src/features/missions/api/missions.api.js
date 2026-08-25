@@ -21,7 +21,10 @@ export const deleteMission = async (missionId) => {
 };
 
 export const createMissionVehicule = async (missionVehiculeData) => {
-  const response = await apiClient.post("/missions-vehicules", missionVehiculeData);
+  const response = await apiClient.post(
+    "/missions-vehicules",
+    missionVehiculeData,
+  );
   return response.data;
 };
 
@@ -43,7 +46,7 @@ export const getMissionGroupes = async (missionId) => {
 export const createMissionGroupe = async (missionId, missionGroupeData) => {
   const response = await apiClient.post(
     `/missions-groupes/${missionId}`,
-    missionGroupeData
+    missionGroupeData,
   );
   return response.data;
 };
@@ -51,25 +54,58 @@ export const createMissionGroupe = async (missionId, missionGroupeData) => {
 // Affectations des militaires
 export const getMissionUsersByGroup = async (missionGroupeId) => {
   const response = await apiClient.get(
-    `/missions-users/groupes/${missionGroupeId}`
+    `/missions-users/groupes/${missionGroupeId}`,
   );
   return response.data;
 };
 
 export const assignMissionUserToGroup = async (
   missionUserId,
-  missionGroupeId
+  missionGroupeId,
 ) => {
   const response = await apiClient.patch(
     `/missions-users/${missionUserId}/groupe`,
-    { missionGroupeId }
+    { missionGroupeId },
   );
   return response.data;
 };
 
 export const removeMissionUserFromGroup = async (missionUserId) => {
   const response = await apiClient.delete(
-    `/missions-users/${missionUserId}/groupe`
+    `/missions-users/${missionUserId}/groupe`,
   );
+  return response.data;
+};
+
+export const updateMissionGroupes = async (missionId, groupesMission) => {
+  const response = await apiClient.put(`/missions/${missionId}/groupes`, {
+    groupesMission,
+  });
+
+  return response.data;
+};
+
+export const updateMissionVehicules = async (
+  missionId,
+  affectationsVehicules,
+) => {
+  const response = await apiClient.put(`/missions/${missionId}/vehicules`, {
+    affectationsVehicules,
+  });
+
+  return response.data;
+};
+
+export const updateMissionConducteurs = async (
+  missionId,
+  affectationsVehicules,
+) => {
+  const response = await apiClient.put(
+    `/missions/${missionId}/conducteurs`,
+    {
+      affectationsVehicules,
+    },
+  );
+
   return response.data;
 };

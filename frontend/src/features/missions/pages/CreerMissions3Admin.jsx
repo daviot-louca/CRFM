@@ -2,10 +2,61 @@ import MainLayout from '@/components/layout/MainLayout'
 import { useNavigate } from 'react-router-dom'
 import Etapes3CompagnieVehicules from '../components/etape3/Etapes3CompagnieVehicules';
 import { useMissions2 } from '../hooks/useMissions2';
+import { updateMissionVehicules } from '../api/missions.api';
 
 function CreerMissions3Admin() {
   const navigate = useNavigate()
   const missions = useMissions2();
+
+  const handleContinuer = async () => {
+    if (!missions.missionId) {
+      alert("Aucune mission n'est actuellement sélectionnée.");
+      return;
+    }
+  
+    try {
+      const affectationsVehicules = (
+        missions.vehiculesSelectionnes ?? []
+      ).map((vehicule) => ({
+        vehiculeId: vehicule.vehiculeId,
+        compagnieId: vehicule.compagnieId,
+        groupeId:
+          vehicule.groupeId ??
+          vehicule.missionGroupeId ??
+          null,
+        sectionId:
+          vehicule.sectionId ??
+          null,
+      }));
+  
+      console.log(
+        "[ÉTAPE 3] Sauvegarde des véhicules :",
+        affectationsVehicules,
+      );
+  
+      await updateMissionVehicules(
+        missions.missionId,
+        affectationsVehicules,
+      );
+  
+      console.log(
+        "[ÉTAPE 3] Véhicules sauvegardés avec succès",
+      );
+  
+      navigate('/admin/creer-missions-4');
+    } catch (error) {
+      console.error(
+        "[ÉTAPE 3] Erreur lors de la sauvegarde :",
+        error,
+      );
+  
+      alert(
+        error?.response?.data?.message ??
+        error?.message ??
+        "Impossible de sauvegarder les véhicules.",
+      );
+    }
+  };
   return (
     <MainLayout>
       <div className="h-[calc(100vh-2rem)] bg-slate-50 overflow-hidden">
@@ -122,7 +173,7 @@ function CreerMissions3Admin() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate('/admin/creer-missions-4')}
+                  onClick={handleContinuer}
                   className="bg-blue-600 hover:bg-blue-700 rounded-2xl px-8 py-3 text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 transition-all duration-200"
                 >
                   Suivant

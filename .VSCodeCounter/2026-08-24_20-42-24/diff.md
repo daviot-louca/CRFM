@@ -1,0 +1,29 @@
+# Diff Summary
+
+Date : 2026-08-24 20:42:24
+
+Directory /Users/loucadaviot/Desktop/crfm
+
+Total : 2 files,  321 codes, 0 comments, 40 blanks, all 361 lines
+
+[Summary](results.md) / [Details](details.md) / Diff Summary / [Diff Details](diff-details.md)
+
+## Languages
+| language | files | code | comment | blank | total |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| JavaScript | 1 | 257 | 0 | 34 | 291 |
+| JavaScript JSX | 1 | 64 | 0 | 6 | 70 |
+
+## Directories
+| path | files | code | comment | blank | total |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| . | 2 | 321 | 0 | 40 | 361 |
+| backend | 1 | 257 | 0 | 34 | 291 |
+| backend/services | 1 | 257 | 0 | 34 | 291 |
+| frontend | 1 | 64 | 0 | 6 | 70 |
+| frontend/src | 1 | 64 | 0 | 6 | 70 |
+| frontend/src/features | 1 | 64 | 0 | 6 | 70 |
+| frontend/src/features/missions | 1 | 64 | 0 | 6 | 70 |
+| frontend/src/features/missions/pages | 1 | 64 | 0 | 6 | 70 |
+
+[Summary](results.md) / [Details](details.md) / Diff Summary / [Diff Details](diff-details.md)
