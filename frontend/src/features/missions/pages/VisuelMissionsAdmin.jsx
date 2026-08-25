@@ -220,17 +220,6 @@ function VisuelMissionsAdmin() {
                       </td>
                       <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex flex-row gap-2 justify-end">
-                          {/* Modifier */}
-                          {/* Si une route d'édition existe, remplacer /admin/missions/edit/${mission.id} par la vraie route */}
-                          {/* TODO: Connecter la route de modification si elle existe */}
-                          {/* La route d'édition existe sous /admin/missions/edit/:id */}
-                          <Link
-                            to={`/admin/missions/edit/${mission.id}`}
-                            state={{ mission }}
-                            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100"
-                          >
-                            Modifier
-                          </Link>
                           {/* Supprimer */}
                           <button
                             type="button"
