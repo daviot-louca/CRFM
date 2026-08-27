@@ -636,49 +636,11 @@ export const updateUserService = async (
    */
 
   if (userData.password) {
-
     userData.password =
-  
       await hash(
-  
         userData.password,
-  
         10,
-  
       );
-  
-  }
-  
-  /*
-  
-   * Champs optionnels :
-  
-   * une chaîne vide devient NULL
-  
-   */
-  
-  if (
-  
-    userData.email !== undefined &&
-  
-    userData.email.trim() === ""
-  
-  ) {
-  
-    userData.email = null;
-  
-  }
-  
-  if (
-  
-    userData.phoneNumber !== undefined &&
-  
-    userData.phoneNumber.trim() === ""
-  
-  ) {
-  
-    userData.phoneNumber = null;
-  
   }
 
   /*

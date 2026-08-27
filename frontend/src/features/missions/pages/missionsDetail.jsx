@@ -437,7 +437,7 @@ export default function MissionDetail() {
 
                     {!derniere && (
                       <div
-                        className={`absolute left-[15px] top-8 h-full w-0.5 ${
+                        className={`absolute left-3.75 top-8 h-full w-0.5 ${
                           etape.terminee
                             ? "bg-blue-600"
                             : "bg-slate-200"

@@ -99,11 +99,13 @@ export const updateMissionVehicules = async (
 export const updateMissionConducteurs = async (
   missionId,
   affectationsVehicules,
+  oaId
 ) => {
   const response = await apiClient.put(
     `/missions/${missionId}/conducteurs`,
     {
       affectationsVehicules,
+      oaId
     },
   );
 

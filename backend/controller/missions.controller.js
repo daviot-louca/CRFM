@@ -220,7 +220,7 @@ export const updateMissionConducteurs = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { affectationsVehicules = [] } = req.body;
+    const { affectationsVehicules = [], oaId = null } = req.body;
 
     console.log(`[PUT /api/missions/${id}/conducteurs] REQUETE RECUE`);
 
@@ -229,9 +229,17 @@ export const updateMissionConducteurs = async (req, res) => {
       JSON.stringify(affectationsVehicules, null, 2),
     );
 
+    console.log(`[PUT /api/missions/${id}/conducteurs] oaId:`, oaId);
+
+    console.log(
+      `[PUT /api/missions/${id}/conducteurs] BODY COMPLET:`,
+      JSON.stringify(req.body, null, 2),
+    );
+
     const mission = await updateMissionConducteursService(
       id,
       affectationsVehicules,
+      oaId,
     );
 
     console.log(`[PUT /api/missions/${id}/conducteurs] SAUVEGARDE REUSSIE`);
