@@ -4,7 +4,6 @@ import helmet from "helmet";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import hpp from "hpp";
-import authRoutes from "../routes/auth.routes.js";
 import routes from "../routes/index.routes.js";
 
 const app = express();
@@ -38,8 +37,6 @@ app.get("/", (req, res) => {
     message: "CRFM API is running 🚀",
   });
 });
-
-app.use("/auth", authRoutes);
 app.use("/api", routes);
 
 export default app;

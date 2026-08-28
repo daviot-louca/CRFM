@@ -1,6 +1,6 @@
 const checkRole = (...rolesAutorises) => {
   return (req, res, next) => {
-    const role = req.user?.role;
+    const role = req.user.role.roleName;
 
     if (!role) {
       return res.status(401).json({

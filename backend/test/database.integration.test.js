@@ -3,7 +3,6 @@ import { after, before, test } from "node:test";
 import db, {
   Compagnie,
   Mission,
-  MissionsEquipages,
   MissionsUsers,
   MissionsVehicule,
   MissionsVehiculesPlein,
@@ -16,7 +15,6 @@ import db, {
 import { getAllCompagniesService } from "../services/compagnie.service.js";
 import { getConducteurVehiculesService } from "../services/conducteur.service.js";
 import { getMissionsService } from "../services/missions.service.js";
-import { getMissionsEquipagesService } from "../services/missionsEquipages.service.js";
 import { getMissionsUsersService } from "../services/missionUser.service.js";
 import { getMissionsVehiculesService } from "../services/missionsVehicules.service.js";
 import { getAllVehiculeService } from "../services/vehicule.service.js";
@@ -34,7 +32,6 @@ test("le schéma de la base correspond aux modèles Sequelize", async () => {
   const models = [
     Compagnie,
     Mission,
-    MissionsEquipages,
     MissionsUsers,
     MissionsVehicule,
     MissionsVehiculesPlein,
@@ -64,7 +61,6 @@ test("tous les includes du backend peuvent être exécutés", async () => {
     getMissionsService(),
     getMissionsUsersService(),
     getMissionsVehiculesService(),
-    getMissionsEquipagesService(),
     getConducteurVehiculesService("00000000-0000-0000-0000-000000000000"),
   ]);
 });

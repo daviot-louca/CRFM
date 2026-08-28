@@ -10,23 +10,25 @@ import {
   updateMissionConducteurs,
   deleteMission,
 } from "../controller/missions.controller.js";
+import authJwt from "../middlewares/auth.middleware.js";
+import checkRole from "../middlewares/permissions.middleware.js";
 
 const router = express.Router();
 
-router.get("/", getMissions);
+router.get("/",authJwt,checkRole("administrateur"), getMissions);
 
-router.post("/", createMission);
+router.post("/",authJwt,checkRole("administrateur"), createMission);
 
-router.get("/:id", getMissionById);
+router.get("/:id",authJwt,checkRole("administrateur"), getMissionById);
 
-router.put("/:id", updateMission);
+router.put("/:id",authJwt,checkRole("administrateur"), updateMission);
 
-router.put("/:id/groupes", updateMissionGroupes);
+router.put("/:id/groupes",authJwt,checkRole("administrateur"), updateMissionGroupes);
 
-router.put("/:id/vehicules", updateMissionVehicules);
+router.put("/:id/vehicules",authJwt,checkRole("administrateur"), updateMissionVehicules);
 
-router.put("/:id/conducteurs", updateMissionConducteurs);
+router.put("/:id/conducteurs",authJwt,checkRole("administrateur"), updateMissionConducteurs);
 
-router.delete("/:id", deleteMission);
+router.delete("/:id",authJwt,checkRole("administrateur"), deleteMission);
 
 export default router;

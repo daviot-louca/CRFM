@@ -7,13 +7,14 @@ import vehiculeRoutes from "./vehicules.routes.js";
 import missionRoutes from "./missions.routes.js";
 import missionUserRoutes from "./missionsUsers.routes.js";
 import missionVehiculeRoutes from "./missionsVehicules.routes.js";
-import missionEquipageRoutes from "./missionsEquipages.routes.js";
 import missionsGroupesRoutes from "./missionsGroupes.routes.js"
 import roleRoutes from "./role.routes.js";
 import conducteurRoutes from "./conducteur.routes.js";
+import authRoutes from "./auth.routes.js";
 
 const router = express.Router();
 
+router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
 router.use("/roles", roleRoutes);
 router.use("/compagnies", compagnieRoutes);
@@ -23,7 +24,6 @@ router.use("/vehicules", vehiculeRoutes);
 router.use("/missions", missionRoutes);
 router.use("/missions-users", missionUserRoutes);
 router.use("/missions-vehicules", missionVehiculeRoutes);
-router.use("/missions-equipages", missionEquipageRoutes);
 router.use("/missions-groupes", missionsGroupesRoutes)
 router.use("/conducteur", conducteurRoutes);
 

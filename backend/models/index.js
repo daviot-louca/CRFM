@@ -2,7 +2,6 @@ import { Sequelize } from "sequelize";
 import sequelize from "../config/db.config.js";
 
 import Mission from "./missions.model.js";
-import MissionsEquipages from "./missions-equipages.model.js";
 import MissionsUsers from "./missionsUsers.model.js";
 import MissionsVehicule from "./missionsVehicule.model.js";
 import MissionsVehiculesPlein from "./missionsVehiculesPlein.model.js";
@@ -20,7 +19,6 @@ const db = {
   Sequelize,
   sequelize,
   Mission,
-  MissionsEquipages,
   MissionsGroupes,
   MissionsUsers,
   MissionsVehicule,
@@ -190,28 +188,6 @@ MissionsUsers.belongsTo(MissionsGroupes, {
   as: "missionGroupe",
 });
 
-MissionsVehicule.hasMany(MissionsEquipages, {
-  foreignKey: "missionVehiculeId",
-  as: "equipages",
-  onDelete: "CASCADE",
-});
-
-MissionsEquipages.belongsTo(MissionsVehicule, {
-  foreignKey: "missionVehiculeId",
-  as: "missionVehicule",
-});
-
-User.hasMany(MissionsEquipages, {
-  foreignKey: "userId",
-  as: "missionsEquipages",
-  onDelete: "CASCADE",
-});
-
-MissionsEquipages.belongsTo(User, {
-  foreignKey: "userId",
-  as: "user",
-});
-
 Mission.hasMany(MissionsVehicule, {
   foreignKey: "missionId",
   as: "missionsVehicules",
@@ -318,7 +294,6 @@ MissionsGroupes.belongsTo(User, {
 export {
   sequelize,
   Mission,
-  MissionsEquipages,
   MissionsGroupes,
   MissionsUsers,
   MissionsVehicule,

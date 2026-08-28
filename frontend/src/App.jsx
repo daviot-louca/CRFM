@@ -19,35 +19,145 @@ import ConducteurVehiculeDetailPage from "./features/conducteur/pages/Conducteur
 import ConducteurVehiculesPage from "./features/conducteur/pages/ConducteurVehiculesPage"
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom"
 import { MissionsProvider } from "./features/missions/context/MissionsContext";
-function App() {
-  return <BrowserRouter>
-    <Routes>
-      {/**Routes admin  */}
-      <Route path="/admin/tableau-de-bord" element={<TableauDeBordAdmin />} />
-      <Route path="/admin/compagnies" element={<CompagniesAdmin />} />
-      <Route element={<MissionsProvider />}>
-        <Route path="/admin/creer-missions-1" element={<Creermissions1Admin />} />
-        <Route path="/admin/creer-missions-2" element={<CreerMissions2Admin />} />
-        <Route path="/admin/creer-missions-3" element={<CreerMissions3Admin />} />
-        <Route path="/admin/creer-missions-4" element={<CreerMission4Admin />} />
-      </Route>
-      <Route path="/admin/vehicules/:id" element={<DetailVehiculesAdmin />} />
-      <Route path="/admin/messages" element={<MessagerieAdmin />} />
-      <Route path="/admin/contact" element={<PageContactMessagerieAdmin />} />
-      <Route path="/admin/compagnies/:compagnieId/sections" element={<SectionsAdmin />} />
-      <Route path="/admin/compagnies/:compagnieId/sections/:sectionId/utilisateurs" element={<Utilisateurs/>}/>      
-      <Route path="/admin/vehicules" element={<VehiculesAdmin />} />
-      <Route path="/admin/vehicules/ajouter" element={<AjouterVehiculeAdmin />}/>
-      <Route path="/admin/missions" element={<VisuelMissionsAdmin />} />
-      <Route path="/admin/missions/:missionsId" element={<MissionDetail />} />
 
-      {/**Routes OA */}
-      {/**Routes conducteur */}
-      <Route path="/conducteur" element={<Navigate to="/conducteur/vehicules" replace />} />
-      <Route path="/conducteur/vehicules" element={<ConducteurVehiculesPage />} />
-      <Route path="/conducteur/vehicules/:missionVehiculeId" element={<ConducteurVehiculeDetailPage />} />
-    </Routes>
-  </BrowserRouter>
+import PageConnexion from "./features/auth/pages/PageConnexion"
+import ProtectedRoute from "../security/ProtectedRoute"
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* ==================== ROUTES PUBLIQUES ==================== */}
+        <Route
+          path="/"
+          element={<Navigate to="/login" replace />}
+        />
+        <Route
+          path="/login"
+          element={<PageConnexion />}
+        />
+        {/* ==================== MISSIONS ==================== */}
+        {/* ADMIN + OA + SOA */}
+        <Route
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "administrateur",
+                "OA",
+                "SOA",
+              ]}
+            />
+          }
+        >
+          <Route
+            path="/admin/missions"
+            element={<VisuelMissionsAdmin />}
+          />
+          <Route
+            path="/admin/missions/:missionsId"
+            element={<MissionDetail />}
+          />
+          <Route element={<MissionsProvider />}>
+            <Route
+              path="/admin/creer-missions-1"
+              element={<Creermissions1Admin />}
+            />
+            <Route
+              path="/admin/creer-missions-2"
+              element={<CreerMissions2Admin />}
+            />
+            <Route
+              path="/admin/creer-missions-3"
+              element={<CreerMissions3Admin />}
+            />
+            <Route
+              path="/admin/creer-missions-4"
+              element={<CreerMission4Admin />}
+            />
+          </Route>
+        </Route>
+        {/* ==================== CONDUCTEUR ==================== */}
+        {/* UNIQUEMENT SON INTERFACE */}
+        <Route
+          element={
+            <ProtectedRoute
+              allowedRoles={["conducteur"]}
+            />
+          }
+        >
+          <Route
+            path="/conducteur"
+            element={
+              <Navigate
+                to="/conducteur/vehicules"
+                replace
+              />
+            }
+          />
+          <Route
+            path="/conducteur/vehicules"
+            element={<ConducteurVehiculesPage />}
+          />
+          <Route
+            path="/conducteur/vehicules/:missionVehiculeId"
+            element={
+              <ConducteurVehiculeDetailPage />
+            }
+          />
+        </Route>
+        {/* ==================== ADMIN UNIQUEMENT ==================== */}
+        <Route
+          element={
+            <ProtectedRoute
+              allowedRoles={["administrateur"]}
+            />
+          }
+        >
+          <Route
+            path="/admin/tableau-de-bord"
+            element={<TableauDeBordAdmin />}
+          />
+          <Route
+            path="/admin/compagnies"
+            element={<CompagniesAdmin />}
+          />
+          {/* Gestion des véhicules */}
+          <Route
+            path="/admin/vehicules"
+            element={<VehiculesAdmin />}
+          />
+          <Route
+            path="/admin/vehicules/:id"
+            element={<DetailVehiculesAdmin />}
+          />
+          <Route
+            path="/admin/vehicules/ajouter"
+            element={<AjouterVehiculeAdmin />}
+          />
+          {/* Messagerie */}
+          <Route
+            path="/admin/messages"
+            element={<MessagerieAdmin />}
+          />
+          <Route
+            path="/admin/contact"
+            element={<PageContactMessagerieAdmin />}
+          />
+          {/* Gestion des sections */}
+          <Route
+            path="/admin/compagnies/:compagnieId/sections"
+            element={<SectionsAdmin />}
+          />
+          {/* Gestion des utilisateurs */}
+          <Route
+            path="/admin/compagnies/:compagnieId/sections/:sectionId/utilisateurs"
+            element={<Utilisateurs />}
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+
+  );
 }
 
 export default App

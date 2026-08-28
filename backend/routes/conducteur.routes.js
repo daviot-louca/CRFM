@@ -6,13 +6,15 @@ import {
   getConducteurVehicules,
   saveConducteurReleve,
 } from "../controller/conducteur.controller.js";
+import authJwt from "../middlewares/auth.middleware.js";
+import checkRole from "../middlewares/permissions.middleware.js";
 
 const router = Router();
 
-router.get("/vehicules", getConducteurVehicules);
-router.get("/vehicules/:missionVehiculeId", getConducteurVehiculeDetail);
-router.put("/vehicules/:missionVehiculeId/releve", saveConducteurReleve);
-router.get("/vehicules/:missionVehiculeId/pleins", getConducteurPleins);
-router.post("/vehicules/:missionVehiculeId/pleins", addConducteurPlein);
+router.get("/vehicules",authJwt,checkRole("administrateur"), getConducteurVehicules);
+router.get("/vehicules/:missionVehiculeId",authJwt,checkRole("administrateur"), getConducteurVehiculeDetail);
+router.put("/vehicules/:missionVehiculeId/releve",authJwt,checkRole("administrateur"), saveConducteurReleve);
+router.get("/vehicules/:missionVehiculeId/pleins",authJwt,checkRole("administrateur"), getConducteurPleins);
+router.post("/vehicules/:missionVehiculeId/pleins",authJwt,checkRole("administrateur"), addConducteurPlein);
 
 export default router;

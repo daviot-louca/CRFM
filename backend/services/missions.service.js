@@ -2281,18 +2281,6 @@ export const updateMissionConducteursService = async (
           }
         }
 
-        /*
-         * ==========================================
-         * ENREGISTREMENT DU CONDUCTEUR
-         * ==========================================
-         *
-         * IMPORTANT :
-         * On n'utilise plus MissionsEquipages.
-         *
-         * Le conducteur est directement enregistré
-         * dans missions_vehicules.conducteurId.
-         */
-
         await missionVehicule.update(
           {
             conducteurId,

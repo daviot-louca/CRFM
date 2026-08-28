@@ -10,19 +10,22 @@ import {
   getUserById,
 } from "../controller/user.controller.js";
 import { Router } from "express";
+import authJwt from "../middlewares/auth.middleware.js";
+import checkRole from "../middlewares/permissions.middleware.js";
+
 const router = Router();
 
-router.get("/",allUsers);
+router.get("/",authJwt,checkRole("administrateur"),allUsers);
 router.get(
-  "/section/:sectionId/disponibilites",
+  "/section/:sectionId/disponibilites",authJwt,checkRole("administrateur"),
   allUsersBySectionWithAvailability,
 );
-router.get("/section/:sectionId", allUsersBySection);
-router.get("/compagnie/:compagnieId/oa", allUsersByCompagnie);
-router.get("/section/:sectionId/soa", allSoaBySection);
-router.post("/",addUser);
-router.put("/:id",updateUser);
-router.delete("/:id",deleteUser);
-router.get("/:id",getUserById);
+router.get("/section/:sectionId",authJwt,checkRole("administrateur"), allUsersBySection);
+router.get("/compagnie/:compagnieId/oa",authJwt,checkRole("administrateur"), allUsersByCompagnie);
+router.get("/section/:sectionId/soa",authJwt,checkRole("administrateur"), allSoaBySection);
+router.post("/",authJwt,checkRole("administrateur"),addUser);
+router.put("/:id",authJwt,checkRole("administrateur"),updateUser);
+router.delete("/:id",authJwt,checkRole("administrateur"),deleteUser);
+router.get("/:id",authJwt,checkRole("administrateur"),getUserById);
 
 export default router;

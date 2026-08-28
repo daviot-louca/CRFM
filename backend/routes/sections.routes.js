@@ -7,20 +7,22 @@ import {
   deleteSection,
   getSectionMe,
 } from "../controller/sections.controller.js";
+import authJwt from "../middlewares/auth.middleware.js";
+import checkRole from "../middlewares/permissions.middleware.js";
 
 const router = Router();
 
 router.get(
-  "/compagnie/:compagnieId",
+  "/compagnie/:compagnieId",authJwt,checkRole("administrateur"),
   getAllSectionsByCompagnie,
 );
 router.post("/",createSection);
 router.get(
-  "/me",
+  "/me",authJwt,checkRole("administrateur"),
   getSectionMe,
 );
-router.get("/:id",getSectionById);
-router.put("/:id",updateSection);
-router.delete("/:id", deleteSection);
+router.get("/:id",authJwt,checkRole("administrateur"),getSectionById);
+router.put("/:id",authJwt,checkRole("administrateur"),updateSection);
+router.delete("/:id",authJwt,checkRole("administrateur"), deleteSection);
 
 export default router;

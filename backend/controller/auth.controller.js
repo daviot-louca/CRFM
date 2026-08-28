@@ -1,14 +1,14 @@
 import { loginService } from "../services/auth.service.js";
 
 export const loginController = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
+  const { phoneNumber, password } = req.body;
+  if (!phoneNumber || !password) {
     return res.status(400).json({
-      error: "L'email et le mot de passe sont obligatoires.",
+      error: "Le numéro de téléphone et le mot de passe sont obligatoires.",
     });
   }
   try {
-    const result = await loginService({ email, password });
+    const result = await loginService({ phoneNumber, password });
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);

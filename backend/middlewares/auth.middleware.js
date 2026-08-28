@@ -24,9 +24,6 @@ const authJwt = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = decoded;
-
-    console.log("Utilisateur authentifié :", decoded.email);
-
     next();
   } catch (error) {
     console.error(error);
