@@ -1171,29 +1171,8 @@ export const createMissionService = async (missionData) => {
         throw error;
       }
 
-      const missionsVehicules = await MissionsVehicule.bulkCreate(
-        lignesMissionsVehicules,
-        {
-          transaction,
-          returning: true,
-        },
-      );
-
       // Création du conducteur associé
       // à chaque véhicule.
-      const lignesEquipages = missionsVehicules
-        .filter((missionVehicule) => missionVehicule.conducteurId)
-        .map((missionVehicule) => ({
-          missionVehiculeId: missionVehicule.id,
-          userId: missionVehicule.conducteurId,
-          fonction: "conducteur",
-        }));
-
-      if (lignesEquipages.length > 0) {
-        await MissionsEquipages.bulkCreate(lignesEquipages, {
-          transaction,
-        });
-      }
 
       if (missionPayload.StatutMission === "En cours") {
         await Vehicule.update(
@@ -1907,28 +1886,6 @@ export const updateMissionVehiculesService = async (
           transaction,
         },
       );
-    }
-
-    /*
-     * ==========================================
-     * 6. SUPPRESSION DES ANCIENS ÉQUIPAGES
-     * ==========================================
-     */
-
-    const anciennesMissionVehiculeIds = anciennesAffectations.map(
-      (mv) => mv.id,
-    );
-
-    if (anciennesMissionVehiculeIds.length > 0) {
-      await MissionsEquipages.destroy({
-        where: {
-          missionVehiculeId: {
-            [Op.in]: anciennesMissionVehiculeIds,
-          },
-        },
-
-        transaction,
-      });
     }
 
     /*
