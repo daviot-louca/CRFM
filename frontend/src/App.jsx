@@ -15,7 +15,9 @@ import SectionsAdmin from "./features/sections/pages/SectionsAdmin"
 import Utilisateurs from "./features/users/page/Utilisateurs"
 import VehiculesAdmin from "./features/vehicules/pages/VehiculesPage"
 import AjouterVehiculeAdmin from "./features/vehicules/pages/AjouterVehiculeAdmin"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import ConducteurVehiculeDetailPage from "./features/conducteur/pages/ConducteurVehiculeDetailPage"
+import ConducteurVehiculesPage from "./features/conducteur/pages/ConducteurVehiculesPage"
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom"
 import { MissionsProvider } from "./features/missions/context/MissionsContext";
 function App() {
   return <BrowserRouter>
@@ -40,6 +42,10 @@ function App() {
       <Route path="/admin/missions/:missionsId" element={<MissionDetail />} />
 
       {/**Routes OA */}
+      {/**Routes conducteur */}
+      <Route path="/conducteur" element={<Navigate to="/conducteur/vehicules" replace />} />
+      <Route path="/conducteur/vehicules" element={<ConducteurVehiculesPage />} />
+      <Route path="/conducteur/vehicules/:missionVehiculeId" element={<ConducteurVehiculeDetailPage />} />
     </Routes>
   </BrowserRouter>
 }

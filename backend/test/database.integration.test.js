@@ -6,12 +6,15 @@ import db, {
   MissionsEquipages,
   MissionsUsers,
   MissionsVehicule,
+  MissionsVehiculesPlein,
+  MissionsVehiculesReleve,
   Section,
   User,
   Vehicule,
   VehiculeType,
 } from "../models/index.js";
 import { getAllCompagniesService } from "../services/compagnie.service.js";
+import { getConducteurVehiculesService } from "../services/conducteur.service.js";
 import { getMissionsService } from "../services/missions.service.js";
 import { getMissionsEquipagesService } from "../services/missionsEquipages.service.js";
 import { getMissionsUsersService } from "../services/missionUser.service.js";
@@ -34,6 +37,8 @@ test("le schéma de la base correspond aux modèles Sequelize", async () => {
     MissionsEquipages,
     MissionsUsers,
     MissionsVehicule,
+    MissionsVehiculesPlein,
+    MissionsVehiculesReleve,
     Section,
     User,
     Vehicule,
@@ -60,5 +65,6 @@ test("tous les includes du backend peuvent être exécutés", async () => {
     getMissionsUsersService(),
     getMissionsVehiculesService(),
     getMissionsEquipagesService(),
+    getConducteurVehiculesService("00000000-0000-0000-0000-000000000000"),
   ]);
 });

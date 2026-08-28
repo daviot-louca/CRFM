@@ -15,21 +15,35 @@ export default function MissionDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    let isActive = true;
 
-    getMissionById(missionsId)
-      .then((data) => {
-        setMission(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(
-          err.message ||
-            "Erreur lors du chargement de la mission"
-        );
-        setLoading(false);
-      });
+    const loadMission = async () => {
+      try {
+        const data = await getMissionById(missionsId);
+
+        if (isActive) {
+          setMission(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (isActive) {
+          setError(
+            err.message ||
+              "Erreur lors du chargement de la mission"
+          );
+        }
+      } finally {
+        if (isActive) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadMission();
+
+    return () => {
+      isActive = false;
+    };
   }, [missionsId]);
 
   const statusColors = {

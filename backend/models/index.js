@@ -2,8 +2,11 @@ import { Sequelize } from "sequelize";
 import sequelize from "../config/db.config.js";
 
 import Mission from "./missions.model.js";
+import MissionsEquipages from "./missions-equipages.model.js";
 import MissionsUsers from "./missionsUsers.model.js";
 import MissionsVehicule from "./missionsVehicule.model.js";
+import MissionsVehiculesPlein from "./missionsVehiculesPlein.model.js";
+import MissionsVehiculesReleve from "./missionsVehiculesReleve.model.js";
 import MissionsGroupes from "./missionsGroupes.model.js";
 import Role from "./roles.model.js";
 import Section from "./sections.model.js";
@@ -17,9 +20,12 @@ const db = {
   Sequelize,
   sequelize,
   Mission,
+  MissionsEquipages,
   MissionsGroupes,
   MissionsUsers,
   MissionsVehicule,
+  MissionsVehiculesPlein,
+  MissionsVehiculesReleve,
   Role,
   Section,
   User,
@@ -179,6 +185,33 @@ MissionsUsers.belongsTo(MissionsGroupes, {
   as: "groupe",
 });
 
+MissionsUsers.belongsTo(MissionsGroupes, {
+  foreignKey: "missionGroupeId",
+  as: "missionGroupe",
+});
+
+MissionsVehicule.hasMany(MissionsEquipages, {
+  foreignKey: "missionVehiculeId",
+  as: "equipages",
+  onDelete: "CASCADE",
+});
+
+MissionsEquipages.belongsTo(MissionsVehicule, {
+  foreignKey: "missionVehiculeId",
+  as: "missionVehicule",
+});
+
+User.hasMany(MissionsEquipages, {
+  foreignKey: "userId",
+  as: "missionsEquipages",
+  onDelete: "CASCADE",
+});
+
+MissionsEquipages.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
 Mission.hasMany(MissionsVehicule, {
   foreignKey: "missionId",
   as: "missionsVehicules",
@@ -241,6 +274,28 @@ MissionsVehicule.belongsTo(MissionsGroupes, {
   as: "groupe",
 });
 
+MissionsVehicule.hasOne(MissionsVehiculesReleve, {
+  foreignKey: "missionVehiculeId",
+  as: "releve",
+  onDelete: "CASCADE",
+});
+
+MissionsVehiculesReleve.belongsTo(MissionsVehicule, {
+  foreignKey: "missionVehiculeId",
+  as: "missionVehicule",
+});
+
+MissionsVehicule.hasMany(MissionsVehiculesPlein, {
+  foreignKey: "missionVehiculeId",
+  as: "pleins",
+  onDelete: "CASCADE",
+});
+
+MissionsVehiculesPlein.belongsTo(MissionsVehicule, {
+  foreignKey: "missionVehiculeId",
+  as: "missionVehicule",
+});
+
 User.hasMany(Mission, {
   foreignKey: "oaId",
   as: "missionsCommandees",
@@ -263,9 +318,12 @@ MissionsGroupes.belongsTo(User, {
 export {
   sequelize,
   Mission,
+  MissionsEquipages,
   MissionsGroupes,
   MissionsUsers,
   MissionsVehicule,
+  MissionsVehiculesPlein,
+  MissionsVehiculesReleve,
   Role,
   Section,
   User,

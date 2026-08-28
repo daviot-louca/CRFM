@@ -113,6 +113,18 @@ function CreerMission4Admin() {
   useEffect(() => {
     if (compagniesLoading) return;
 
+    let updateTimer = null;
+    const updateOaResponsableMission = (value) => {
+      updateTimer = window.setTimeout(() => {
+        setOaResponsableMission(value);
+      }, 0);
+    };
+    const clearUpdateTimer = () => {
+      if (updateTimer) {
+        window.clearTimeout(updateTimer);
+      }
+    };
+
     console.log("========== [OA AUTO] ==========");
 
     const groupeAvecSoa = groupesAAfficher.find(
@@ -126,8 +138,8 @@ function CreerMission4Admin() {
 
     if (!groupeAvecSoa?.soaId) {
       console.log("[OA AUTO] Aucun SOA sélectionné");
-      setOaResponsableMission(null);
-      return;
+      updateOaResponsableMission(null);
+      return clearUpdateTimer;
     }
 
     const soaId = groupeAvecSoa.soaId;
@@ -170,8 +182,8 @@ function CreerMission4Admin() {
         "[OA AUTO] Impossible de trouver le SOA"
       );
 
-      setOaResponsableMission(null);
-      return;
+      updateOaResponsableMission(null);
+      return clearUpdateTimer;
     }
 
     let compagnie = null;
@@ -217,8 +229,8 @@ function CreerMission4Admin() {
         "[OA AUTO] Impossible de trouver la compagnie"
       );
 
-      setOaResponsableMission(null);
-      return;
+      updateOaResponsableMission(null);
+      return clearUpdateTimer;
     }
 
     // Récupération de l'OA
@@ -253,8 +265,8 @@ function CreerMission4Admin() {
         }
       );
 
-      setOaResponsableMission(null);
-      return;
+      updateOaResponsableMission(null);
+      return clearUpdateTimer;
     }
 
     console.log(
@@ -265,7 +277,9 @@ function CreerMission4Admin() {
       }
     );
 
-    setOaResponsableMission(oa);
+    updateOaResponsableMission(oa);
+
+    return clearUpdateTimer;
   }, [
     groupesAAfficher,
     usersDisponibles,

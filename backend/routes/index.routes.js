@@ -10,6 +10,7 @@ import missionVehiculeRoutes from "./missionsVehicules.routes.js";
 import missionEquipageRoutes from "./missionsEquipages.routes.js";
 import missionsGroupesRoutes from "./missionsGroupes.routes.js"
 import roleRoutes from "./role.routes.js";
+import conducteurRoutes from "./conducteur.routes.js";
 
 const router = express.Router();
 
@@ -24,5 +25,6 @@ router.use("/missions-users", missionUserRoutes);
 router.use("/missions-vehicules", missionVehiculeRoutes);
 router.use("/missions-equipages", missionEquipageRoutes);
 router.use("/missions-groupes", missionsGroupesRoutes)
+router.use("/conducteur", conducteurRoutes);
 
 export default router;

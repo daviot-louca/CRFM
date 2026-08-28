@@ -2,7 +2,6 @@ import { useEffect, useMemo } from "react";
 import { useMission } from "../context/useMission";
 import {
   getMissionGroupes,
-  createMissionGroupe,
 } from "../api/missions.api";
 
 const asArray = (value) => {
