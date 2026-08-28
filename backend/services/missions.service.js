@@ -3,7 +3,6 @@ import sequelize from "../config/db.config.js";
 import Compagnie from "../models/compagnie.model.js";
 import Mission from "../models/missions.model.js";
 import MissionsGroupes from "../models/missionsGroupes.model.js";
-import MissionsEquipages from "../models/missions-equipages.model.js";
 import MissionsUsers from "../models/missionsUsers.model.js";
 import MissionsVehicule from "../models/missionsVehicule.model.js";
 import Section from "../models/sections.model.js";
@@ -111,14 +110,19 @@ const missionIncludes = [
       },
 
       {
-        model: MissionsEquipages,
-        as: "equipages",
-        separate: true,
+        model: User,
+
+        as: "conducteur",
+
+        attributes: userAttributes,
+
         include: [
           {
-            model: User,
-            as: "user",
-            attributes: userAttributes,
+            model: Role,
+
+            as: "role",
+
+            attributes: ["id", "roleName"],
           },
         ],
       },
@@ -746,12 +750,7 @@ export const getMissionByIdService = async (id) => {
      * Conducteur
      */
 
-    const conducteur = (mv.equipages ?? []).find(
-      (equipage) =>
-        equipage.fonction === "conducteur" ||
-        equipage.fonction === "SOA" ||
-        equipage.fonction === "OA",
-    )?.user;
+    const conducteur = mv.conducteur ?? null;
 
     return {
       id: mv.vehicule?.id,
@@ -768,20 +767,11 @@ export const getMissionByIdService = async (id) => {
 
       groupe: mv.groupe?.nom ?? null,
 
+      conducteurId: mv.conducteurId ?? null,
+
       conducteur: conducteur
         ? getNomUtilisateur(conducteur, conducteur.id)
         : null,
-
-      passagers: (mv.equipages ?? [])
-        .filter(
-          (equipage) =>
-            equipage.fonction !== "conducteur" &&
-            equipage.fonction !== "SOA" &&
-            equipage.fonction !== "OA",
-        )
-        .map((equipage) => getNomUtilisateur(equipage.user, equipage.userId)),
-
-      equipages: mv.equipages ?? [],
 
       x: statistiquesEquipage.x,
 
@@ -2038,9 +2028,6 @@ export const updateMissionConducteursService = async (
        * ==========================================
        * 1. OA RESPONSABLE DE LA MISSION
        * ==========================================
-       *
-       * L'oaId est calculé à l'étape 4 du frontend
-       * puis envoyé directement au backend.
        */
 
       const oaResponsableId = normalizeId(oaId);
@@ -2048,6 +2035,7 @@ export const updateMissionConducteursService = async (
       if (oaResponsableId) {
         const oa = await User.findByPk(oaResponsableId, {
           attributes: userAttributes,
+
           include: [
             {
               model: Role,
@@ -2055,13 +2043,12 @@ export const updateMissionConducteursService = async (
               attributes: ["id", "roleName"],
             },
           ],
+
           transaction,
         });
 
         if (!oa) {
-          const error = new Error(
-            "OA responsable introuvable.",
-          );
+          const error = new Error("OA responsable introuvable.");
 
           error.statusCode = 404;
           throw error;
@@ -2097,31 +2084,28 @@ export const updateMissionConducteursService = async (
        * ==========================================
        */
 
-      const missionsVehicules =
-        await MissionsVehicule.findAll({
-          where: {
-            missionId: mission.id,
-          },
-          transaction,
-        });
+      const missionsVehicules = await MissionsVehicule.findAll({
+        where: {
+          missionId: mission.id,
+        },
 
-      const missionsVehiculesByVehiculeId =
-        new Map(
-          missionsVehicules.map(
-            (missionVehicule) => [
-              missionVehicule.vehiculeId,
-              missionVehicule,
-            ],
-          ),
-        );
+        transaction,
+      });
+
+      const missionsVehiculesByVehiculeId = new Map(
+        missionsVehicules.map((missionVehicule) => [
+          String(missionVehicule.vehiculeId),
+          missionVehicule,
+        ]),
+      );
 
       console.log(
         "[ÉTAPE 4 BACKEND] Véhicules de la mission :",
         missionsVehicules.map((mv) => ({
           id: mv.id,
           vehiculeId: mv.vehiculeId,
-          missionGroupeId:
-            mv.missionGroupeId,
+          missionGroupeId: mv.missionGroupeId,
+          conducteurId: mv.conducteurId,
         })),
       );
 
@@ -2134,11 +2118,7 @@ export const updateMissionConducteursService = async (
       const conducteurIds = [
         ...new Set(
           affectationsVehicules
-            .map((affectation) =>
-              normalizeId(
-                affectation?.conducteurId,
-              ),
-            )
+            .map((affectation) => normalizeId(affectation?.conducteurId))
             .filter(Boolean),
         ),
       ];
@@ -2149,43 +2129,36 @@ export const updateMissionConducteursService = async (
        * ==========================================
        */
 
-      const missionsUsers =
-        await MissionsUsers.findAll({
-          where: {
-            missionId: mission.id,
-          },
+      const missionsUsers = await MissionsUsers.findAll({
+        where: {
+          missionId: mission.id,
+        },
 
-          include: [
-            {
-              model: User,
-              as: "user",
-              attributes: userAttributes,
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: userAttributes,
 
-              include: [
-                {
-                  model: Role,
-                  as: "role",
-                  attributes: [
-                    "id",
-                    "roleName",
-                  ],
-                },
-              ],
-            },
-          ],
-
-          transaction,
-        });
-
-      const missionsUsersByUserId =
-        new Map(
-          missionsUsers.map(
-            (missionUser) => [
-              missionUser.userId,
-              missionUser,
+            include: [
+              {
+                model: Role,
+                as: "role",
+                attributes: ["id", "roleName"],
+              },
             ],
-          ),
-        );
+          },
+        ],
+
+        transaction,
+      });
+
+      const missionsUsersByUserId = new Map(
+        missionsUsers.map((missionUser) => [
+          String(missionUser.userId),
+          missionUser,
+        ]),
+      );
 
       /*
        * ==========================================
@@ -2194,10 +2167,7 @@ export const updateMissionConducteursService = async (
        */
 
       for (const conducteurId of conducteurIds) {
-        const missionUser =
-          missionsUsersByUserId.get(
-            conducteurId,
-          );
+        const missionUser = missionsUsersByUserId.get(String(conducteurId));
 
         if (!missionUser) {
           const error = new Error(
@@ -2220,23 +2190,16 @@ export const updateMissionConducteursService = async (
 
       /*
        * ==========================================
-       * 6. VALIDATION DES AFFECTATIONS
+       * 6. VALIDATION ET ENREGISTREMENT
        * ==========================================
        */
 
-      const conducteursDejaAffectes =
-        new Set();
+      const conducteursDejaAffectes = new Set();
 
       for (const affectation of affectationsVehicules) {
-        const vehiculeId =
-          normalizeId(
-            affectation?.vehiculeId,
-          );
+        const vehiculeId = normalizeId(affectation?.vehiculeId);
 
-        const conducteurId =
-          normalizeId(
-            affectation?.conducteurId,
-          );
+        const conducteurId = normalizeId(affectation?.conducteurId);
 
         if (!vehiculeId) {
           continue;
@@ -2247,10 +2210,9 @@ export const updateMissionConducteursService = async (
          * à la mission.
          */
 
-        const missionVehicule =
-          missionsVehiculesByVehiculeId.get(
-            vehiculeId,
-          );
+        const missionVehicule = missionsVehiculesByVehiculeId.get(
+          String(vehiculeId),
+        );
 
         if (!missionVehicule) {
           const error = new Error(
@@ -2266,9 +2228,7 @@ export const updateMissionConducteursService = async (
          */
 
         if (!conducteurId) {
-          const error = new Error(
-            "Chaque véhicule doit avoir un conducteur.",
-          );
+          const error = new Error("Chaque véhicule doit avoir un conducteur.");
 
           error.statusCode = 400;
           throw error;
@@ -2279,18 +2239,12 @@ export const updateMissionConducteursService = async (
          * depuis missions_users.
          */
 
-        const missionUser =
-          missionsUsersByUserId.get(
-            conducteurId,
-          );
+        const missionUser = missionsUsersByUserId.get(String(conducteurId));
 
-        const conducteur =
-          missionUser?.user;
+        const conducteur = missionUser?.user;
 
         if (!conducteur) {
-          const error = new Error(
-            `Conducteur introuvable : ${conducteurId}.`,
-          );
+          const error = new Error(`Conducteur introuvable : ${conducteurId}.`);
 
           error.statusCode = 404;
           throw error;
@@ -2302,11 +2256,7 @@ export const updateMissionConducteursService = async (
          * ==========================================
          */
 
-        if (
-          conducteursDejaAffectes.has(
-            conducteurId,
-          )
-        ) {
+        if (conducteursDejaAffectes.has(String(conducteurId))) {
           const error = new Error(
             `${getNomUtilisateur(
               conducteur,
@@ -2318,9 +2268,7 @@ export const updateMissionConducteursService = async (
           throw error;
         }
 
-        conducteursDejaAffectes.add(
-          conducteurId,
-        );
+        conducteursDejaAffectes.add(String(conducteurId));
 
         /*
          * ==========================================
@@ -2329,35 +2277,25 @@ export const updateMissionConducteursService = async (
          */
 
         const groupeId =
-          normalizeId(
-            affectation?.groupeId,
-          ) ??
-          normalizeId(
-            missionVehicule.missionGroupeId,
-          );
+          normalizeId(affectation?.groupeId) ??
+          normalizeId(missionVehicule.missionGroupeId);
 
-        console.log(
-          "[ÉTAPE 4 BACKEND] Vérification groupe :",
-          {
-            conducteurId,
-            groupeId,
-            groupeDuConducteur:
-              missionUser.missionGroupeId,
-            groupeDuVehicule:
-              missionVehicule.missionGroupeId,
-          },
-        );
+        console.log("[ÉTAPE 4 BACKEND] Vérification groupe :", {
+          conducteurId,
+          groupeId,
+          groupeDuConducteur: missionUser.missionGroupeId,
+          groupeDuVehicule: missionVehicule.missionGroupeId,
+        });
 
         if (groupeId) {
-          const missionGroupe =
-            await MissionsGroupes.findOne({
-              where: {
-                id: groupeId,
-                missionId: mission.id,
-              },
+          const missionGroupe = await MissionsGroupes.findOne({
+            where: {
+              id: groupeId,
+              missionId: mission.id,
+            },
 
-              transaction,
-            });
+            transaction,
+          });
 
           if (!missionGroupe) {
             const error = new Error(
@@ -2373,10 +2311,7 @@ export const updateMissionConducteursService = async (
            * au même groupe que le véhicule.
            */
 
-          if (
-            missionUser.missionGroupeId !==
-            groupeId
-          ) {
+          if (String(missionUser.missionGroupeId) !== String(groupeId)) {
             const error = new Error(
               `${getNomUtilisateur(
                 conducteur,
@@ -2389,140 +2324,58 @@ export const updateMissionConducteursService = async (
           }
         }
 
+        /*
+         * ==========================================
+         * ENREGISTREMENT DU CONDUCTEUR
+         * ==========================================
+         *
+         * IMPORTANT :
+         * On n'utilise plus MissionsEquipages.
+         *
+         * Le conducteur est directement enregistré
+         * dans missions_vehicules.conducteurId.
+         */
+
+        await missionVehicule.update(
+          {
+            conducteurId,
+          },
+          {
+            transaction,
+          },
+        );
+
         console.log(
-          "[ÉTAPE 4 BACKEND] Affectation validée :",
+          "[ÉTAPE 4 BACKEND] Affectation validée et conducteur enregistré :",
           {
             vehiculeId,
             conducteurId,
+            missionVehiculeId: missionVehicule.id,
             groupeId,
-            conducteur:
-              getNomUtilisateur(
-                conducteur,
-                conducteurId,
-              ),
-          },
-        );
-      }
-
-      /*
-       * ==========================================
-       * 7. SUPPRESSION DES ANCIENS CONDUCTEURS
-       * ==========================================
-       *
-       * On ne touche PAS aux passagers.
-       */
-
-      const missionVehiculeIds =
-        missionsVehicules.map(
-          (missionVehicule) =>
-            missionVehicule.id,
-        );
-
-      if (
-        missionVehiculeIds.length > 0
-      ) {
-        await MissionsEquipages.destroy({
-          where: {
-            missionVehiculeId: {
-              [Op.in]:
-                missionVehiculeIds,
-            },
-
-            fonction: "conducteur",
-          },
-
-          transaction,
-        });
-      }
-
-      /*
-       * ==========================================
-       * 8. CRÉATION DES CONDUCTEURS
-       * ==========================================
-       */
-
-      const lignesEquipages =
-        affectationsVehicules
-          .map((affectation) => {
-            const vehiculeId =
-              normalizeId(
-                affectation?.vehiculeId,
-              );
-
-            const conducteurId =
-              normalizeId(
-                affectation?.conducteurId,
-              );
-
-            if (
-              !vehiculeId ||
-              !conducteurId
-            ) {
-              return null;
-            }
-
-            const missionVehicule =
-              missionsVehiculesByVehiculeId.get(
-                vehiculeId,
-              );
-
-            if (!missionVehicule) {
-              return null;
-            }
-
-            return {
-              missionVehiculeId:
-                missionVehicule.id,
-
-              userId: conducteurId,
-
-              fonction: "conducteur",
-            };
-          })
-          .filter(Boolean);
-
-      console.log(
-        "[ÉTAPE 4 BACKEND] Équipages à créer :",
-        lignesEquipages,
-      );
-
-      if (
-        lignesEquipages.length > 0
-      ) {
-        await MissionsEquipages.bulkCreate(
-          lignesEquipages,
-          {
-            transaction,
+            conducteur: getNomUtilisateur(conducteur, conducteurId),
           },
         );
       }
 
       console.log(
-        "[ÉTAPE 4 BACKEND] Conducteurs enregistrés avec succès.",
+        "[ÉTAPE 4 BACKEND] Conducteurs enregistrés directement dans missions_vehicules.",
       );
 
       /*
        * ==========================================
-       * 9. RETOUR DE LA MISSION
+       * 7. RETOUR DE LA MISSION
        * ==========================================
        */
 
-      const missionUpdated =
-        await Mission.findByPk(
-          mission.id,
-          {
-            include:
-              missionIncludes,
-            transaction,
-          },
-        );
+      const missionUpdated = await Mission.findByPk(mission.id, {
+        include: missionIncludes,
+
+        transaction,
+      });
 
       return missionUpdated;
     })
-    .then(
-      (missionUpdated) =>
-        missionUpdated.toJSON(),
-    );
+    .then((missionUpdated) => missionUpdated.toJSON());
 };
 
 export const deleteMissionService = async (id) => {

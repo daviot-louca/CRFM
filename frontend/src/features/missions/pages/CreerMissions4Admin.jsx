@@ -63,7 +63,7 @@ function CreerMission4Admin() {
     groupes.length > 0
       ? groupes
       : groupesManuels;
-    const normaliserUtilisateur = (
+  const normaliserUtilisateur = (
     user
   ) => {
     if (!user) return null;
@@ -301,9 +301,7 @@ function CreerMission4Admin() {
       .filter(Boolean);
   };
 
-  // ==========================================
-  // CONDUCTEURS DISPONIBLES
-  // ==========================================
+  // Conducteurs dispo
 
   const getConducteursDisponibles = (
     groupe

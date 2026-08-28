@@ -304,44 +304,7 @@ export function useMissions2() {
    * ==========================================
    */
 
-  console.log(
-    "========== [useMissions2] VÉHICULES ==========",
-  );
-
-  console.log(
-    "[useMissions2] mission :",
-    mission,
-  );
-
-  console.log(
-    "[useMissions2] mission.vehicules :",
-    vehiculesMission,
-  );
-
-  console.log(
-    "[useMissions2] vehiculesSelectionnes :",
-    vehiculesSelectionnes,
-  );
-
-  console.log(
-    "[useMissions2] IDs véhicules sélectionnés :",
-    [...idsVehiculesSelectionnes],
-  );
-
-  console.log(
-    "[useMissions2] véhicules mission sélectionnés :",
-    vehiculesMissionSelectionnes,
-  );
-
-  console.log(
-    "[useMissions2] véhicules disponibles sélectionnés :",
-    vehiculesDisponiblesSelectionnes,
-  );
-
-  console.log(
-    "[useMissions2] véhicules complets FINALS :",
-    vehiculesSelectionnesUniques,
-  );
+  console.log( "mission.vehicules", vehiculesMission );
 
   console.log(
     "==============================================",

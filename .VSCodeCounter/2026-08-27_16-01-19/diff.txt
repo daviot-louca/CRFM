@@ -1,0 +1,39 @@
+Date : 2026-08-27 16:01:19
+Directory : /Users/loucadaviot/Desktop/crfm
+Total : 5 files,  591 codes, 27 comments, 60 blanks, all 678 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| JavaScript JSX |          1 |        540 |         40 |         81 |        661 |
+| JavaScript     |          4 |         51 |        -13 |        -21 |         17 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                         | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                            |          5 |        591 |         27 |         60 |        678 |
+| backend                                                                                      |          3 |         49 |        -13 |        -21 |         15 |
+| backend/controller                                                                           |          1 |          6 |          0 |          2 |          8 |
+| backend/services                                                                             |          2 |         43 |        -13 |        -23 |          7 |
+| frontend                                                                                     |          2 |        542 |         40 |         81 |        663 |
+| frontend/src                                                                                 |          2 |        542 |         40 |         81 |        663 |
+| frontend/src/features                                                                        |          2 |        542 |         40 |         81 |        663 |
+| frontend/src/features/missions                                                               |          2 |        542 |         40 |         81 |        663 |
+| frontend/src/features/missions/api                                                           |          1 |          2 |          0 |          0 |          2 |
+| frontend/src/features/missions/pages                                                         |          1 |        540 |         40 |         81 |        661 |
++----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                     | language       | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/loucadaviot/Desktop/crfm/backend/controller/missions.controller.js                    | JavaScript     |          6 |          0 |          2 |          8 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/missions.service.js                         | JavaScript     |         55 |         -6 |         -4 |         45 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/user.service.js                             | JavaScript     |        -12 |         -7 |        -19 |        -38 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/api/missions.api.js           | JavaScript     |          2 |          0 |          0 |          2 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions4Admin.jsx | JavaScript JSX |        540 |         40 |         81 |        661 |
+| Total                                                                                        |                |        591 |         27 |         60 |        678 |
++----------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
