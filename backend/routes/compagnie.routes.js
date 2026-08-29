@@ -12,10 +12,10 @@ import checkRole from "../middlewares/permissions.middleware.js"
 
 const router = Router();
 
-router.get("/",authJwt,checkRole("administrateur"), getAllCompagnies);
+router.get("/",authJwt,checkRole("administrateur","OA","SOA"), getAllCompagnies);
 router.post("/",authJwt,checkRole("administrateur"), createCompagnie);
-router.get("/me",authJwt,checkRole("administrateur"),  getMyCompagnie);
-router.get("/:id",authJwt,checkRole("administrateur"), getCompagnieById);
+router.get("/me",authJwt,checkRole("administrateur","OA","SOA"),  getMyCompagnie);
+router.get("/:id",authJwt,checkRole("administrateur","OA"), getCompagnieById);
 router.put("/:id",authJwt,checkRole("administrateur"), updateCompagnie);
 router.delete("/:id",authJwt,checkRole("administrateur"), deleteCompagnie);
 

@@ -209,8 +209,8 @@ const readStoredDraft = () => {
 
     return rawDraft
       ? deserializeDraft(
-          JSON.parse(rawDraft),
-        )
+        JSON.parse(rawDraft),
+      )
       : createEmptyDraft();
   } catch (error) {
     console.warn(
@@ -255,7 +255,7 @@ export function MissionsProvider({
 
   const [searchParams] =
     useSearchParams();
-    const location = useLocation();
+  const location = useLocation();
   const missionIdFromUrl =
     searchParams.get("missionId");
 
@@ -445,9 +445,9 @@ export function MissionsProvider({
         }
 
         /*
-         * ==========================================
+ 
          * ID
-         * ==========================================
+ 
          */
 
         setMissionId(
@@ -455,9 +455,9 @@ export function MissionsProvider({
         );
 
         /*
-         * ==========================================
+ 
          * ÉTAPE 1
-         * ==========================================
+ 
          */
 
         setInformations({
@@ -496,9 +496,9 @@ export function MissionsProvider({
         });
 
         /*
-         * ==========================================
+ 
          * ÉTAPE 2
-         * ==========================================
+ 
          */
 
         const groupes =
@@ -512,9 +512,9 @@ export function MissionsProvider({
         );
 
         /*
-         * ==========================================
+ 
          * PERSONNEL + SECTIONS
-         * ==========================================
+ 
          */
 
         const missionsUsers =
@@ -576,7 +576,7 @@ export function MissionsProvider({
             ) {
               if (
                 !usersParSection[
-                  sectionId
+                sectionId
                 ]
               ) {
                 usersParSection[
@@ -598,7 +598,7 @@ export function MissionsProvider({
             ) {
               if (
                 !sectionsParCompagnie[
-                  compagnieId
+                compagnieId
                 ]
               ) {
                 sectionsParCompagnie[
@@ -641,9 +641,9 @@ export function MissionsProvider({
                 sectionId,
                 userIds,
               ]) => [
-                sectionId,
-                [...userIds],
-              ],
+                  sectionId,
+                  [...userIds],
+                ],
             ),
           ),
         );
@@ -654,9 +654,9 @@ export function MissionsProvider({
         );
 
         /*
-         * ==========================================
+ 
          * ÉTAPE 3 + 4
-         * ==========================================
+ 
          *
          * IMPORTANT :
          *
@@ -700,14 +700,14 @@ export function MissionsProvider({
               (
                 missionVehicule,
               ) => [
-                missionVehicule?.vehiculeId ??
+                  missionVehicule?.vehiculeId ??
                   missionVehicule
                     ?.vehicule
                     ?.id ??
                   missionVehicule?.id,
 
-                missionVehicule,
-              ],
+                  missionVehicule,
+                ],
             ),
           );
 
@@ -786,59 +786,59 @@ export function MissionsProvider({
                */
 
               const vehiculeNormalise =
-                {
-                  vehiculeId,
+              {
+                vehiculeId,
 
-                  compagnieId:
-                    missionVehicule
-                      ?.compagnieId ??
-                    vehicule
-                      ?.compagnieId ??
-                    vehicule
-                      ?.compagnie
-                      ?.id ??
-                    null,
+                compagnieId:
+                  missionVehicule
+                    ?.compagnieId ??
+                  vehicule
+                    ?.compagnieId ??
+                  vehicule
+                    ?.compagnie
+                    ?.id ??
+                  null,
 
-                  groupeId:
-                    groupeIdApi ??
-                    groupeCorrespondant
-                      ?.id ??
-                    null,
+                groupeId:
+                  groupeIdApi ??
+                  groupeCorrespondant
+                    ?.id ??
+                  null,
 
-                  groupeNom:
-                    typeof vehicule
-                      ?.groupe ===
+                groupeNom:
+                  typeof vehicule
+                    ?.groupe ===
                     "string"
-                      ? vehicule.groupe
-                      : vehicule
-                          ?.groupe
-                          ?.nom ??
-                        groupeCorrespondant
-                          ?.nom ??
-                        null,
-
-                  sectionId:
-                    missionVehicule
-                      ?.sectionId ??
-                    vehicule
-                      ?.sectionId ??
-                    vehicule
-                      ?.section
-                      ?.id ??
+                    ? vehicule.groupe
+                    : vehicule
+                      ?.groupe
+                      ?.nom ??
+                    groupeCorrespondant
+                      ?.nom ??
                     null,
 
-                  conducteurId:
-                    missionVehicule
-                      ?.conducteurId ??
-                    vehicule
-                      ?.conducteurId ??
-                    vehicule
-                      ?.conducteur
-                      ?.id ??
-                    null,
+                sectionId:
+                  missionVehicule
+                    ?.sectionId ??
+                  vehicule
+                    ?.sectionId ??
+                  vehicule
+                    ?.section
+                    ?.id ??
+                  null,
 
-                  vehicule,
-                };
+                conducteurId:
+                  missionVehicule
+                    ?.conducteurId ??
+                  vehicule
+                    ?.conducteurId ??
+                  vehicule
+                    ?.conducteur
+                    ?.id ??
+                  null,
+
+                vehicule,
+              };
 
               console.log(
                 "[MISSIONS CONTEXT] Véhicule restauré :",
@@ -877,9 +877,9 @@ export function MissionsProvider({
         );
 
         /*
-         * ==========================================
+ 
          * COMPAGNIES
-         * ==========================================
+ 
          */
 
         const compagniesIds =
@@ -899,9 +899,9 @@ export function MissionsProvider({
         );
 
         /*
-         * ==========================================
+ 
          * FIN CHARGEMENT
-         * ==========================================
+ 
          */
 
         console.log(

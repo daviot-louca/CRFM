@@ -10,7 +10,7 @@ import User from "../models/user.model.js";
 import Role from "../models/roles.model.js";
 import Vehicule from "../models/vehicule.model.js";
 import VehiculeType from "../models/vehicules-types.model.js";
-
+import { verifierAccesMission,getMissionsAccessFilter } from "./validation/missions-Access.service.js";
 const userAttributes = { exclude: ["password"] };
 
 const userWithRoleInclude = [
@@ -553,19 +553,24 @@ const validateMissionCommandement = async ({
   };
 };
 
-export const getMissionsService = async () => {
+export const getMissionsService = async (user) => {
+  const accessFilter = await getMissionsAccessFilter(user);
+
   const missions = await Mission.findAll({
+    ...(accessFilter ? { where: accessFilter } : {}),
     include: missionListIncludes,
   });
 
   await Promise.all(
-    missions.map((mission) => synchroniserStatutMission(mission)),
+    missions.map((mission) =>
+      synchroniserStatutMission(mission),
+    ),
   );
 
   return missions;
 };
 
-export const getMissionByIdService = async (id) => {
+export const getMissionByIdService = async (id,user) => {
   const mission = await Mission.findByPk(id, {
     include: missionIncludes,
   });
@@ -577,6 +582,7 @@ export const getMissionByIdService = async (id) => {
 
     throw error;
   }
+  await verifierAccesMission(mission, user)
 
   await synchroniserStatutMission(mission);
 
@@ -1278,7 +1284,7 @@ export const updateMissionService = async (id, missionData) => {
   return mission.toJSON();
 };
 
-export const updateMissionGroupesService = async (id, groupesMission = []) => {
+export const updateMissionGroupesService = async (id, groupesMission = [],user) => {
   const mission = await Mission.findByPk(id);
 
   if (!mission) {
@@ -1288,6 +1294,7 @@ export const updateMissionGroupesService = async (id, groupesMission = []) => {
 
     throw error;
   }
+  await verifierAccesMission(mission, user)
 
   if (!Array.isArray(groupesMission)) {
     const error = new Error(
@@ -1598,12 +1605,6 @@ export const updateMissionGroupesService = async (id, groupesMission = []) => {
       });
     }
 
-    /*
-     * ==========================================
-     * 8. Retour de la mission
-     * ==========================================
-     */
-
     const missionUpdated = await Mission.findByPk(mission.id, {
       include: missionIncludes,
 
@@ -1617,6 +1618,7 @@ export const updateMissionGroupesService = async (id, groupesMission = []) => {
 export const updateMissionVehiculesService = async (
   id,
   affectationsVehicules = [],
+  user
 ) => {
   const mission = await Mission.findByPk(id);
 
@@ -1625,6 +1627,7 @@ export const updateMissionVehiculesService = async (
     error.statusCode = 404;
     throw error;
   }
+  await verifierAccesMission(mission, user)
 
   if (!Array.isArray(affectationsVehicules)) {
     const error = new Error(
@@ -1637,11 +1640,7 @@ export const updateMissionVehiculesService = async (
   }
 
   await sequelize.transaction(async (transaction) => {
-    /*
-     * ==========================================
-     * 1. RÉCUPÉRATION DES GROUPES DE LA MISSION
-     * ==========================================
-     */
+
 
     const groupes = await MissionsGroupes.findAll({
       where: {
@@ -1653,41 +1652,8 @@ export const updateMissionVehiculesService = async (
 
     const groupesById = new Map(groupes.map((groupe) => [groupe.id, groupe]));
 
-    /*
-     * ==========================================
-     * 2. NORMALISATION DES AFFECTATIONS
-     * ==========================================
-     *
-     * Format accepté :
-     *
-     * {
-     *   vehiculeId,
-     *   compagnieId,
-     *   sectionId,
-     *   groupeId
-     * }
-     *
-     * ou :
-     *
-     * {
-     *   compagnieId,
-     *   sectionId,
-     *   groupeId,
-     *   vehicules: [
-     *     {
-     *       vehiculeId
-     *     }
-     *   ]
-     * }
-     */
-
     const affectationsNormalisees = affectationsVehicules.flatMap(
       (affectation) => {
-        /*
-         * Nouveau format :
-         * un véhicule directement dans
-         * l'affectation.
-         */
 
         if (affectation?.vehiculeId) {
           return [
@@ -1704,12 +1670,6 @@ export const updateMissionVehiculesService = async (
             },
           ];
         }
-
-        /*
-         * Ancien format :
-         * plusieurs véhicules dans
-         * affectation.vehicules.
-         */
 
         return asArray(affectation?.vehicules).map((vehicule) => ({
           vehiculeId: normalizeId(vehicule?.vehiculeId ?? vehicule),
@@ -1961,6 +1921,7 @@ export const updateMissionConducteursService = async (
   id,
   affectationsVehicules = [],
   oaId = null,
+  user
 ) => {
   const mission = await Mission.findByPk(id);
 
@@ -1969,6 +1930,7 @@ export const updateMissionConducteursService = async (
     error.statusCode = 404;
     throw error;
   }
+  await verifierAccesMission(mission, user)
 
   if (!Array.isArray(affectationsVehicules)) {
     const error = new Error(

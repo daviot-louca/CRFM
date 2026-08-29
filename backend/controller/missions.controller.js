@@ -11,7 +11,8 @@ import {
 
 export const getMissions = async (req, res) => {
   try {
-    const missions = await getMissionsService();
+    const user = req.user
+    const missions = await getMissionsService(user);
     res.json(missions);
   } catch (error) {
     console.error("[GET /api/missions]", error);
@@ -22,14 +23,10 @@ export const getMissions = async (req, res) => {
   }
 };
 export const getMissionById = async (req, res) => {
-  console.log("[GET /api/missions/:id] REQUETE RECUE");
-  console.log("[GET /api/missions/:id] ID:", req.params.id);
-
   try {
-    const mission = await getMissionByIdService(req.params.id);
-
-    console.log("[GET /api/missions/:id] MISSION TROUVEE:", mission?.id);
-
+    const id = req.params.id
+    const user = req.user
+    const mission = await getMissionByIdService(id,user);
     res.json(mission);
   } catch (error) {
     console.error("[GET /api/missions/:id] ERREUR COMPLETE:", error);
@@ -156,6 +153,7 @@ export const updateMission = async (req, res) => {
 export const updateMissionGroupes = async (req, res) => {
   try {
     const { id } = req.params;
+    const user = req.user
 
     const { groupesMission = [] } = req.body;
 
@@ -166,7 +164,7 @@ export const updateMissionGroupes = async (req, res) => {
       JSON.stringify(groupesMission, null, 2),
     );
 
-    const mission = await updateMissionGroupesService(id, groupesMission);
+    const mission = await updateMissionGroupesService(id, groupesMission,user);
 
     console.log(`[PUT /api/missions/${id}/groupes] SAUVEGARDE REUSSIE`);
 
@@ -186,7 +184,7 @@ export const updateMissionGroupes = async (req, res) => {
 export const updateMissionVehicules = async (req, res) => {
   try {
     const { id } = req.params;
-
+    const user = req.user
     const { affectationsVehicules = [] } = req.body;
 
     console.log(`[PUT /api/missions/${id}/vehicules] REQUETE RECUE`);
@@ -199,6 +197,7 @@ export const updateMissionVehicules = async (req, res) => {
     const mission = await updateMissionVehiculesService(
       id,
       affectationsVehicules,
+      user
     );
 
     console.log(`[PUT /api/missions/${id}/vehicules] SAUVEGARDE REUSSIE`);
@@ -219,7 +218,7 @@ export const updateMissionVehicules = async (req, res) => {
 export const updateMissionConducteurs = async (req, res) => {
   try {
     const { id } = req.params;
-
+    const user = req.user
     const { affectationsVehicules = [], oaId = null } = req.body;
 
     console.log(`[PUT /api/missions/${id}/conducteurs] REQUETE RECUE`);
@@ -240,6 +239,7 @@ export const updateMissionConducteurs = async (req, res) => {
       id,
       affectationsVehicules,
       oaId,
+      user
     );
 
     console.log(`[PUT /api/missions/${id}/conducteurs] SAUVEGARDE REUSSIE`);

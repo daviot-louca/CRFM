@@ -18,7 +18,7 @@ router.get(
 );
 router.post("/",createSection);
 router.get(
-  "/me",authJwt,checkRole("administrateur"),
+  "/me",authJwt,checkRole("administrateur","OA","SOA"),
   getSectionMe,
 );
 router.get("/:id",authJwt,checkRole("administrateur"),getSectionById);
