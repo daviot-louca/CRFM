@@ -111,3 +111,19 @@ export const updateMissionConducteurs = async (
 
   return response.data;
 };
+
+export const updateMissionCommandement = async (
+  missionId,
+  oaId,
+  groupesCommandement,
+) => {
+  const response = await apiClient.put(
+    `/missions/${missionId}/commandement`,
+    {
+      oaId,
+      groupesCommandement,
+    },
+  );
+
+  return response.data;
+};

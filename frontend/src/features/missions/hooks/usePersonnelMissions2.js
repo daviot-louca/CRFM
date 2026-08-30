@@ -17,7 +17,7 @@ export function usePersonnelMissions2(compagniesSelectionneesIds, sectionsSelect
   } = useMission();
   const [recherchePersonnel, setRecherchePersonnel] = useState("");
   const [chargementUsers, setChargementUsers] = useState({});
-
+  const [tousLesUsers, setTousLesUsers] = useState([]);
   const sectionIdsSelectionnees = useMemo(
     () =>
       Object.values(sectionsSelectionnees || {})
@@ -67,7 +67,19 @@ export function usePersonnelMissions2(compagniesSelectionneesIds, sectionsSelect
         });
         return next;
       });
-
+      setTousLesUsers((prev) => {
+        const map = new Map(
+          prev.map((user) => [user.id, user])
+        );
+      
+        results.forEach(({ users }) => {
+          users.forEach((user) => {
+            map.set(user.id, user);
+          });
+        });
+      
+        return Array.from(map.values());
+      });
       setChargementUsers((prev) => ({
         ...prev,
         ...Object.fromEntries(results.map(({ sectionId }) => [sectionId, false])),
@@ -79,7 +91,7 @@ export function usePersonnelMissions2(compagniesSelectionneesIds, sectionsSelect
     return () => {
       isMounted = false;
     };
-  }, [sectionIdsSelectionnees, usersParSection]);
+  }, [sectionIdsSelectionnees]);
 
   // Toggle a user's selection in a section
   function toggleUser(sectionId, userId) {
@@ -119,18 +131,16 @@ export function usePersonnelMissions2(compagniesSelectionneesIds, sectionsSelect
 
   // Get user object by id from loaded users
   function getUser(userId) {
-    for (const users of Object.values(usersParSection)) {
-      const found = users.find((u) => u.id === userId);
-      if (found) return found;
-    }
-    return undefined;
+    return tousLesUsers.find(
+      (user) => user.id === userId
+    );
   }
 
   function getUsersSection(sectionId) {
     return (usersParSection[sectionId] || []).map((user) => user.id);
   }
-
   return {
+    tousLesUsers,
     usersParSection,
     usersSelectionnes,
     recherchePersonnel,

@@ -19,18 +19,9 @@ module.exports = {
       type: "unique",
       name: "missions_vehicules_mission_id_vehicule_id_key",
     });
-    await queryInterface.addConstraint("missions_equipages", {
-      fields: ["missionVehiculeId", "userId"],
-      type: "unique",
-      name: "missions_equipages_mission_vehicule_id_user_id_key",
-    });
   },
 
   async down(queryInterface) {
-    await queryInterface.removeConstraint(
-      "missions_equipages",
-      "missions_equipages_mission_vehicule_id_user_id_key",
-    );
     await queryInterface.removeConstraint(
       "missions_vehicules",
       "missions_vehicules_mission_id_vehicule_id_key",

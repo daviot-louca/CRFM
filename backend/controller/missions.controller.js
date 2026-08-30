@@ -6,6 +6,7 @@ import {
   updateMissionGroupesService,
   updateMissionVehiculesService,
   updateMissionConducteursService,
+  updateMissionCommandementService,
   deleteMissionService,
 } from "../services/missions.service.js";
 
@@ -253,6 +254,58 @@ export const updateMissionConducteurs = async (req, res) => {
 
     return res.status(error.statusCode || 500).json({
       message: error.message || "Erreur lors de la sauvegarde des conducteurs.",
+    });
+  }
+};
+
+export const updateMissionCommandement = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = req.user;
+
+    const {
+      oaId = null,
+      groupesCommandement = [],
+    } = req.body;
+
+    console.log(
+      `[PUT /api/missions/${id}/commandement] REQUETE RECUE`,
+    );
+
+    console.log(
+      `[PUT /api/missions/${id}/commandement] BODY:`,
+      JSON.stringify(req.body, null, 2),
+    );
+
+    const mission =
+      await updateMissionCommandementService(
+        id,
+        oaId,
+        groupesCommandement,
+        user,
+      );
+
+    console.log(
+      `[PUT /api/missions/${id}/commandement] SAUVEGARDE REUSSIE`,
+    );
+
+    return res.status(200).json({
+      message:
+        "Le commandement de la mission a été sauvegardé.",
+      mission,
+    });
+  } catch (error) {
+    console.error(
+      "[PUT /api/missions/:id/commandement] ERREUR:",
+      error,
+    );
+
+    return res.status(
+      error.statusCode || 500,
+    ).json({
+      message:
+        error.message ||
+        "Erreur lors de la sauvegarde du commandement.",
     });
   }
 };

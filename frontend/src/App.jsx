@@ -4,7 +4,8 @@ import CompagniesAdmin from "./features/compagnies/pages/CompagniesAdmin"
 import Creermissions1Admin from "./features/missions/pages/Creermissions1Admin"
 import CreerMissions2Admin from "./features/missions/pages/CreerMissions2Admin"
 import CreerMissions3Admin from "./features/missions/pages/CreerMissions3Admin"
-import CreerMission4Admin from "./features/missions/pages/CreerMissions4Admin"
+import CreerMissions4Admin from "./features/missions/pages/CreerMissions4Admin"
+import CreerMissions5Admin from "./features/missions/pages/CreerMissions5Admin"
 import VisuelMissionsAdmin from "./features/missions/pages/VisuelMissionsAdmin"
 import MissionDetail from "./features/missions/pages/missionsDetail"
 
@@ -72,7 +73,11 @@ function App() {
             />
             <Route
               path="/admin/creer-missions-4"
-              element={<CreerMission4Admin />}
+              element={<CreerMissions4Admin />}
+            />
+            <Route
+              path="/admin/creer-missions-5"
+              element={<CreerMissions5Admin />}
             />
           </Route>
         </Route>

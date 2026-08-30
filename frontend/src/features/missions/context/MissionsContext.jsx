@@ -36,6 +36,8 @@ const createEmptyDraft = () => ({
   vehiculesSelectionnes: [],
 
   sectionsIgnorees: [],
+
+  oaId: null,
 });
 
 const asArray = (value) => {
@@ -123,6 +125,11 @@ const serializeDraft = (draft) => ({
   informations:
     draft.informations ?? {},
 
+  oaId:
+    draft.oaId ??
+    draft.informations?.oaId ??
+    null,
+
   compagniesSelectionneesIds:
     asArray(
       draft.compagniesSelectionneesIds,
@@ -167,6 +174,11 @@ const deserializeDraft = (
     asArray(
       draft?.compagniesSelectionneesIds,
     ),
+
+  oaId:
+    draft?.oaId ??
+    draft?.informations?.oaId ??
+    null,
 
   sectionsSelectionnees:
     deserializeSectionsSelectionnees(
@@ -255,7 +267,9 @@ export function MissionsProvider({
 
   const [searchParams] =
     useSearchParams();
+
   const location = useLocation();
+
   const missionIdFromUrl =
     searchParams.get("missionId");
 
@@ -284,6 +298,13 @@ export function MissionsProvider({
   const [informations, setInformations] =
     useState(
       initialDraft.informations,
+    );
+
+  const [oaId, setOaId] =
+    useState(
+      initialDraft.oaId ??
+      initialDraft.informations?.oaId ??
+      null,
     );
 
   /*
@@ -331,6 +352,28 @@ export function MissionsProvider({
   ] = useState(
     initialDraft.usersSelectionnes,
   );
+
+  /*
+   * UTILISATEURS COMPLETS DE LA MISSION
+   *
+   * IMPORTANT :
+   *
+   * usersSelectionnes contient seulement
+   * les IDs.
+   *
+   * usersMission contient les vrais objets
+   * User récupérés depuis mission.missionsUsers.
+   *
+   * C'est cette liste qui permet à l'étape 5
+   * d'accéder à :
+   *
+   * user.role.roleName
+   */
+
+  const [
+    usersMission,
+    setUsersMission,
+  ] = useState([]);
 
   /*
    * ==========================================
@@ -445,9 +488,9 @@ export function MissionsProvider({
         }
 
         /*
- 
+         * ==========================================
          * ID
- 
+         * ==========================================
          */
 
         setMissionId(
@@ -455,9 +498,9 @@ export function MissionsProvider({
         );
 
         /*
- 
+         * ==========================================
          * ÉTAPE 1
- 
+         * ==========================================
          */
 
         setInformations({
@@ -495,10 +538,16 @@ export function MissionsProvider({
             null,
         });
 
+        setOaId(
+          mission.oaId ??
+          mission.oa?.id ??
+          null,
+        );
+
         /*
- 
+         * ==========================================
          * ÉTAPE 2
- 
+         * ==========================================
          */
 
         const groupes =
@@ -512,15 +561,40 @@ export function MissionsProvider({
         );
 
         /*
- 
+         * ==========================================
          * PERSONNEL + SECTIONS
- 
+         * ==========================================
          */
 
         const missionsUsers =
           asArray(
             mission.missionsUsers,
           );
+
+        /*
+         * ==========================================
+         * NOUVEAU :
+         * CONSERVATION DES VRAIS USERS
+         * ==========================================
+         */
+
+        const usersMissionComplets =
+          missionsUsers
+            .map(
+              (missionUser) =>
+                missionUser?.user ??
+                null,
+            )
+            .filter(Boolean);
+
+        setUsersMission(
+          usersMissionComplets,
+        );
+
+        console.log(
+          "[MISSIONS CONTEXT] Utilisateurs complets de la mission :",
+          usersMissionComplets,
+        );
 
         const usersParSection =
           {};
@@ -576,7 +650,7 @@ export function MissionsProvider({
             ) {
               if (
                 !usersParSection[
-                sectionId
+                  sectionId
                 ]
               ) {
                 usersParSection[
@@ -598,7 +672,7 @@ export function MissionsProvider({
             ) {
               if (
                 !sectionsParCompagnie[
-                compagnieId
+                  compagnieId
                 ]
               ) {
                 sectionsParCompagnie[
@@ -641,9 +715,9 @@ export function MissionsProvider({
                 sectionId,
                 userIds,
               ]) => [
-                  sectionId,
-                  [...userIds],
-                ],
+                sectionId,
+                [...userIds],
+              ],
             ),
           ),
         );
@@ -654,19 +728,9 @@ export function MissionsProvider({
         );
 
         /*
- 
+         * ==========================================
          * ÉTAPE 3 + 4
- 
-         *
-         * IMPORTANT :
-         *
-         * mission.vehicules contient les véhicules.
-         *
-         * mission.missionsVehicules contient les relations
-         * entre la mission et les véhicules.
-         *
-         * C'est cette seconde source qui contient notamment
-         * le véritable missionGroupeId.
+         * ==========================================
          */
 
         const vehiculesApi =
@@ -700,14 +764,14 @@ export function MissionsProvider({
               (
                 missionVehicule,
               ) => [
-                  missionVehicule?.vehiculeId ??
-                  missionVehicule
-                    ?.vehicule
-                    ?.id ??
-                  missionVehicule?.id,
+                missionVehicule?.vehiculeId ??
+                missionVehicule
+                  ?.vehicule
+                  ?.id ??
+                missionVehicule?.id,
 
-                  missionVehicule,
-                ],
+                missionVehicule,
+              ],
             ),
           );
 
@@ -733,10 +797,6 @@ export function MissionsProvider({
                   vehiculeId,
                 );
 
-              /*
-               * Récupération du vrai groupe.
-               */
-
               const groupeIdApi =
                 missionVehicule
                   ?.missionGroupeId ??
@@ -747,10 +807,6 @@ export function MissionsProvider({
                 vehicule
                   ?.groupeId ??
                 null;
-
-              /*
-               * Recherche du groupe correspondant.
-               */
 
               const groupeCorrespondant =
                 groupes.find(
@@ -780,65 +836,60 @@ export function MissionsProvider({
                       .toLowerCase(),
                 );
 
-              /*
-               * Construction de l'objet utilisé
-               * par les étapes 3 et 4.
-               */
-
               const vehiculeNormalise =
-              {
-                vehiculeId,
+                {
+                  vehiculeId,
 
-                compagnieId:
-                  missionVehicule
-                    ?.compagnieId ??
-                  vehicule
-                    ?.compagnieId ??
-                  vehicule
-                    ?.compagnie
-                    ?.id ??
-                  null,
-
-                groupeId:
-                  groupeIdApi ??
-                  groupeCorrespondant
-                    ?.id ??
-                  null,
-
-                groupeNom:
-                  typeof vehicule
-                    ?.groupe ===
-                    "string"
-                    ? vehicule.groupe
-                    : vehicule
-                      ?.groupe
-                      ?.nom ??
-                    groupeCorrespondant
-                      ?.nom ??
+                  compagnieId:
+                    missionVehicule
+                      ?.compagnieId ??
+                    vehicule
+                      ?.compagnieId ??
+                    vehicule
+                      ?.compagnie
+                      ?.id ??
                     null,
 
-                sectionId:
-                  missionVehicule
-                    ?.sectionId ??
-                  vehicule
-                    ?.sectionId ??
-                  vehicule
-                    ?.section
-                    ?.id ??
-                  null,
+                  groupeId:
+                    groupeIdApi ??
+                    groupeCorrespondant
+                      ?.id ??
+                    null,
 
-                conducteurId:
-                  missionVehicule
-                    ?.conducteurId ??
-                  vehicule
-                    ?.conducteurId ??
-                  vehicule
-                    ?.conducteur
-                    ?.id ??
-                  null,
+                  groupeNom:
+                    typeof vehicule
+                      ?.groupe ===
+                      "string"
+                      ? vehicule.groupe
+                      : vehicule
+                        ?.groupe
+                        ?.nom ??
+                      groupeCorrespondant
+                        ?.nom ??
+                      null,
 
-                vehicule,
-              };
+                  sectionId:
+                    missionVehicule
+                      ?.sectionId ??
+                    vehicule
+                      ?.sectionId ??
+                    vehicule
+                      ?.section
+                      ?.id ??
+                    null,
+
+                  conducteurId:
+                    missionVehicule
+                      ?.conducteurId ??
+                    vehicule
+                      ?.conducteurId ??
+                    vehicule
+                      ?.conducteur
+                      ?.id ??
+                    null,
+
+                  vehicule,
+                };
 
               console.log(
                 "[MISSIONS CONTEXT] Véhicule restauré :",
@@ -859,14 +910,6 @@ export function MissionsProvider({
             },
           );
 
-        /*
-         * IMPORTANT :
-         *
-         * On conserve les véhicules dans le contexte
-         * même si certaines informations de relation
-         * sont nulles.
-         */
-
         setVehiculesSelectionnes(
           vehicules,
         );
@@ -877,9 +920,9 @@ export function MissionsProvider({
         );
 
         /*
- 
+         * ==========================================
          * COMPAGNIES
- 
+         * ==========================================
          */
 
         const compagniesIds =
@@ -899,9 +942,9 @@ export function MissionsProvider({
         );
 
         /*
- 
+         * ==========================================
          * FIN CHARGEMENT
- 
+         * ==========================================
          */
 
         console.log(
@@ -929,7 +972,7 @@ export function MissionsProvider({
     chargerMission();
   }, [
     missionIdFromUrl,
-    location.pathname
+    location.pathname,
   ]);
 
   /*
@@ -943,6 +986,8 @@ export function MissionsProvider({
       missionId,
 
       informations,
+
+      oaId,
 
       compagniesSelectionneesIds,
 
@@ -971,6 +1016,8 @@ export function MissionsProvider({
 
     groupesManuels,
 
+    oaId,
+
     vehiculesSelectionnes,
   ]);
 
@@ -994,6 +1041,10 @@ export function MissionsProvider({
           emptyDraft.informations,
         );
 
+        setOaId(
+          emptyDraft.oaId,
+        );
+
         setCompagniesSelectionneesIds(
           emptyDraft
             .compagniesSelectionneesIds,
@@ -1010,6 +1061,8 @@ export function MissionsProvider({
         setUsersSelectionnes(
           emptyDraft.usersSelectionnes,
         );
+
+        setUsersMission([]);
 
         setGroupesManuels(
           emptyDraft.groupesManuels,
@@ -1039,6 +1092,10 @@ export function MissionsProvider({
          */
 
         missionId,
+
+        oaId,
+
+        setOaId,
 
         setMissionId,
 
@@ -1078,6 +1135,8 @@ export function MissionsProvider({
 
         setUsersSelectionnes,
 
+        usersMission,
+
         /*
          * Groupes
          */
@@ -1105,6 +1164,8 @@ export function MissionsProvider({
 
         informations,
 
+        oaId,
+
         compagniesSelectionneesIds,
 
         sectionsSelectionnees,
@@ -1112,6 +1173,8 @@ export function MissionsProvider({
         sectionsIgnorees,
 
         usersSelectionnes,
+
+        usersMission,
 
         groupesManuels,
 

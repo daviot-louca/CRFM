@@ -1,0 +1,48 @@
+Date : 2026-08-29 16:09:47
+Directory : /Users/loucadaviot/Desktop/crfm
+Total : 12 files,  540 codes, 43 comments, 156 blanks, all 739 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| JavaScript     |         10 |        521 |         40 |        152 |        713 |
+| JavaScript JSX |          2 |         19 |          3 |          4 |         26 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                  | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                     |         12 |        540 |         43 |        156 |        739 |
+| backend                                                                                               |         10 |        521 |         40 |        152 |        713 |
+| backend/migrations                                                                                    |          2 |         53 |          1 |          9 |         63 |
+| backend/models                                                                                        |          2 |         57 |          0 |          9 |         66 |
+| backend/services                                                                                      |          6 |        411 |         39 |        134 |        584 |
+| backend/services (Files)                                                                              |          5 |        175 |          8 |         51 |        234 |
+| backend/services/validation                                                                           |          1 |        236 |         31 |         83 |        350 |
+| frontend                                                                                              |          2 |         19 |          3 |          4 |         26 |
+| frontend/src                                                                                          |          2 |         19 |          3 |          4 |         26 |
+| frontend/src/features                                                                                 |          2 |         19 |          3 |          4 |         26 |
+| frontend/src/features/missions                                                                        |          2 |         19 |          3 |          4 |         26 |
+| frontend/src/features/missions/pages                                                                  |          2 |         19 |          3 |          4 |         26 |
++-------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                              | language       | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/loucadaviot/Desktop/crfm/backend/migrations/20260722110000-align-relations-and-constraints.cjs | JavaScript     |         -9 |          0 |          0 |         -9 |
+| /Users/loucadaviot/Desktop/crfm/backend/migrations/20260828130101-create-mission-oa.cjs               | JavaScript     |         62 |          1 |          9 |         72 |
+| /Users/loucadaviot/Desktop/crfm/backend/models/index.js                                               | JavaScript     |         23 |          0 |          5 |         28 |
+| /Users/loucadaviot/Desktop/crfm/backend/models/missionOA.model.js                                     | JavaScript     |         34 |          0 |          4 |         38 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/missionUser.service.js                               | JavaScript     |         70 |          0 |         10 |         80 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/missions.service.js                                  | JavaScript     |       -977 |       -219 |       -338 |     -1,534 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/missionsConducteurs.service.js                       | JavaScript     |        409 |         70 |        142 |        621 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/missionsGroupes.service.js                           | JavaScript     |        386 |         69 |        109 |        564 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/missionsVehicules.service.js                         | JavaScript     |        287 |         88 |        128 |        503 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/validation/missions-commandement.service.js          | JavaScript     |        236 |         31 |         83 |        350 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions4Admin.jsx          | JavaScript JSX |         10 |          3 |          2 |         15 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/missionsDetail.jsx               | JavaScript JSX |          9 |          0 |          2 |         11 |
+| Total                                                                                                 |                |        540 |         43 |        156 |        739 |
++-------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

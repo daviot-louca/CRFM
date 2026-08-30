@@ -29,7 +29,7 @@ export default function MissionDetail() {
         if (isActive) {
           setError(
             err.message ||
-              "Erreur lors du chargement de la mission"
+            "Erreur lors du chargement de la mission"
           );
         }
       } finally {
@@ -157,13 +157,12 @@ export default function MissionDetail() {
   }
 
   const oaResponsable = mission?.oa
-    ? `${mission.oa.grade || ""} ${
-        mission.oa.lastName ||
-        mission.oa.nom ||
-        ""
+    ? `${mission.oa.grade || ""} ${mission.oa.lastName ||
+      mission.oa.nom ||
+      ""
       }`.trim()
     : mission?.oaResponsable ||
-      "N/A";
+    "N/A";
 
   const vehiculesMission =
     mission?.vehicules ?? [];
@@ -187,51 +186,70 @@ export default function MissionDetail() {
   const etape3Terminee =
     vehiculesMission.length > 0;
 
-  const etape4Terminee =
-    etape3Terminee &&
+  const conducteursTousAffectes =
+    vehiculesMission.length > 0 &&
     vehiculesMission.every(
       (vehicule) =>
         Boolean(
+          vehicule?.conducteurId ??
+          vehicule?.conducteur?.id ??
           vehicule?.conducteur
         )
     );
+  const soaSelectionne =
+    groupesMission.length > 0 &&
+    groupesMission.every(
+      (groupe) =>
+        Boolean(
+          groupe?.soaId ??
+          groupe?.soa?.id ??
+          groupe?.soa
+        )
+    );
+
+  const etape4Terminee = soaSelectionne;
+
+  const etape5Terminee =
+    soaSelectionne &&
+    conducteursTousAffectes;
 
   const etapes = [
     {
       numero: 1,
-      titre:
-        "Informations générales",
+      titre: "Informations générales",
       description:
         "Les informations principales de la mission sont renseignées.",
-      terminee:
-        etape1Terminee,
+      terminee: etape1Terminee,
     },
     {
       numero: 2,
-      titre:
-        "Affectation des groupes",
+      titre: "Affectation des groupes",
       description:
         "Les groupes et les militaires concernés sont définis.",
-      terminee:
-        etape2Terminee,
+      terminee: etape2Terminee,
     },
     {
       numero: 3,
-      titre:
-        "Affectation des véhicules",
+      titre: "Affectation des véhicules",
       description:
         "Les véhicules sont affectés aux différents groupes.",
-      terminee:
-        etape3Terminee,
+      terminee: etape3Terminee,
     },
     {
       numero: 4,
-      titre:
-        "Affectation des conducteurs",
+      titre: "Affectation du SOA",
       description:
-        "Chaque véhicule dispose de son conducteur.",
-      terminee:
-        etape4Terminee,
+        "Le SOA responsable de chaque groupe est défini.",
+      terminee: etape4Terminee,
+    },
+    {
+      numero: 5,
+      titre: "Affectation des conducteurs",
+      description:
+        conducteursTousAffectes
+          ? "Chaque véhicule dispose de son conducteur."
+          : "Les conducteurs restent à affecter.",
+      terminee: etape5Terminee,
     },
   ];
 
@@ -243,7 +261,7 @@ export default function MissionDetail() {
   const progression = Math.round(
     (nombreEtapesTerminees /
       etapes.length) *
-      100
+    100
   );
 
   const prochaineEtape =
@@ -271,7 +289,7 @@ export default function MissionDetail() {
 
       const route =
         routesEtapes[
-          prochaineEtape.numero
+        prochaineEtape.numero
         ];
 
       if (route) {
@@ -298,12 +316,11 @@ export default function MissionDetail() {
             <div className="flex flex-wrap items-center gap-3">
 
               <span
-                className={`inline-block rounded-full px-5 py-2 text-sm font-semibold ${
-                  statusColors[
-                    mission.StatutMission
+                className={`inline-block rounded-full px-5 py-2 text-sm font-semibold ${statusColors[
+                  mission.StatutMission
                   ] ||
                   "bg-gray-200 text-gray-700"
-                }`}
+                  }`}
               >
                 {mission.StatutMission}
               </span>
@@ -451,22 +468,20 @@ export default function MissionDetail() {
 
                     {!derniere && (
                       <div
-                        className={`absolute left-3.75 top-8 h-full w-0.5 ${
-                          etape.terminee
+                        className={`absolute left-3.75 top-8 h-full w-0.5 ${etape.terminee
                             ? "bg-blue-600"
                             : "bg-slate-200"
-                        }`}
+                          }`}
                       />
                     )}
 
                     {/* Cercle */}
 
                     <div
-                      className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${
-                        etape.terminee
+                      className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${etape.terminee
                           ? "border-blue-600 bg-blue-600 text-white"
                           : "border-slate-300 bg-white text-slate-400"
-                      }`}
+                        }`}
                     >
                       {etape.terminee
                         ? "✓"
@@ -476,11 +491,10 @@ export default function MissionDetail() {
                     {/* Contenu */}
 
                     <div
-                      className={`mb-8 flex-1 rounded-xl border p-4 ${
-                        etape.terminee
+                      className={`mb-8 flex-1 rounded-xl border p-4 ${etape.terminee
                           ? "border-blue-100 bg-blue-50"
                           : "border-slate-200 bg-slate-50"
-                      }`}
+                        }`}
                     >
 
                       <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
@@ -488,11 +502,10 @@ export default function MissionDetail() {
                         <div>
 
                           <h3
-                            className={`font-bold ${
-                              etape.terminee
+                            className={`font-bold ${etape.terminee
                                 ? "text-slate-900"
                                 : "text-slate-500"
-                            }`}
+                              }`}
                           >
                             Étape{" "}
                             {etape.numero} —{" "}
@@ -508,11 +521,10 @@ export default function MissionDetail() {
                         </div>
 
                         <span
-                          className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${
-                            etape.terminee
+                          className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${etape.terminee
                               ? "bg-green-100 text-green-700"
                               : "bg-slate-200 text-slate-500"
-                          }`}
+                            }`}
                         >
                           {etape.terminee
                             ? "Terminée"
@@ -617,14 +629,13 @@ export default function MissionDetail() {
                 </p>
 
                 <span
-                  className={`mt-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${
-                    statusColors[
-                      mission
-                        ?.statistiques
-                        ?.statut
+                  className={`mt-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${statusColors[
+                    mission
+                      ?.statistiques
+                      ?.statut
                     ] ||
                     "bg-gray-200 text-gray-700"
-                  }`}
+                    }`}
                 >
                   {mission
                     ?.statistiques
@@ -954,7 +965,7 @@ export default function MissionDetail() {
               {vehiculesMission.length}{" "}
               véhicule
               {vehiculesMission.length >
-              1
+                1
                 ? "s"
                 : ""}
             </span>
@@ -962,7 +973,7 @@ export default function MissionDetail() {
           </div>
 
           {vehiculesMission.length ===
-          0 ? (
+            0 ? (
             <div className="rounded-2xl border border-gray-300 bg-white p-8 text-center shadow">
 
               <p className="text-sm text-gray-500">
@@ -1058,7 +1069,7 @@ export default function MissionDetail() {
 
                         {v.passagers
                           ?.length >
-                        0 ? (
+                          0 ? (
                           v.passagers.map(
                             (p, i) => (
                               <span
@@ -1066,11 +1077,11 @@ export default function MissionDetail() {
                                 className="inline-block rounded-full bg-gray-200 px-3 py-1 text-xs font-medium text-slate-700"
                               >
                                 {typeof p ===
-                                "string"
+                                  "string"
                                   ? p
                                   : getUserName(
-                                      p
-                                    )}
+                                    p
+                                  )}
                               </span>
                             )
                           )

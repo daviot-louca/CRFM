@@ -114,7 +114,7 @@ export default function CreerMissions2Admin() {
 
           <div className="mb-10 rounded-2xl border border-gray-200 bg-white px-6 py-6 shadow-sm">
 
-            <div className="mx-auto flex max-w-3xl items-center justify-between">
+            <div className="mx-auto flex max-w-4xl items-center justify-between">
 
               {/* Étape 1 */}
 
@@ -132,7 +132,7 @@ export default function CreerMissions2Admin() {
 
               {/* Trait */}
 
-              <div className="mx-2 h-0.5 w-16 bg-gray-200" />
+              <div className="mx-2 h-0.5 flex-1 bg-gray-200" />
 
               {/* Étape 2 */}
 
@@ -150,7 +150,7 @@ export default function CreerMissions2Admin() {
 
               {/* Trait */}
 
-              <div className="mx-2 h-0.5 w-16 bg-gray-200" />
+              <div className="mx-2 h-0.5 flex-1 bg-gray-200" />
 
               {/* Étape 3 */}
 
@@ -158,6 +158,24 @@ export default function CreerMissions2Admin() {
 
                 <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 font-bold text-gray-400">
                   3
+                </div>
+
+                <span className="mt-2 whitespace-nowrap text-xs font-semibold text-gray-400">
+                  Commandement
+                </span>
+
+              </div>
+
+              {/* Trait */}
+
+              <div className="mx-2 h-0.5 flex-1 bg-gray-200" />
+
+              {/* Étape 4 */}
+
+              <div className="flex flex-col items-center">
+
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 font-bold text-gray-400">
+                  4
                 </div>
 
                 <span className="mt-2 text-xs font-semibold text-gray-400">
@@ -168,18 +186,18 @@ export default function CreerMissions2Admin() {
 
               {/* Trait */}
 
-              <div className="mx-2 h-0.5 w-16 bg-gray-200" />
+              <div className="mx-2 h-0.5 flex-1 bg-gray-200" />
 
-              {/* Étape 4 */}
+              {/* Étape 5 */}
 
               <div className="flex flex-col items-center">
 
                 <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 font-bold text-gray-400">
-                  4
+                  5
                 </div>
 
                 <span className="mt-2 whitespace-nowrap text-xs font-semibold text-gray-400">
-                  Récapitulatif & validation
+                  Conducteurs
                 </span>
 
               </div>
@@ -298,11 +316,10 @@ export default function CreerMissions2Admin() {
               <button
                 type="button"
                 disabled={!peutContinuer}
-                className={`rounded-xl px-8 py-3 font-semibold text-white transition ${
-                  peutContinuer
+                className={`rounded-xl px-8 py-3 font-semibold text-white transition ${peutContinuer
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "cursor-not-allowed bg-slate-300"
-                }`}
+                  }`}
                 onClick={
                   handleContinuer
                 }

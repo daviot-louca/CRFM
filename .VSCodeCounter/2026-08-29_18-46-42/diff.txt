@@ -1,0 +1,62 @@
+Date : 2026-08-29 18:46:42
+Directory : /Users/loucadaviot/Desktop/crfm
+Total : 21 files,  1607 codes, 256 comments, 259 blanks, all 2122 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| JavaScript JSX |         14 |        894 |        128 |         87 |      1,109 |
+| JavaScript     |          7 |        713 |        128 |        172 |      1,013 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                              | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                 |         21 |      1,607 |        256 |        259 |      2,122 |
+| backend                                                                                                           |          4 |        225 |         28 |         52 |        305 |
+| backend/controller                                                                                                |          1 |         45 |          0 |          8 |         53 |
+| backend/routes                                                                                                    |          1 |         27 |          0 |          1 |         28 |
+| backend/services                                                                                                  |          2 |        153 |         28 |         43 |        224 |
+| frontend                                                                                                          |         17 |      1,382 |        228 |        207 |      1,817 |
+| frontend/src                                                                                                      |         17 |      1,382 |        228 |        207 |      1,817 |
+| frontend/src (Files)                                                                                              |          1 |          5 |          0 |          0 |          5 |
+| frontend/src/features                                                                                             |         16 |      1,377 |        228 |        207 |      1,812 |
+| frontend/src/features/missions                                                                                    |         16 |      1,377 |        228 |        207 |      1,812 |
+| frontend/src/features/missions/api                                                                                |          1 |         14 |          0 |          2 |         16 |
+| frontend/src/features/missions/components                                                                         |          8 |          0 |          0 |          0 |          0 |
+| frontend/src/features/missions/components/etape3                                                                  |          4 |       -333 |        -22 |        -22 |       -377 |
+| frontend/src/features/missions/components/etape4                                                                  |          4 |        333 |         22 |         22 |        377 |
+| frontend/src/features/missions/context                                                                            |          2 |         42 |          0 |         -3 |         39 |
+| frontend/src/features/missions/hooks                                                                              |          1 |        460 |        100 |        116 |        676 |
+| frontend/src/features/missions/pages                                                                              |          4 |        861 |        128 |         92 |      1,081 |
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                                          | language       | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/loucadaviot/Desktop/crfm/backend/controller/missions.controller.js                                         | JavaScript     |         45 |          0 |          8 |         53 |
+| /Users/loucadaviot/Desktop/crfm/backend/routes/missions.routes.js                                                 | JavaScript     |         27 |          0 |          1 |         28 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/missionUser.service.js                                           | JavaScript     |          8 |          0 |          1 |          9 |
+| /Users/loucadaviot/Desktop/crfm/backend/services/missions.service.js                                              | JavaScript     |        145 |         28 |         42 |        215 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/App.jsx                                                              | JavaScript JSX |          5 |          0 |          0 |          5 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/api/missions.api.js                                | JavaScript     |         14 |          0 |          2 |         16 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape3/Etapes3CompagnieVehicules.jsx    | JavaScript JSX |       -107 |          0 |        -13 |       -120 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape3/Etapes3Resume.jsx                | JavaScript JSX |        -37 |          0 |         -3 |        -40 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape3/Etapes3VehiculesDisponibles.jsx  | JavaScript JSX |       -100 |        -17 |         -2 |       -119 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape3/Etapes3VehiculesSelectionnes.jsx | JavaScript JSX |        -89 |         -5 |         -4 |        -98 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape4/Etapes4CompagnieVehicules.jsx    | JavaScript JSX |        107 |          0 |         13 |        120 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape4/Etapes4Resume.jsx                | JavaScript JSX |         37 |          0 |          3 |         40 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape4/Etapes4VehiculesDisponibles.jsx  | JavaScript JSX |        100 |         17 |          2 |        119 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape4/Etapes4VehiculesSelectionnes.jsx | JavaScript JSX |         89 |          5 |          4 |         98 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/context/MissionsContext.jsx                        | JavaScript JSX |         28 |          0 |         -5 |         23 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/context/MissionsContextValue.js                    | JavaScript     |         14 |          0 |          2 |         16 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/hooks/useMissionCommandement.js                    | JavaScript     |        460 |        100 |        116 |        676 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions2Admin.jsx                      | JavaScript JSX |          8 |          2 |          7 |         17 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions3Admin.jsx                      | JavaScript JSX |        904 |         58 |         75 |      1,037 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions4Admin.jsx                      | JavaScript JSX |       -661 |        -26 |       -128 |       -815 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions5Admin.jsx                      | JavaScript JSX |        610 |         94 |        138 |        842 |
+| Total                                                                                                             |                |      1,607 |        256 |        259 |      2,122 |
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

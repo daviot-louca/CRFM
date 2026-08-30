@@ -4,6 +4,7 @@ import MissionsGroupes from "../models/missionsGroupes.model.js";
 import MissionsUsers from "../models/missionsUsers.model.js";
 import Section from "../models/sections.model.js";
 import User from "../models/user.model.js";
+import Role from "../models/roles.model.js"
 
 export const getMissionsUsersService = async () => {
   return await MissionsUsers.findAll({
@@ -204,6 +205,13 @@ export const getMissionUsersByGroupService = async (missionGroupeId) => {
         model: User,
         as: "user",
         attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Role,
+            as: "role",
+            attributes: ["id", "roleName"],
+          },
+        ],
       },
       {
         model: Section,
@@ -247,4 +255,85 @@ export const removeMissionUserFromGroupService = async (id) => {
   await missionUser.update({ missionGroupeId: null });
 
   return missionUser;
+};
+
+export const createMissionUsers = async (
+  missionId,
+  userIds = [],
+  groupesMission = [],
+  groupeIdMap = new Map(),
+  usersById = new Map(),
+  transaction,
+) => {
+  if (!Array.isArray(userIds) || userIds.length === 0) {
+    return [];
+  }
+
+  const sectionParUtilisateur = new Map();
+  const groupeParUtilisateur = new Map();
+
+  groupesMission.forEach((groupe, index) => {
+    if (!Array.isArray(groupe.userIds)) {
+      return;
+    }
+
+    const missionGroupeId =
+      groupeIdMap.get(groupe.id) ??
+      groupeIdMap.get(`index:${index}`) ??
+      null;
+
+    groupe.userIds.forEach((userId) => {
+      if (!sectionParUtilisateur.has(userId)) {
+        sectionParUtilisateur.set(
+          userId,
+          groupe.sectionId ??
+            usersById.get(userId)?.sectionId ??
+            null,
+        );
+      }
+
+      groupeParUtilisateur.set(
+        userId,
+        missionGroupeId,
+      );
+    });
+  });
+
+  const sectionKey = Object.prototype.hasOwnProperty.call(
+    MissionsUsers.rawAttributes,
+    "sectionId",
+  )
+    ? "sectionId"
+    : Object.keys(
+        MissionsUsers.rawAttributes,
+      ).find((key) =>
+        key.toLowerCase().includes("section"),
+      );
+
+  const lignesMissionUsers = userIds.map(
+    (userId) => {
+      const ligne = {
+        missionId,
+        userId,
+        missionGroupeId:
+          groupeParUtilisateur.get(userId) ??
+          null,
+      };
+
+      if (sectionKey) {
+        ligne[sectionKey] =
+          sectionParUtilisateur.get(userId) ??
+          null;
+      }
+
+      return ligne;
+    },
+  );
+
+  return MissionsUsers.bulkCreate(
+    lignesMissionUsers,
+    {
+      transaction,
+    },
+  );
 };

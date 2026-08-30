@@ -14,6 +14,7 @@ import UserToken from "./userToken.model.js";
 import Vehicule from "./vehicule.model.js";
 import VehiculeType from "./vehicules-types.model.js";
 import Compagnie from "./compagnie.model.js";
+import MissionOA from "./missionOA.model.js";
 
 const db = {
   Sequelize,
@@ -24,6 +25,7 @@ const db = {
   MissionsVehicule,
   MissionsVehiculesPlein,
   MissionsVehiculesReleve,
+  MissionOA,
   Role,
   Section,
   User,
@@ -151,6 +153,31 @@ MissionsGroupes.belongsTo(Mission, {
   foreignKey: "missionId",
   as: "mission",
 });
+
+Mission.hasMany(MissionOA, {
+  foreignKey: "missionId",
+  as: "missionsOA",
+  onDelete: "CASCADE",
+});
+
+MissionOA.belongsTo(Mission, {
+  foreignKey: "missionId",
+  as: "mission",
+  onDelete: "CASCADE",
+});
+
+User.hasMany(MissionOA, {
+  foreignKey: "oaId",
+  as: "missionsOA",
+  onDelete: "CASCADE",
+});
+
+MissionOA.belongsTo(User, {
+  foreignKey: "oaId",
+  as: "oa",
+  onDelete: "CASCADE",
+});
+
 User.hasMany(MissionsUsers, {
   foreignKey: "userId",
   as: "missionsUsers",
@@ -295,6 +322,7 @@ export {
   sequelize,
   Mission,
   MissionsGroupes,
+  MissionOA,
   MissionsUsers,
   MissionsVehicule,
   MissionsVehiculesPlein,

@@ -8,12 +8,54 @@ import { useMission } from "../context/useMission";
 export function useMissions2() {
   const mission = useMission();
 
-  const compagnies = useCompagniesMissions2();
+  /*
+   * ==========================================
+   * UTILISATEURS DE LA MISSION
+   * ==========================================
+   *
+   * Le contexte contient directement les
+   * utilisateurs complets dans usersMission.
+   *
+   * Si usersMission n'est pas encore exposé,
+   * on récupère les users depuis missionsUsers.
+   */
 
-  const personnel = usePersonnelMissions2(
-    compagnies.compagniesSelectionneesIds,
-    compagnies.sectionsSelectionnees,
-  );
+  const usersMission = Array.isArray(
+    mission?.usersMission,
+  )
+    ? mission.usersMission
+    : Array.isArray(
+        mission?.missionsUsers,
+      )
+      ? mission.missionsUsers
+          .map(
+            (missionUser) =>
+              missionUser?.user ??
+              null,
+          )
+          .filter(Boolean)
+      : [];
+
+  /*
+   * ==========================================
+   * COMPAGNIES
+   * ==========================================
+   */
+
+  const compagnies =
+    useCompagniesMissions2();
+
+  /*
+   * ==========================================
+   * PERSONNEL
+   * ==========================================
+   */
+
+  const personnel =
+    usePersonnelMissions2(
+      compagnies.compagniesSelectionneesIds,
+      compagnies.sectionsSelectionnees,
+    );
 
   /*
    * ==========================================
@@ -23,16 +65,19 @@ export function useMissions2() {
 
   const sectionsSelectionneesGroupes =
     Object.entries(
-      compagnies.sectionsSelectionnees || {},
+      compagnies.sectionsSelectionnees ||
+        {},
     ).flatMap(
       ([compagnieId, sections]) =>
-        [...sections].map((section) =>
-          typeof section === "object"
-            ? section
-            : {
-                id: section,
-                compagnieId,
-              },
+        [...sections].map(
+          (section) =>
+            typeof section ===
+            "object"
+              ? section
+              : {
+                  id: section,
+                  compagnieId,
+                },
         ),
     );
 
@@ -42,30 +87,120 @@ export function useMissions2() {
    * ==========================================
    */
 
-  const groupes = useGroupesMissions2({
-    usersSelectionnesIds:
-      personnel.tousUsersSelectionnesIds,
+  const groupes =
+    useGroupesMissions2({
+      usersSelectionnesIds:
+        personnel.tousUsersSelectionnesIds,
 
-    sectionsSelectionnees:
-      sectionsSelectionneesGroupes,
+      sectionsSelectionnees:
+        sectionsSelectionneesGroupes,
 
-    getUsersSection:
-      personnel.getUsersSection,
-  });
+      getUsersSection:
+        personnel.getUsersSection,
+    });
 
   /*
    * ==========================================
    * UTILISATEURS DISPONIBLES
    * ==========================================
+   *
+   * Les utilisateurs sont déjà ceux affectés
+   * à la mission.
+   *
+   * Aucun filtrage par usersParSection.
    */
 
   const usersDisponibles =
-    personnel.tousUsersSelectionnesIds
-      .map((userId) =>
-        personnel.getUser(userId),
-      )
-      .filter(Boolean);
+    usersMission;
 
+  /*
+   * ==========================================
+   * CONDUCTEURS
+   * ==========================================
+   *
+   * Peuvent conduire :
+   *
+   * - CONDUCTEUR
+   * - SOA
+   * - OA
+   *
+   * On accepte role.roleName mais aussi
+   * roleName directement si l'API renvoie
+   * cette forme.
+   */
+
+  const conducteurs =
+    usersDisponibles.filter(
+      (user) => {
+        const roleName =
+          String(
+            user?.role?.roleName ??
+              user?.roleName ??
+              "",
+          )
+            .trim()
+            .toUpperCase();
+
+        return (
+          roleName ===
+            "CONDUCTEUR" ||
+          roleName === "SOA" ||
+          roleName === "OA"
+        );
+      },
+    );
+
+  console.log(
+    "[useMissions2] usersMission :",
+    usersMission,
+  );
+
+  console.log(
+    "[useMissions2] usersDisponibles :",
+    usersDisponibles,
+  );
+
+  console.log(
+    "[useMissions2] conducteurs :",
+    conducteurs,
+  );
+
+  console.log(
+    "[ÉTAPE 5] PREMIER USER :",
+    usersMission?.[0],
+  );
+
+  console.log(
+    "[ÉTAPE 5] PREMIER ROLE :",
+    usersMission?.[0]?.role,
+  );
+
+  console.log(
+    "[ÉTAPE 5] PREMIER ROLE NAME :",
+    usersMission?.[0]?.role?.roleName ??
+      usersMission?.[0]?.roleName,
+  );
+  console.log(
+    "[ÉTAPE 5] PREMIER USER KEYS :",
+    usersMission?.[0]
+      ? Object.keys(usersMission[0])
+      : [],
+  );
+  
+  console.log(
+    "[ÉTAPE 5] PREMIER USER JSON :",
+    usersMission?.[0]
+      ? JSON.parse(JSON.stringify(usersMission[0]))
+      : null,
+  );console.log(
+    "[ÉTAPE 5] KEYS PREMIER USER :",
+    Object.keys(usersMission?.[0] ?? {})
+  );
+  
+  console.log(
+    "[ÉTAPE 5] PREMIER USER COMPLET :",
+    usersMission?.[0]
+  );
   /*
    * ==========================================
    * VÉHICULES
@@ -73,7 +208,8 @@ export function useMissions2() {
    */
 
   const {
-    vehicules: listeVehicules = [],
+    vehicules:
+      listeVehicules = [],
   } = useVehicules();
 
   const vehicules =
@@ -88,17 +224,21 @@ export function useMissions2() {
    */
 
   const compagniesSelectionneesGroupes =
-    (groupes.groupes ?? []).map(
+    (
+      groupes.groupes ?? []
+    ).map(
       (groupe, index) => {
         const compagnieId =
           groupe.compagnieId ??
-          groupe.section?.compagnieId ??
+          groupe.section
+            ?.compagnieId ??
           null;
 
         const compagnie =
           compagnies.compagnies.find(
             (item) =>
-              item.id === compagnieId,
+              item.id ===
+              compagnieId,
           );
 
         return {
@@ -113,16 +253,21 @@ export function useMissions2() {
                 groupe.section
                   ?.sectionName ??
                 groupe.nom ??
-                `Section ${index + 1}`
+                `Section ${
+                  index + 1
+                }`
               : groupe.nomGroupe ??
                 groupe.nom ??
-                `Groupe ${index + 1}`,
+                `Groupe ${
+                  index + 1
+                }`,
 
           compagnieId,
 
           nomCompagnie:
             groupe.nomCompagnie ??
-            groupe.compagnie?.nom ??
+            groupe.compagnie
+              ?.nom ??
             compagnie?.nom ??
             "Compagnie",
 
@@ -138,9 +283,6 @@ export function useMissions2() {
    * ==========================================
    * VÉHICULES SÉLECTIONNÉS
    * ==========================================
-   *
-   * On récupère d'abord les affectations provenant
-   * du contexte / hook.
    */
 
   const vehiculesSelectionnesContext =
@@ -158,7 +300,8 @@ export function useMissions2() {
       : [];
 
   const vehiculesSelectionnes =
-    vehiculesSelectionnesContext.length > 0
+    vehiculesSelectionnesContext.length >
+    0
       ? vehiculesSelectionnesContext
       : vehiculesSelectionnesHook;
 
@@ -171,20 +314,23 @@ export function useMissions2() {
   const idsVehiculesSelectionnes =
     new Set(
       vehiculesSelectionnes
-        .map((selection) => {
-          if (
-            typeof selection === "string"
-          ) {
-            return selection;
-          }
+        .map(
+          (selection) => {
+            if (
+              typeof selection ===
+              "string"
+            ) {
+              return selection;
+            }
 
-          return (
-            selection?.vehiculeId ??
-            selection?.vehicule?.id ??
-            selection?.id ??
-            null
-          );
-        })
+            return (
+              selection?.vehiculeId ??
+              selection?.vehicule?.id ??
+              selection?.id ??
+              null
+            );
+          },
+        )
         .filter(Boolean)
         .map(String),
     );
@@ -193,10 +339,6 @@ export function useMissions2() {
    * ==========================================
    * VÉHICULES DÉJÀ DANS LA MISSION
    * ==========================================
-   *
-   * C'est cette source qui est importante lorsque
-   * le véhicule n'est plus présent dans la liste
-   * des véhicules disponibles.
    */
 
   const vehiculesMission =
@@ -221,9 +363,6 @@ export function useMissions2() {
    * ==========================================
    * VÉHICULES DISPONIBLES
    * ==========================================
-   *
-   * On les utilise seulement s'ils sont encore
-   * présents dans la liste globale.
    */
 
   const vehiculesDisponiblesSelectionnes =
@@ -245,37 +384,39 @@ export function useMissions2() {
 
   /*
    * ==========================================
-   * VÉHICULES DIRECTEMENT CONTENUS DANS
-   * LES SÉLECTIONS
+   * VÉHICULES DIRECTS
    * ==========================================
    */
 
   const vehiculesDirects =
     vehiculesSelectionnes
-      .map((selection) => {
-        if (
-          selection?.vehicule &&
-          typeof selection.vehicule ===
-            "object"
-        ) {
-          return selection.vehicule;
-        }
+      .map(
+        (selection) => {
+          if (
+            selection?.vehicule &&
+            typeof selection.vehicule ===
+              "object"
+          ) {
+            return selection.vehicule;
+          }
 
-        return null;
-      })
+          return null;
+        },
+      )
       .filter(Boolean);
 
   /*
    * ==========================================
-   * FUSION
+   * FUSION DES VÉHICULES
    * ==========================================
    */
 
-  const vehiculesSelectionnesComplets = [
-    ...vehiculesMissionSelectionnes,
-    ...vehiculesDisponiblesSelectionnes,
-    ...vehiculesDirects,
-  ];
+  const vehiculesSelectionnesComplets =
+    [
+      ...vehiculesMissionSelectionnes,
+      ...vehiculesDisponiblesSelectionnes,
+      ...vehiculesDirects,
+    ];
 
   /*
    * ==========================================
@@ -283,20 +424,24 @@ export function useMissions2() {
    * ==========================================
    */
 
-  const vehiculesSelectionnesUniques = [
-    ...new Map(
-      vehiculesSelectionnesComplets
-        .filter(Boolean)
-        .map((vehicule) => [
-          String(
-            vehicule?.id ??
-              vehicule?.vehiculeId ??
-              vehicule?.vehicule?.id,
+  const vehiculesSelectionnesUniques =
+    [
+      ...new Map(
+        vehiculesSelectionnesComplets
+          .filter(Boolean)
+          .map(
+            (vehicule) => [
+              String(
+                vehicule?.id ??
+                  vehicule?.vehiculeId ??
+                  vehicule?.vehicule
+                    ?.id,
+              ),
+              vehicule,
+            ],
           ),
-          vehicule,
-        ]),
-    ).values(),
-  ];
+      ).values(),
+    ];
 
   /*
    * ==========================================
@@ -304,7 +449,10 @@ export function useMissions2() {
    * ==========================================
    */
 
-  console.log( "mission.vehicules", vehiculesMission );
+  console.log(
+    "mission.vehicules",
+    vehiculesMission,
+  );
 
   console.log(
     "==============================================",
@@ -318,58 +466,53 @@ export function useMissions2() {
 
   return {
     /*
-     * Contexte mission
+     * Mission
      */
+
     ...mission,
 
     /*
      * Compagnies
      */
+
     ...compagnies,
 
     /*
      * Personnel
      */
+
     ...personnel,
 
     /*
      * Groupes
      */
+
     ...groupes,
 
     /*
      * Véhicules
      */
+
     ...vehicules,
 
     /*
-     * ==========================================
-     * VÉHICULES SÉLECTIONNÉS
-     * ==========================================
-     *
-     * On conserve les affectations de l'étape 3.
+     * Utilisateurs de la mission
+     */
+
+    usersMission,
+
+    usersDisponibles,
+
+    conducteurs,
+
+    /*
+     * Véhicules sélectionnés
      */
 
     vehiculesSelectionnes,
 
-    /*
-     * ==========================================
-     * VÉHICULES COMPLETS
-     * ==========================================
-     *
-     * L'étape 4 peut utiliser cette propriété
-     * pour récupérer le nom, type, immatriculation,
-     * etc.
-     */
-
     vehiculesSelectionnesComplets:
       vehiculesSelectionnesUniques,
-
-    /*
-     * Utilisateurs disponibles
-     */
-
-    usersDisponibles,
 
     /*
      * Groupes utilisés par l'étape 3
