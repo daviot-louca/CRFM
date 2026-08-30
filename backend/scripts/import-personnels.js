@@ -32,7 +32,7 @@ function getRoleFromGrade(grade) {
   }
 
   if (gradesOfficiers.includes(gradeNormalise)) {
-    return "OA";
+    return "SOA";
   }
 
   return null;

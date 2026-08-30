@@ -20,13 +20,11 @@ export function useMissions2() {
    * on récupère les users depuis missionsUsers.
    */
 
-  const usersMission = Array.isArray(
-    mission?.usersMission,
-  )
+  const usersMission =
+  Array.isArray(mission?.usersMission) &&
+  mission.usersMission.length > 0
     ? mission.usersMission
-    : Array.isArray(
-        mission?.missionsUsers,
-      )
+    : Array.isArray(mission?.missionsUsers)
       ? mission.missionsUsers
           .map(
             (missionUser) =>
@@ -111,7 +109,7 @@ export function useMissions2() {
    */
 
   const usersDisponibles =
-    usersMission;
+  personnel.tousLesUsers;
 
   /*
    * ==========================================
@@ -465,59 +463,21 @@ export function useMissions2() {
    */
 
   return {
-    /*
-     * Mission
-     */
-
     ...mission,
-
-    /*
-     * Compagnies
-     */
-
     ...compagnies,
-
-    /*
-     * Personnel
-     */
-
     ...personnel,
-
-    /*
-     * Groupes
-     */
-
     ...groupes,
-
-    /*
-     * Véhicules
-     */
-
     ...vehicules,
-
-    /*
-     * Utilisateurs de la mission
-     */
-
+  
     usersMission,
-
     usersDisponibles,
-
     conducteurs,
-
-    /*
-     * Véhicules sélectionnés
-     */
-
+  
     vehiculesSelectionnes,
-
+  
     vehiculesSelectionnesComplets:
       vehiculesSelectionnesUniques,
-
-    /*
-     * Groupes utilisés par l'étape 3
-     */
-
+  
     compagniesSelectionneesGroupes,
   };
 }

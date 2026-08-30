@@ -21,8 +21,8 @@ function PageConnexion() {
       const role = result.user.role.roleName;
       if (role === "administrateur") {
         navigate("/admin/tableau-de-bord");
-      } else if (role === "OAL") {
-        navigate("/oal");
+      } else if (role === "OA") {
+        navigate("/admin/tableau-de-bord");
       } else if (role === "SOA") {
         navigate("/soa");
       } else if (role === "conducteur") {

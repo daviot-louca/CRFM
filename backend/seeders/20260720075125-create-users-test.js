@@ -37,7 +37,7 @@ export default {
     const sectionTest = sections[0];
 
     // 3. Hasher le mot de passe de test
-    const password = await bcrypt.hash("Test123!", 10);
+    const password = await bcrypt.hash("ChangeMe123!", 10);
 
     // 4. Créer les utilisateurs
     await queryInterface.bulkInsert("users", [
@@ -46,6 +46,7 @@ export default {
         grade: "Capitaine",
         nom: "Test",
         email: "oa@crfm.fr",
+        phoneNumber:"0102030405",
         password,
         section_id: sectionTest.id,
         role_id: getRoleId("OA"),
@@ -57,6 +58,7 @@ export default {
         grade: "Adjudant",
         nom: "Test",
         email: "soa@crfm.fr",
+        phoneNumber:"0203040506",
         password,
         section_id: sectionTest.id,
         role_id: getRoleId("SOA"),
@@ -68,6 +70,7 @@ export default {
         grade: "Caporal",
         nom: "Test",
         email: "conducteur@crfm.fr",
+        phoneNumber:"0304050607",
         password,
         section_id: sectionTest.id,
         role_id: getRoleId("conducteur"),

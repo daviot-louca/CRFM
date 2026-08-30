@@ -20,11 +20,11 @@ router.get(
   "/section/:sectionId/disponibilites",authJwt,checkRole("administrateur"),
   allUsersBySectionWithAvailability,
 );
-router.get("/section/:sectionId",authJwt,checkRole("administrateur"), allUsersBySection);
-router.get("/compagnie/:compagnieId/oa",authJwt,checkRole("administrateur"), allUsersByCompagnie);
-router.get("/section/:sectionId/soa",authJwt,checkRole("administrateur"), allSoaBySection);
+router.get("/section/:sectionId",authJwt,checkRole("administrateur","OA"), allUsersBySection);
+router.get("/compagnie/:compagnieId/oa",authJwt,checkRole("administrateur","OA"), allUsersByCompagnie);
+router.get("/section/:sectionId/soa",authJwt,checkRole("administrateur","OA"), allSoaBySection);
 router.post("/",authJwt,checkRole("administrateur"),addUser);
-router.put("/:id",authJwt,checkRole("administrateur"),updateUser);
+router.put("/:id",authJwt,checkRole("administrateur","OA"),updateUser);
 router.delete("/:id",authJwt,checkRole("administrateur"),deleteUser);
 router.get("/:id",authJwt,checkRole("administrateur"),getUserById);
 

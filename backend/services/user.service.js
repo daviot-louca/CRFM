@@ -646,6 +646,14 @@ export const updateUserService = async (
   /*
    * Mise à jour utilisateur
    */
+  if (
+    typeof userData.email === "string"
+  ) {
+    userData.email =
+      userData.email.trim() !== ""
+        ? userData.email.trim()
+        : null;
+  }
 
   await user.update(userData);
 

@@ -10,6 +10,8 @@ import User from "../models/user.model.js";
 import Role from "../models/roles.model.js";
 import Vehicule from "../models/vehicule.model.js";
 import VehiculeType from "../models/vehicules-types.model.js";
+import MissionsVehiculesPlein from "../models/missionsVehiculesPlein.model.js";
+import MissionsVehiculesReleve from "../models/missionsVehiculesReleve.model.js"
 
 import { updateMissionConducteurs } from "./missionsConducteurs.service.js";
 
@@ -52,11 +54,11 @@ const missionIncludes = [
         attributes: userAttributes,
         include: [
           {
-            model:Role,
+            model: Role,
             as: "role",
-            attributes:["id","roleName"],
-          }
-        ]
+            attributes: ["id", "roleName"],
+          },
+        ],
       },
       {
         model: Section,
@@ -138,20 +140,24 @@ const missionIncludes = [
 
       {
         model: User,
-
         as: "conducteur",
-
         attributes: userAttributes,
-
         include: [
           {
             model: Role,
-
             as: "role",
-
             attributes: ["id", "roleName"],
           },
         ],
+      },
+
+      {
+        model: MissionsVehiculesPlein,
+        as: "pleins",
+      },
+      {
+        model: MissionsVehiculesReleve,
+        as: "releve",
       },
     ],
   },
@@ -429,6 +435,18 @@ export const getMissionByIdService = async (id, user) => {
       conducteur: conducteur
         ? getNomUtilisateur(conducteur, conducteur.id)
         : null,
+
+      pleins: mv.pleins ?? [],
+
+      nombrePleins: Array.isArray(mv.pleins) ? mv.pleins.length : 0,
+
+      litresPleins: Array.isArray(mv.pleins)
+        ? mv.pleins.reduce(
+            (total, plein) => total + Number(plein?.litres ?? 0),
+            0,
+          )
+        : 0,
+        releve: mv.releve ?? null,
 
       x: statistiquesEquipage.x,
 
@@ -849,14 +867,14 @@ export const updateMissionCommandementService = async (
         },
         transaction,
       });
-      
+
       if (!compagnieAvecCetOA) {
         const error = new Error(
           "L'OA sélectionné n'est désigné dans aucune compagnie.",
         );
-      
+
         error.statusCode = 400;
-      
+
         throw error;
       }
     }
@@ -961,9 +979,9 @@ export const updateMissionCommandementService = async (
         const error = new Error(
           "Le SOA sélectionné n'est pas affecté à cette mission.",
         );
-      
+
         error.statusCode = 400;
-      
+
         throw error;
       }
 
@@ -1008,6 +1026,25 @@ export const deleteMissionService = async (id) => {
   }
 
   await sequelize.transaction(async (transaction) => {
+    // Récupérer les véhicules affectés à la mission
+    // avant de supprimer les associations.
+    const missionsVehicules = await MissionsVehicule.findAll({
+      where: {
+        missionId: id,
+      },
+      attributes: ["vehiculeId"],
+      transaction,
+    });
+
+    const vehiculeIds = [
+      ...new Set(
+        missionsVehicules
+          .map((mv) => mv.vehiculeId)
+          .filter(Boolean),
+      ),
+    ];
+
+    // Supprimer les utilisateurs de la mission
     await MissionsUsers.destroy({
       where: {
         missionId: id,
@@ -1015,8 +1052,10 @@ export const deleteMissionService = async (id) => {
       transaction,
     });
 
+    // Supprimer les véhicules de la mission
     await deleteMissionVehicules(id, transaction);
 
+    // Supprimer les groupes de la mission
     await MissionsGroupes.destroy({
       where: {
         missionId: id,
@@ -1024,6 +1063,55 @@ export const deleteMissionService = async (id) => {
       transaction,
     });
 
+    /*
+     * Les véhicules de cette mission doivent redevenir disponibles.
+     *
+     * On vérifie d'abord s'ils sont encore affectés
+     * à une autre mission.
+     */
+    if (vehiculeIds.length > 0) {
+      const autresAffectations = await MissionsVehicule.findAll({
+        where: {
+          vehiculeId: {
+            [Op.in]: vehiculeIds,
+          },
+        },
+        transaction,
+      });
+
+      const vehiculesEncoreAffectes = new Set(
+        autresAffectations.map((mv) =>
+          String(mv.vehiculeId),
+        ),
+      );
+
+      const vehiculesARepasserDisponibles =
+        vehiculeIds.filter(
+          (vehiculeId) =>
+            !vehiculesEncoreAffectes.has(
+              String(vehiculeId),
+            ),
+        );
+
+      if (vehiculesARepasserDisponibles.length > 0) {
+        await Vehicule.update(
+          {
+            disponibilite: true,
+          },
+          {
+            where: {
+              id: {
+                [Op.in]:
+                  vehiculesARepasserDisponibles,
+              },
+            },
+            transaction,
+          },
+        );
+      }
+    }
+
+    // Supprimer définitivement la mission
     await mission.destroy({
       transaction,
     });

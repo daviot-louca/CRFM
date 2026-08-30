@@ -7,6 +7,6 @@ import checkRole from "../middlewares/permissions.middleware.js";
 
 const router = express.Router();
 
-router.get("/",authJwt,checkRole("administrateur"), getRoles);
+router.get("/",authJwt,checkRole("administrateur","OA"), getRoles);
 
 export default router;

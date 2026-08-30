@@ -27,11 +27,8 @@ export const verifierAccesMission = async (mission, user) => {
         soaId: user.id,
       },
     });
-
     if (!groupe) {
-      const error = new Error(
-        "Vous n'avez pas accès à cette mission."
-      );
+      const error = new Error("Vous n'avez pas accès à cette mission.");
 
       error.statusCode = 403;
       throw error;
@@ -55,9 +52,7 @@ export const verifierAccesMission = async (mission, user) => {
     });
 
     if (!compagnie) {
-      const error = new Error(
-        "Vous n'avez pas accès à cette mission."
-      );
+      const error = new Error("Vous n'avez pas accès à cette mission.");
 
       error.statusCode = 403;
       throw error;
@@ -98,18 +93,14 @@ export const verifierAccesMission = async (mission, user) => {
       return true;
     }
 
-    const error = new Error(
-      "Vous n'avez pas accès à cette mission."
-    );
+    const error = new Error("Vous n'avez pas accès à cette mission.");
 
     error.statusCode = 403;
     throw error;
   }
 
   // Conducteur ou autre rôle
-  const error = new Error(
-    "Vous n'avez pas accès aux missions."
-  );
+  const error = new Error("Vous n'avez pas accès aux missions.");
 
   error.statusCode = 403;
   throw error;
@@ -118,117 +109,106 @@ export const verifierAccesMission = async (mission, user) => {
 /** fonction pour getMissions */
 
 export const getMissionsAccessFilter = async (user) => {
-    const role = user?.role?.roleName;
-  
-    if (!user?.id || !role) {
-      const error = new Error("Utilisateur non authentifié.");
-      error.statusCode = 401;
-      throw error;
-    }
-  
-    // ADMIN → toutes les missions
-    if (role === "administrateur") {
-      return null;
-    }
-  
-    // SOA → uniquement les missions où il est indiqué
-    if (role === "SOA") {
-      const groupes = await MissionsGroupes.findAll({
-        where: {
-          soaId: user.id,
-        },
-        attributes: ["missionId"],
-      });
-  
-      const missionIds = [
-        ...new Set(
-          groupes
-            .map((groupe) => groupe.missionId)
-            .filter(Boolean),
-        ),
-      ];
-  
-      return {
-        id: {
-          [Op.in]: missionIds,
-        },
-      };
-    }
-  
-    // OA →
-    // - missions où il est directement indiqué comme OA
-    // OU
-    // - missions où un SOA de sa compagnie est présent
-    if (role === "OA") {
-      const compagnie = await Compagnie.findOne({
-        where: {
-          oaId: user.id,
-        },
-        attributes: ["id"],
-      });
-  
-      if (!compagnie) {
-        return {
-          id: {
-            [Op.in]: [],
-          },
-        };
-      }
-  
-      const groupes = await MissionsGroupes.findAll({
-        where: {
-          soaId: {
-            [Op.ne]: null,
-          },
-        },
-        attributes: ["missionId"],
-        include: [
-          {
-            model: User,
-            as: "soa",
-            required: true,
-            attributes: [],
-            include: [
-              {
-                model: Section,
-                as: "section",
-                required: true,
-                attributes: [],
-                where: {
-                  compagnieId: compagnie.id,
-                },
-              },
-            ],
-          },
-        ],
-      });
-  
-      const missionIds = [
-        ...new Set(
-          groupes
-            .map((groupe) => groupe.missionId)
-            .filter(Boolean),
-        ),
-      ];
-  
-      return {
-        [Op.or]: [
-          {
-            oaId: user.id,
-          },
-          {
-            id: {
-              [Op.in]: missionIds,
-            },
-          },
-        ],
-      };
-    }
-  
-    // Conducteur ou autre rôle → aucune mission
-    return {
+  const role = user?.role?.roleName;
+
+  if (!user?.id || !role) {
+    const error = new Error("Utilisateur non authentifié.");
+
+    error.statusCode = 401;
+    throw error;
+  }
+
+  // SOA → uniquement les missions où il est indiqué
+  if (role === "SOA") {
+    const groupes = await MissionsGroupes.findAll({
+      where: {
+        soaId: user.id,
+      },
+      attributes: ["missionId", "soaId"],
+    });
+
+    const missionIds = [
+      ...new Set(groupes.map((groupe) => groupe.missionId).filter(Boolean)),
+    ];
+
+    const filter = {
       id: {
-        [Op.in]: [],
+        [Op.in]: missionIds,
       },
     };
+
+    return filter;
+  }
+
+  // OA →
+  // - missions où il est directement indiqué comme OA
+  // OU
+  // - missions où un SOA de sa compagnie est présent
+  if (role === "OA") {
+    const compagnie = await Compagnie.findOne({
+      where: {
+        oaId: user.id,
+      },
+      attributes: ["id"],
+    });
+
+    if (!compagnie) {
+      return {
+        id: {
+          [Op.in]: [],
+        },
+      };
+    }
+
+    const groupes = await MissionsGroupes.findAll({
+      where: {
+        soaId: {
+          [Op.ne]: null,
+        },
+      },
+      attributes: ["missionId"],
+      include: [
+        {
+          model: User,
+          as: "soa",
+          required: true,
+          attributes: [],
+          include: [
+            {
+              model: Section,
+              as: "section",
+              required: true,
+              attributes: [],
+              where: {
+                compagnieId: compagnie.id,
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    const missionIds = [
+      ...new Set(groupes.map((groupe) => groupe.missionId).filter(Boolean)),
+    ];
+
+    const filter = {
+      [Op.or]: [
+        {
+          oaId: user.id,
+        },
+        {
+          id: {
+            [Op.in]: missionIds,
+          },
+        },
+      ],
+    };
+    return filter;
+  }
+  return {
+    id: {
+      [Op.in]: [],
+    },
   };
+};

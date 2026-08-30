@@ -258,6 +258,9 @@ export default function CreerMissions2Admin() {
 
                 <Etapes2Groupes
                   {...missions}
+                  usersDisponibles={
+                    missions.usersMission
+                  }
                   getNomComplet={
                     getNomComplet
                   }
@@ -317,8 +320,8 @@ export default function CreerMissions2Admin() {
                 type="button"
                 disabled={!peutContinuer}
                 className={`rounded-xl px-8 py-3 font-semibold text-white transition ${peutContinuer
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "cursor-not-allowed bg-slate-300"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "cursor-not-allowed bg-slate-300"
                   }`}
                 onClick={
                   handleContinuer

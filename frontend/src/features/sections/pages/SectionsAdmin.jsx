@@ -15,7 +15,26 @@ function SectionsAdmin() {
   const [chefSectionId, setChefSectionId] = useState("");
   const [soaUsers, setSoaUsers] = useState([]);
   const [soaError, setSoaError] = useState(null);
+  const token = localStorage.getItem("token");
 
+  let userRole = null;
+  
+  try {
+    if (token) {
+      const payload = JSON.parse(
+        atob(token.split(".")[1])
+      );
+  
+      userRole = payload?.role?.roleName ?? null;
+    }
+  } catch (error) {
+    console.error(
+      "Impossible de récupérer le rôle utilisateur :",
+      error
+    );
+  }
+  
+  const isAdministrateur = userRole === "administrateur";
   const resetForm = () => {
     setSectionName("");
     setChefSectionId("");
@@ -111,7 +130,7 @@ function SectionsAdmin() {
           <Link to="/admin/compagnies" className="text-sm font-medium text-gray-500 transition hover:text-gray-900">
             ← Retour aux compagnies
           </Link>
-          <button
+          {isAdministrateur&&(<button
             type="button"
             onClick={() => {
               if (showAddForm) {
@@ -126,7 +145,7 @@ function SectionsAdmin() {
             className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
           >
             {showAddForm ? "Annuler" : "Ajouter une section"}
-          </button>
+          </button>)}
         </div>
 
         {actionError && (
@@ -208,12 +227,12 @@ function SectionsAdmin() {
                   <h2 className="font-semibold text-gray-900">{section.sectionName}</h2>
 
                   <div className="flex flex-wrap gap-2">
-                    <button type="button" onClick={() => startEdit(section)} className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50">
+                    {isAdministrateur&&(<button type="button" onClick={() => startEdit(section)} className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50">
                       Modifier
-                    </button>
-                    <button type="button" onClick={() => handleDelete(section)} className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50">
+                    </button>)}
+                    {isAdministrateur&&(<button type="button" onClick={() => handleDelete(section)} className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50">
                       Supprimer
-                    </button>
+                    </button>)}
                     <Link to={`/admin/compagnies/${compagnieId}/sections/${section.id}/utilisateurs`} className="rounded-lg bg-gray-900 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]">
                       Voir les utilisateurs
                     </Link>

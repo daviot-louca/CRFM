@@ -20,7 +20,30 @@ export default function MissionDetail() {
     const loadMission = async () => {
       try {
         const data = await getMissionById(missionsId);
-
+        console.log(
+          "[MISSION DETAIL] VEHICULES API :",
+          data?.vehicules
+        );
+        
+        console.log(
+          "[MISSION DETAIL] PREMIER VEHICULE :",
+          data?.vehicules?.[0]
+        );
+        
+        console.log(
+          "[MISSION DETAIL] PLEINS :",
+          data?.vehicules?.[0]?.pleins
+        );
+        
+        console.log(
+          "[MISSION DETAIL] NOMBRE PLEINS :",
+          data?.vehicules?.[0]?.nombrePleins
+        );
+        
+        console.log(
+          "[MISSION DETAIL] LITRES :",
+          data?.vehicules?.[0]?.litresPleins
+        );
         if (isActive) {
           setMission(data);
           setError(null);
@@ -120,6 +143,32 @@ export default function MissionDetail() {
     );
   };
 
+  const getReleve = (vehicule) => {
+    return (
+      vehicule?.releve ??
+      vehicule?.conducteurReleve ??
+      vehicule?.missionsVehiculesReleve ??
+      null
+    );
+  };
+  const formatDateTime = (value) => {
+    if (!value) return "Non renseignée";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "Non renseignée";
+    }
+
+    return date.toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   if (loading) {
     return (
       <MainLayout>
@@ -196,6 +245,7 @@ export default function MissionDetail() {
           vehicule?.conducteur
         )
     );
+
   const soaSelectionne =
     groupesMission.length > 0 &&
     groupesMission.every(
@@ -207,49 +257,99 @@ export default function MissionDetail() {
         )
     );
 
-  const etape4Terminee = soaSelectionne;
+  const etape4Terminee =
+    soaSelectionne;
 
   const etape5Terminee =
     soaSelectionne &&
     conducteursTousAffectes;
 
+  const donneesConducteurRenseignees =
+    vehiculesMission.length > 0 &&
+    vehiculesMission.every((vehicule) => {
+      const releve =
+        getReleve(vehicule);
+
+      return Boolean(
+        releve &&
+        (
+          releve.modeReleve ||
+          (
+            releve.valeurDepart !==
+            null &&
+            releve.valeurDepart !==
+            undefined
+          ) ||
+          releve.dateDepart ||
+          (
+            releve.valeurArrivee !==
+            null &&
+            releve.valeurArrivee !==
+            undefined
+          ) ||
+          releve.dateArrivee
+        )
+      );
+    });
+
   const etapes = [
     {
       numero: 1,
-      titre: "Informations générales",
+      titre:
+        "Informations générales",
       description:
         "Les informations principales de la mission sont renseignées.",
-      terminee: etape1Terminee,
+      terminee:
+        etape1Terminee,
     },
     {
       numero: 2,
-      titre: "Affectation des groupes",
+      titre:
+        "Affectation des groupes",
       description:
         "Les groupes et les militaires concernés sont définis.",
-      terminee: etape2Terminee,
+      terminee:
+        etape2Terminee,
     },
     {
       numero: 3,
-      titre: "Affectation des véhicules",
+      titre:
+        "Affectation des véhicules",
       description:
         "Les véhicules sont affectés aux différents groupes.",
-      terminee: etape3Terminee,
+      terminee:
+        etape3Terminee,
     },
     {
       numero: 4,
-      titre: "Affectation du SOA",
+      titre:
+        "Affectation du SOA",
       description:
         "Le SOA responsable de chaque groupe est défini.",
-      terminee: etape4Terminee,
+      terminee:
+        etape4Terminee,
     },
     {
       numero: 5,
-      titre: "Affectation des conducteurs",
+      titre:
+        "Affectation des conducteurs",
       description:
         conducteursTousAffectes
           ? "Chaque véhicule dispose de son conducteur."
           : "Les conducteurs restent à affecter.",
-      terminee: etape5Terminee,
+      terminee:
+        etape5Terminee,
+    },
+    {
+      numero: 6,
+      titre:
+        "Données conducteur",
+      description:
+        donneesConducteurRenseignees
+          ? "Les données des conducteurs ont été renseignées et sont disponibles dans le détail de la mission."
+          : "Les données des conducteurs restent à renseigner.",
+      terminee:
+        donneesConducteurRenseignees,
     },
   ];
 
@@ -285,6 +385,8 @@ export default function MissionDetail() {
         2: `/admin/creer-missions-2?missionId=${missionsId}`,
         3: `/admin/creer-missions-3?missionId=${missionsId}`,
         4: `/admin/creer-missions-4?missionId=${missionsId}`,
+        5: `/admin/creer-missions-5?missionId=${missionsId}`,
+        6: null,
       };
 
       const route =
@@ -318,7 +420,7 @@ export default function MissionDetail() {
               <span
                 className={`inline-block rounded-full px-5 py-2 text-sm font-semibold ${statusColors[
                   mission.StatutMission
-                  ] ||
+                ] ||
                   "bg-gray-200 text-gray-700"
                   }`}
               >
@@ -436,8 +538,6 @@ export default function MissionDetail() {
 
           </div>
 
-          {/* Barre de progression */}
-
           <div className="mb-8 h-3 w-full overflow-hidden rounded-full bg-slate-200">
 
             <div
@@ -448,8 +548,6 @@ export default function MissionDetail() {
             />
 
           </div>
-
-          {/* Timeline */}
 
           <div className="relative">
 
@@ -469,18 +567,16 @@ export default function MissionDetail() {
                     {!derniere && (
                       <div
                         className={`absolute left-3.75 top-8 h-full w-0.5 ${etape.terminee
-                            ? "bg-blue-600"
-                            : "bg-slate-200"
+                          ? "bg-blue-600"
+                          : "bg-slate-200"
                           }`}
                       />
                     )}
 
-                    {/* Cercle */}
-
                     <div
                       className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${etape.terminee
-                          ? "border-blue-600 bg-blue-600 text-white"
-                          : "border-slate-300 bg-white text-slate-400"
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-slate-300 bg-white text-slate-400"
                         }`}
                     >
                       {etape.terminee
@@ -488,12 +584,10 @@ export default function MissionDetail() {
                         : etape.numero}
                     </div>
 
-                    {/* Contenu */}
-
                     <div
                       className={`mb-8 flex-1 rounded-xl border p-4 ${etape.terminee
-                          ? "border-blue-100 bg-blue-50"
-                          : "border-slate-200 bg-slate-50"
+                        ? "border-blue-100 bg-blue-50"
+                        : "border-slate-200 bg-slate-50"
                         }`}
                     >
 
@@ -503,8 +597,8 @@ export default function MissionDetail() {
 
                           <h3
                             className={`font-bold ${etape.terminee
-                                ? "text-slate-900"
-                                : "text-slate-500"
+                              ? "text-slate-900"
+                              : "text-slate-500"
                               }`}
                           >
                             Étape{" "}
@@ -522,8 +616,8 @@ export default function MissionDetail() {
 
                         <span
                           className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${etape.terminee
-                              ? "bg-green-100 text-green-700"
-                              : "bg-slate-200 text-slate-500"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-slate-200 text-slate-500"
                             }`}
                         >
                           {etape.terminee
@@ -542,11 +636,7 @@ export default function MissionDetail() {
 
           </div>
 
-          {/* ==========================================
-              PROCHAINE ÉTAPE
-          ========================================== */}
-
-          {prochaineEtape ? (
+          {prochaineEtape && prochaineEtape.numero !== 6 ? (
             <div className="mt-2 flex flex-col gap-4 rounded-xl border border-yellow-200 bg-yellow-50 p-4 md:flex-row md:items-center md:justify-between">
 
               <div>
@@ -556,26 +646,37 @@ export default function MissionDetail() {
                 </p>
 
                 <p className="mt-1 text-sm text-yellow-700">
-                  Étape{" "}
-                  {prochaineEtape.numero}{" "}
-                  —{" "}
-                  {prochaineEtape.titre}
+                  Étape {prochaineEtape.numero} — {prochaineEtape.titre}
                 </p>
 
               </div>
 
               <button
                 type="button"
-                onClick={
-                  handleContinuerMission
-                }
+                onClick={handleContinuerMission}
                 className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 md:w-auto"
               >
                 Continuer la mission →
               </button>
 
             </div>
+
+          ) : prochaineEtape?.numero === 6 ? (
+
+            <div className="mt-2 rounded-xl border border-yellow-200 bg-yellow-50 p-4">
+
+              <p className="font-semibold text-yellow-800">
+                Données conducteur en attente
+              </p>
+
+              <p className="mt-1 text-sm text-yellow-700">
+                Les données doivent être renseignées par les conducteurs. Aucun bouton d'action n'est nécessaire ici.
+              </p>
+
+            </div>
+
           ) : (
+
             <div className="mt-2 rounded-xl border border-green-200 bg-green-50 p-4">
 
               <p className="font-semibold text-green-800">
@@ -587,6 +688,7 @@ export default function MissionDetail() {
               </p>
 
             </div>
+
           )}
 
         </section>
@@ -610,126 +712,83 @@ export default function MissionDetail() {
             <div className="grid grid-cols-2 gap-4">
 
               <div className="rounded-xl border bg-slate-50 p-4">
-
                 <p className="text-xs font-semibold uppercase text-slate-500">
                   OA Responsable
                 </p>
-
                 <p className="mt-1 text-lg font-bold text-slate-900">
-                  {oaResponsable ||
-                    "N/A"}
+                  {oaResponsable || "N/A"}
                 </p>
-
               </div>
 
               <div className="rounded-xl border bg-slate-50 p-4">
-
                 <p className="text-xs font-semibold uppercase text-slate-500">
                   Statut
                 </p>
 
                 <span
                   className={`mt-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${statusColors[
-                    mission
-                      ?.statistiques
-                      ?.statut
-                    ] ||
+                    mission?.statistiques?.statut
+                  ] ||
                     "bg-gray-200 text-gray-700"
                     }`}
                 >
-                  {mission
-                    ?.statistiques
-                    ?.statut ||
+                  {mission?.statistiques?.statut ||
                     "N/A"}
                 </span>
-
               </div>
 
               <div className="rounded-xl border bg-slate-50 p-4 text-center">
-
                 <p className="text-3xl font-bold text-slate-900">
-                  {mission
-                    ?.statistiques
-                    ?.compagnies ??
-                    0}
+                  {mission?.statistiques?.compagnies ?? 0}
                 </p>
-
                 <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
                   Compagnies
                 </p>
-
               </div>
 
               <div className="rounded-xl border bg-slate-50 p-4 text-center">
-
                 <p className="text-3xl font-bold text-slate-900">
-                  {mission
-                    ?.statistiques
-                    ?.groupes ??
-                    0}
+                  {mission?.statistiques?.groupes ?? 0}
                 </p>
-
                 <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
                   Groupes
                 </p>
-
               </div>
 
               <div className="rounded-xl border bg-slate-50 p-4 text-center">
-
                 <p className="text-3xl font-bold text-slate-900">
-                  {mission
-                    ?.statistiques
-                    ?.conducteurs ??
-                    0}
+                  {mission?.statistiques?.conducteurs ?? 0}
                 </p>
-
                 <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
                   Conducteurs
                 </p>
-
               </div>
 
               <div className="rounded-xl border bg-slate-50 p-4 text-center">
-
                 <p className="text-3xl font-bold text-slate-900">
-                  {mission
-                    ?.statistiques
-                    ?.x ?? 0}
+                  {mission?.statistiques?.x ?? 0}
                 </p>
-
                 <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
                   Militaires (X)
                 </p>
-
               </div>
 
               <div className="rounded-xl border bg-slate-50 p-4 text-center">
-
                 <p className="text-3xl font-bold text-slate-900">
-                  {mission
-                    ?.statistiques
-                    ?.y ?? 0}
+                  {mission?.statistiques?.y ?? 0}
                 </p>
-
                 <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
                   Sous-officiers (Y)
                 </p>
-
               </div>
 
               <div className="rounded-xl border bg-slate-50 p-4 text-center">
-
                 <p className="text-3xl font-bold text-slate-900">
-                  {mission
-                    ?.statistiques
-                    ?.z ?? 0}
+                  {mission?.statistiques?.z ?? 0}
                 </p>
-
                 <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
                   Officiers (Z)
                 </p>
-
               </div>
 
             </div>
@@ -750,7 +809,6 @@ export default function MissionDetail() {
                 <span className="font-semibold text-slate-900">
                   Description :{" "}
                 </span>
-
                 {mission.missionDescription}
               </div>
 
@@ -758,7 +816,6 @@ export default function MissionDetail() {
                 <span className="font-semibold text-slate-900">
                   Lieu :{" "}
                 </span>
-
                 {mission.lieuMission}
               </div>
 
@@ -766,7 +823,6 @@ export default function MissionDetail() {
                 <span className="font-semibold text-slate-900">
                   Type :{" "}
                 </span>
-
                 {mission.typeMission}
               </div>
 
@@ -811,6 +867,230 @@ export default function MissionDetail() {
         </section>
 
         {/* ==========================================
+            DONNÉES CONDUCTEUR
+        ========================================== */}
+
+        <section className="rounded-2xl border bg-white p-6 shadow">
+
+          <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+
+            <div>
+
+              <h2 className="text-2xl font-semibold text-slate-900">
+                Données conducteur
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Données renseignées par les conducteurs affectés aux véhicules.
+              </p>
+
+            </div>
+
+          </div>
+
+          {vehiculesMission.length === 0 ? (
+
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
+
+              <p className="text-sm text-gray-500">
+                Aucun véhicule affecté à cette mission.
+              </p>
+
+            </div>
+
+          ) : (
+
+            <div className="space-y-6">
+
+              {vehiculesMission.map(
+                (vehicule, index) => {
+
+                  const conducteur =
+                    vehicule?.conducteur;
+
+                  const releve =
+                    getReleve(vehicule);
+
+                  const donneesRenseignees =
+                    Boolean(
+                      releve &&
+                      (
+                        releve.modeReleve ||
+                        (
+                          releve.valeurDepart !==
+                          null &&
+                          releve.valeurDepart !==
+                          undefined
+                        ) ||
+                        releve.dateDepart ||
+                        (
+                          releve.valeurArrivee !==
+                          null &&
+                          releve.valeurArrivee !==
+                          undefined
+                        ) ||
+                        releve.dateArrivee
+                      )
+                    );
+
+                  return (
+                    <div
+                      key={
+                        vehicule?.id ??
+                        index
+                      }
+                      className="rounded-xl border border-gray-200 bg-gray-50 p-5"
+                    >
+
+                      <div className="mb-5 flex flex-col justify-between gap-3 md:flex-row md:items-center">
+
+                        <div>
+
+                          <h3 className="text-xl font-bold text-slate-900">
+                            {getVehiculeName(
+                              vehicule
+                            )}
+                          </h3>
+
+                          <p className="mt-1 text-sm text-slate-500">
+                            {vehicule?.immatriculation ||
+                              "Immatriculation non renseignée"}
+                          </p>
+
+                        </div>
+
+                        <span
+                          className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${donneesRenseignees
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
+                            }`}
+                        >
+                          {donneesRenseignees
+                            ? "Données renseignées"
+                            : "En attente des données conducteur"}
+                        </span>
+
+                      </div>
+
+                      <div className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                        <div className="rounded-lg border bg-white p-4">
+
+                          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                            Conducteur
+                          </p>
+
+                          <p className="mt-1 font-semibold text-slate-900">
+                            {getConducteurName(
+                              vehicule
+                            )}
+                          </p>
+
+                        </div>
+
+                        <div className="rounded-lg border bg-white p-4">
+
+                          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+
+                            Pleins
+
+                          </p>
+
+                          <p className="mt-1 font-semibold text-slate-900">
+
+                            {vehicule.nombrePleins ?? 0}
+
+                          </p>
+
+                          <p className="mt-1 text-sm text-slate-500">
+
+                            {Number(
+
+                              vehicule.litresPleins ?? 0
+
+                            ).toLocaleString("fr-FR", {
+
+                              minimumFractionDigits: 2,
+
+                              maximumFractionDigits: 2,
+
+                            })}{" "}
+
+                            L
+
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                        <div className="rounded-lg border bg-white p-4">
+
+                          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                            Mode de relevé
+                          </p>
+
+                          <p className="mt-1 font-semibold text-slate-900">
+                            {releve?.modeReleve ||
+                              "Non renseigné"}
+                          </p>
+
+                        </div>
+
+                        <div className="rounded-lg border bg-white p-4">
+
+                          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                            Départ
+                          </p>
+
+                          <p className="mt-1 font-semibold text-slate-900">
+                            {releve?.valeurDepart ??
+                              "Non renseigné"}
+                          </p>
+
+                          <p className="mt-1 text-xs text-slate-500">
+                            {formatDateTime(
+                              releve?.dateDepart
+                            )}
+                          </p>
+
+                        </div>
+
+                        <div className="rounded-lg border bg-white p-4">
+
+                          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                            Arrivée
+                          </p>
+
+                          <p className="mt-1 font-semibold text-slate-900">
+                            {releve?.valeurArrivee ??
+                              "Non renseigné"}
+                          </p>
+
+                          <p className="mt-1 text-xs text-slate-500">
+                            {formatDateTime(
+                              releve?.dateArrivee
+                            )}
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+                  );
+                }
+              )}
+
+            </div>
+
+          )}
+
+        </section>
+
+        {/* ==========================================
             HIÉRARCHIE OPÉRATIONNELLE
         ========================================== */}
 
@@ -818,6 +1098,7 @@ export default function MissionDetail() {
 
           {mission?.compagnies?.map(
             (c, idx) => (
+
               <div
                 key={idx}
                 className="mb-8 rounded-2xl border border-gray-300 bg-white p-6 shadow"
@@ -843,6 +1124,7 @@ export default function MissionDetail() {
                     )
                     .map(
                       (g, gidx) => (
+
                         <div
                           key={gidx}
                           className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-5"
@@ -926,24 +1208,28 @@ export default function MissionDetail() {
 
                             {g.militaires?.map(
                               (m, i) => (
+
                                 <span
                                   key={i}
                                   className="inline-block rounded-full bg-gray-200 px-4 py-1 text-xs font-medium text-slate-700"
                                 >
                                   {m}
                                 </span>
+
                               )
                             )}
 
                           </div>
 
                         </div>
+
                       )
                     )}
 
                 </div>
 
               </div>
+
             )
           )}
 
@@ -974,6 +1260,7 @@ export default function MissionDetail() {
 
           {vehiculesMission.length ===
             0 ? (
+
             <div className="rounded-2xl border border-gray-300 bg-white p-8 text-center shadow">
 
               <p className="text-sm text-gray-500">
@@ -982,11 +1269,14 @@ export default function MissionDetail() {
               </p>
 
             </div>
+
           ) : (
+
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
 
               {vehiculesMission.map(
                 (v, idx) => (
+
                   <div
                     key={v.id ?? idx}
                     className="rounded-xl border border-gray-300 bg-white p-5 shadow"
@@ -1070,8 +1360,10 @@ export default function MissionDetail() {
                         {v.passagers
                           ?.length >
                           0 ? (
+
                           v.passagers.map(
                             (p, i) => (
+
                               <span
                                 key={i}
                                 className="inline-block rounded-full bg-gray-200 px-3 py-1 text-xs font-medium text-slate-700"
@@ -1083,12 +1375,16 @@ export default function MissionDetail() {
                                     p
                                   )}
                               </span>
+
                             )
                           )
+
                         ) : (
+
                           <span className="text-xs italic text-gray-400">
                             Aucun passager
                           </span>
+
                         )}
 
                       </div>
@@ -1096,10 +1392,12 @@ export default function MissionDetail() {
                     </div>
 
                   </div>
+
                 )
               )}
 
             </div>
+
           )}
 
         </section>

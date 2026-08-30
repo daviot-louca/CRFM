@@ -22,7 +22,26 @@ function VisuelMissionsAdmin() {
   const [missionASupprimer, setMissionASupprimer] = useState(null);
   const [suppressionEnCours, setSuppressionEnCours] = useState(false);
   const [erreurSuppression, setErreurSuppression] = useState("");
+  const token = localStorage.getItem("token");
 
+  let userRole = null;
+
+  try {
+    if (token) {
+      const payload = JSON.parse(
+        atob(token.split(".")[1])
+      );
+
+      userRole = payload?.role?.roleName ?? null;
+    }
+  } catch (error) {
+    console.error(
+      "Impossible de récupérer le rôle utilisateur :",
+      error
+    );
+  }
+
+  const isAdministrateur = userRole === "administrateur";
   const handleStartNewMission = () => {
     clearMissionCreationDraftStorage();
   };
@@ -68,7 +87,7 @@ function VisuelMissionsAdmin() {
     } catch (error) {
       setErreurSuppression(
         error?.response?.data?.message ||
-          "Une erreur est survenue lors de la suppression de la mission."
+        "Une erreur est survenue lors de la suppression de la mission."
       );
     } finally {
       setSuppressionEnCours(false);
@@ -100,7 +119,7 @@ function VisuelMissionsAdmin() {
     <MainLayout>
       <div className="w-full">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center items-end justify-end mb-8 gap-4">
+        {isAdministrateur && (<div className="flex flex-col sm:flex-row sm:items-center items-end justify-end mb-8 gap-4">
           <Link
             to="/admin/creer-missions-1"
             onClick={handleStartNewMission}
@@ -108,7 +127,7 @@ function VisuelMissionsAdmin() {
           >
             + Ajouter une mission
           </Link>
-        </div>
+        </div>)}
 
         {/* Barre d'outils */}
         {missions.length > 0 && (
@@ -144,17 +163,17 @@ function VisuelMissionsAdmin() {
         {missions.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center flex flex-col items-center">
             <p className="font-semibold text-gray-900 text-lg mb-2">Aucune mission</p>
-            <p className="mb-4 text-sm text-gray-500">
+            {isAdministrateur ? (<p className="mb-4 text-sm text-gray-500">
               Aucune mission n&apos;est actuellement enregistrée.<br />
               Créez votre première mission pour commencer à organiser vos actions.
-            </p>
-            <Link
+            </p>) : (<p>Vous n'avez aucune mission pour le moment</p>)}
+            {isAdministrateur && (<Link
               to="/admin/creer-missions-1"
               onClick={handleStartNewMission}
               className="inline-block rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800"
             >
               Créer la première mission
-            </Link>
+            </Link>)}
           </div>
         ) : missionsFiltrees.length === 0 ? (
           <div className="rounded-xl border border-gray-200 bg-white p-8 text-center flex flex-col items-center">

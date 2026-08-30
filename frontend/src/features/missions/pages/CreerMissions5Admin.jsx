@@ -57,35 +57,76 @@ function CreerMissions5Admin() {
   };
 
   const conducteursMission = useMemo(() => {
-    const utilisateurs = Array.isArray(usersDisponibles)
-      ? usersDisponibles
+    /*
+     * Les groupes générés contiennent déjà les utilisateurs
+     * complets dans groupe.utilisateurs[].user.
+     *
+     * On utilise donc en priorité les utilisateurs réellement
+     * affectés aux groupes.
+     */
+  
+    const utilisateursDesGroupes = Array.isArray(groupesAAfficher)
+      ? groupesAAfficher
+          .flatMap((groupe) =>
+            Array.isArray(groupe?.utilisateurs)
+              ? groupe.utilisateurs
+              : []
+          )
           .map(extractUser)
           .filter(Boolean)
       : [];
-
+  
+    /*
+     * Fallback : si aucun utilisateur n'est présent dans
+     * les groupes, on utilise usersDisponibles.
+     */
+  
+    const utilisateurs =
+      utilisateursDesGroupes.length > 0
+        ? utilisateursDesGroupes
+        : Array.isArray(usersDisponibles)
+          ? usersDisponibles
+              .map(extractUser)
+              .filter(Boolean)
+          : [];
+  
+    console.log(
+      "[ÉTAPE 5] UTILISATEURS SOURCES CONDUCTEURS :",
+      utilisateurs
+    );
+  
     const conducteurs = utilisateurs.filter((user) => {
       const roleName = String(
-        user?.role?.roleName ?? ""
+        user?.role?.roleName ??
+        user?.roleName ??
+        ""
       )
         .trim()
         .toUpperCase();
-
+  
       return (
         roleName === "CONDUCTEUR" ||
         roleName === "SOA" ||
         roleName === "OA"
       );
     });
-
+  
+    console.log(
+      "[ÉTAPE 5] CONDUCTEURS TROUVÉS :",
+      conducteurs
+    );
+  
     return Array.from(
       new Map(
-        conducteurs.map((user) => [
-          String(user.id),
-          user,
-        ])
+        conducteurs
+          .filter((user) => user?.id)
+          .map((user) => [
+            String(user.id),
+            user,
+          ])
       ).values()
     );
-  }, [usersDisponibles]);
+  }, [groupesAAfficher, usersDisponibles]);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);

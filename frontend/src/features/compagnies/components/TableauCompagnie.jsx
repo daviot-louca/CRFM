@@ -14,7 +14,26 @@ function TableauCompagnie() {
 
   const [oaUsers, setOaUsers] = useState([]);
   const [oaError, setOaError] = useState(null);
+  const token = localStorage.getItem("token");
 
+  let userRole = null;
+  
+  try {
+    if (token) {
+      const payload = JSON.parse(
+        atob(token.split(".")[1])
+      );
+  
+      userRole = payload?.role?.roleName ?? null;
+    }
+  } catch (error) {
+    console.error(
+      "Impossible de récupérer le rôle utilisateur :",
+      error
+    );
+  }
+  
+  const isAdministrateur = userRole === "administrateur";
   const resetForm = () => {
     setFormData({ nom: "", imageUrl: "", ordre: "", oaId: "" });
     setShowAddForm(false);
@@ -111,7 +130,7 @@ function TableauCompagnie() {
   return (
     <div className="mb-20">
       <div className="mb-5 flex justify-end">
-        <button
+        {isAdministrateur&&(<button
           type="button"
           onClick={() => {
             if (showAddForm) {
@@ -128,7 +147,7 @@ function TableauCompagnie() {
           className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
         >
           {showAddForm ? "Annuler" : "Ajouter une compagnie"}
-        </button>
+        </button>)}
       </div>
 
       {actionError && (
@@ -226,13 +245,13 @@ function TableauCompagnie() {
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row md:items-center">
-              <button type="button" onClick={() => startEdit(compagnie)} className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 active:scale-[0.98]">
+              {isAdministrateur&&(<button type="button" onClick={() => startEdit(compagnie)} className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 active:scale-[0.98]">
                 Modifier
-              </button>
+              </button>)}
 
-              <button type="button" onClick={() => handleDelete(compagnie)} className="rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 active:scale-[0.98]">
+              {isAdministrateur&&(<button type="button" onClick={() => handleDelete(compagnie)} className="rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 active:scale-[0.98]">
                 Supprimer
-              </button>
+              </button>)}
 
               <Link to={`/admin/compagnies/${compagnie.id}/sections`} className="rounded-lg bg-gray-900 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]">
                 Voir les sections

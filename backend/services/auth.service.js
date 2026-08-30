@@ -18,6 +18,7 @@ export const loginService = async ({ phoneNumber, password }) => {
     if (!isMatch) {
       throw new Error("Identifiants incorrects");
     }
+
     const token = jwt.sign(
       {
         id: user.id,

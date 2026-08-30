@@ -23,7 +23,7 @@ import { MissionsProvider } from "./features/missions/context/MissionsContext";
 
 import PageConnexion from "./features/auth/pages/PageConnexion"
 import ProtectedRoute from "../security/ProtectedRoute"
-
+import PageAccesRefuse from "../security/PageAccesRefuse"
 function App() {
   return (
     <BrowserRouter>
@@ -36,6 +36,10 @@ function App() {
         <Route
           path="/login"
           element={<PageConnexion />}
+        />
+        <Route
+          path="/403"
+          element={<PageAccesRefuse />}
         />
         {/* ==================== MISSIONS ==================== */}
         {/* ADMIN + OA + SOA */}
@@ -79,6 +83,34 @@ function App() {
               path="/admin/creer-missions-5"
               element={<CreerMissions5Admin />}
             />
+            <Route
+              path="/admin/tableau-de-bord"
+              element={<TableauDeBordAdmin />}
+            />
+            <Route
+              path="/admin/compagnies"
+              element={<CompagniesAdmin />}
+            />
+            <Route
+              path="/admin/vehicules"
+              element={<VehiculesAdmin />}
+            />
+            <Route
+              path="/admin/vehicules/:id"
+              element={<DetailVehiculesAdmin />}
+            />
+            {/* Gestion des sections */}
+            <Route
+              path="/admin/compagnies/:compagnieId/sections"
+              element={<SectionsAdmin />}
+            />
+            {/* Gestion des utilisateurs */}
+            <Route
+              path="/admin/compagnies/:compagnieId/sections/:sectionId/utilisateurs"
+              element={<Utilisateurs />}
+            />
+
+
           </Route>
         </Route>
         {/* ==================== CONDUCTEUR ==================== */}
@@ -118,23 +150,7 @@ function App() {
             />
           }
         >
-          <Route
-            path="/admin/tableau-de-bord"
-            element={<TableauDeBordAdmin />}
-          />
-          <Route
-            path="/admin/compagnies"
-            element={<CompagniesAdmin />}
-          />
           {/* Gestion des véhicules */}
-          <Route
-            path="/admin/vehicules"
-            element={<VehiculesAdmin />}
-          />
-          <Route
-            path="/admin/vehicules/:id"
-            element={<DetailVehiculesAdmin />}
-          />
           <Route
             path="/admin/vehicules/ajouter"
             element={<AjouterVehiculeAdmin />}
@@ -147,16 +163,6 @@ function App() {
           <Route
             path="/admin/contact"
             element={<PageContactMessagerieAdmin />}
-          />
-          {/* Gestion des sections */}
-          <Route
-            path="/admin/compagnies/:compagnieId/sections"
-            element={<SectionsAdmin />}
-          />
-          {/* Gestion des utilisateurs */}
-          <Route
-            path="/admin/compagnies/:compagnieId/sections/:sectionId/utilisateurs"
-            element={<Utilisateurs />}
           />
         </Route>
       </Routes>
