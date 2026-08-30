@@ -117,7 +117,9 @@ export const getMissionsAccessFilter = async (user) => {
     error.statusCode = 401;
     throw error;
   }
-
+  if (role === "administrateur") {
+    return null;
+  }
   // SOA → uniquement les missions où il est indiqué
   if (role === "SOA") {
     const groupes = await MissionsGroupes.findAll({

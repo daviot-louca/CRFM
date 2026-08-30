@@ -5,8 +5,19 @@ export default function Etapes2Groupes({
   renommerGroupe,
   toggleUserDansGroupe,
   usersDisponibles = [],
+  usersSelectionnesIds = [],
   getNomComplet,
 }) {
+  const idsSelectionnes = new Set(
+    (usersSelectionnesIds ?? []).map((id) =>
+      String(id)
+    )
+  );
+
+  const utilisateursSelectionnes =
+    usersDisponibles.filter((user) =>
+      idsSelectionnes.has(String(user.id))
+    );
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm h-[720px] flex flex-col overflow-hidden">
       <header className="px-5 py-5 border-b flex items-start justify-between gap-4">
@@ -106,7 +117,7 @@ export default function Etapes2Groupes({
                       </p>
 
                       <div className="max-h-72 overflow-y-auto space-y-4 pr-1">
-                        {usersDisponibles.map(
+                      {utilisateursSelectionnes.map(
                           (user) => {
                             const fullName =
                               getNomComplet

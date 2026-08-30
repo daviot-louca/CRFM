@@ -257,22 +257,43 @@ export default function CreerMissions2Admin() {
               <div className="xl:col-span-4">
 
                 <Etapes2Groupes
+
                   {...missions}
+
                   usersDisponibles={
-                    missions.usersMission
+
+                    missions.usersDisponibles ??
+
+                    missions.usersMission ??
+
+                    []
+
                   }
+
                   getNomComplet={
+
                     getNomComplet
+
                   }
+
                   usersSelectionnesIds={
+
                     missions.tousUsersSelectionnesIds
+
                   }
+
                   sectionsSelectionnees={
+
                     missions.sectionsSelectionnees
+
                   }
+
                   getUsersSection={
+
                     missions.getUsersSection
+
                   }
+
                 />
 
               </div>
