@@ -41,12 +41,11 @@ function Sidebar() {
         >
           Tableau de bord
         </NavLink>
-
         <NavLink
-          to="/admin/messagerie"
+          to="/PageAide"
           className="rounded-md bg-gris-fonce px-3 py-2.5 text-sm text-gris-clair transition-all duration-300 hover:bg-gris-clair hover:text-gris-fonce sm:px-4 sm:py-3 sm:text-base"
         >
-          Messagerie
+          Page d'aide
         </NavLink>
       </nav>
     </div>

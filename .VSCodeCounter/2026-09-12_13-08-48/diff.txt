@@ -1,0 +1,55 @@
+Date : 2026-09-12 13:08:48
+Directory : /Users/loucadaviot/Desktop/crfm
+Total : 15 files,  -270 codes, 20 comments, 134 blanks, all -116 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| JavaScript JSX |         15 |       -270 |         20 |        134 |       -116 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                              | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                 |         15 |       -270 |         20 |        134 |       -116 |
+| frontend                                                                                                          |         15 |       -270 |         20 |        134 |       -116 |
+| frontend/src                                                                                                      |         15 |       -270 |         20 |        134 |       -116 |
+| frontend/src/components                                                                                           |          1 |         -6 |          0 |         -1 |         -7 |
+| frontend/src/components/layout                                                                                    |          1 |         -6 |          0 |         -1 |         -7 |
+| frontend/src/components/layout/admin                                                                              |          1 |         -6 |          0 |         -1 |         -7 |
+| frontend/src/features                                                                                             |         14 |       -264 |         20 |        135 |       -109 |
+| frontend/src/features/missions                                                                                    |         10 |       -424 |        -15 |         93 |       -346 |
+| frontend/src/features/missions/components                                                                         |          4 |       -154 |        -20 |          3 |       -171 |
+| frontend/src/features/missions/components/etape4                                                                  |          4 |       -154 |        -20 |          3 |       -171 |
+| frontend/src/features/missions/pages                                                                              |          6 |       -270 |          5 |         90 |       -175 |
+| frontend/src/features/sections                                                                                    |          1 |        115 |          8 |         23 |        146 |
+| frontend/src/features/sections/pages                                                                              |          1 |        115 |          8 |         23 |        146 |
+| frontend/src/features/users                                                                                       |          1 |          2 |         15 |          0 |         17 |
+| frontend/src/features/users/page                                                                                  |          1 |          2 |         15 |          0 |         17 |
+| frontend/src/features/vehicules                                                                                   |          2 |         43 |         12 |         19 |         74 |
+| frontend/src/features/vehicules/pages                                                                             |          2 |         43 |         12 |         19 |         74 |
++-------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                                          | language       | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/loucadaviot/Desktop/crfm/frontend/src/components/layout/admin/Sidebar.jsx                                  | JavaScript JSX |         -6 |          0 |         -1 |         -7 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape4/Etapes4CompagnieVehicules.jsx    | JavaScript JSX |         72 |          2 |         12 |         86 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape4/Etapes4Resume.jsx                | JavaScript JSX |        -37 |          0 |         -3 |        -40 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape4/Etapes4VehiculesDisponibles.jsx  | JavaScript JSX |       -100 |        -17 |         -2 |       -119 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape4/Etapes4VehiculesSelectionnes.jsx | JavaScript JSX |        -89 |         -5 |         -4 |        -98 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions2Admin.jsx                      | JavaScript JSX |        -16 |          7 |          4 |         -5 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions3Admin.jsx                      | JavaScript JSX |       -391 |         -8 |          6 |       -393 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions4Admin.jsx                      | JavaScript JSX |        -17 |          1 |         16 |          0 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions5Admin.jsx                      | JavaScript JSX |        -32 |         -6 |         -3 |        -41 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/Creermissions1Admin.jsx                      | JavaScript JSX |         -8 |          6 |          3 |          1 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/VisuelMissionsAdmin.jsx                      | JavaScript JSX |        194 |          5 |         64 |        263 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/sections/pages/SectionsAdmin.jsx                            | JavaScript JSX |        115 |          8 |         23 |        146 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/users/page/Utilisateurs.jsx                                 | JavaScript JSX |          2 |         15 |          0 |         17 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/vehicules/pages/AjouterVehiculeAdmin.jsx                    | JavaScript JSX |         43 |         12 |         17 |         72 |
+| /Users/loucadaviot/Desktop/crfm/frontend/src/features/vehicules/pages/VehiculesPage.jsx                           | JavaScript JSX |          0 |          0 |          2 |          2 |
+| Total                                                                                                             |                |       -270 |         20 |        134 |       -116 |
++-------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

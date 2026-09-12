@@ -314,7 +314,7 @@ export default function MissionDetail() {
     {
       numero: 3,
       titre:
-        "Affectation des véhicules",
+        "Affectation de l'OAL et du SOA",
       description:
         "Les véhicules sont affectés aux différents groupes.",
       terminee:
@@ -323,7 +323,7 @@ export default function MissionDetail() {
     {
       numero: 4,
       titre:
-        "Affectation du SOA",
+        "Affectation des véhicules",
       description:
         "Le SOA responsable de chaque groupe est défini.",
       terminee:
@@ -905,8 +905,6 @@ export default function MissionDetail() {
               {vehiculesMission.map(
                 (vehicule, index) => {
 
-                  const conducteur =
-                    vehicule?.conducteur;
 
                   const releve =
                     getReleve(vehicule);

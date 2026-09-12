@@ -68,18 +68,9 @@ export default function CreerMissions2Admin() {
           [],
       }));
 
-      console.log(
-        "[ÉTAPE 2] Sauvegarde des groupes :",
-        groupesMission
-      );
-
       await updateMissionGroupes(
         missions.missionId,
         groupesMission
-      );
-
-      console.log(
-        "[ÉTAPE 2] Groupes sauvegardés avec succès"
       );
 
       navigate(
@@ -109,7 +100,7 @@ export default function CreerMissions2Admin() {
           ================================================== */}
 
           <div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white px-3 py-4 shadow-sm sm:mb-7 sm:px-5 sm:py-5">
-            <div className="mx-auto flex min-w-[560px] max-w-5xl items-start">
+            <div className="mx-auto flex min-w-140 max-w-5xl items-start">
 
               {/* Étape 1 */}
               <div className="flex min-w-0 flex-1 flex-col items-center text-center">
@@ -117,7 +108,7 @@ export default function CreerMissions2Admin() {
                   ✓
                 </div>
 
-                <span className="mt-1.5 max-w-[80px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-20 text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
                   Infos
                 </span>
               </div>
@@ -130,7 +121,7 @@ export default function CreerMissions2Admin() {
                   2
                 </div>
 
-                <span className="mt-1.5 max-w-[100px] text-[9px] font-extrabold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-25 text-[9px] font-extrabold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
                   Affectations des compagnies
                 </span>
               </div>
@@ -143,7 +134,7 @@ export default function CreerMissions2Admin() {
                   3
                 </div>
 
-                <span className="mt-1.5 max-w-[105px] text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-26.25 text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
                   Désignation du OAL et du SOA
                 </span>
               </div>
@@ -156,7 +147,7 @@ export default function CreerMissions2Admin() {
                   4
                 </div>
 
-                <span className="mt-1.5 max-w-[80px] text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-20 text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
                   Véhicules
                 </span>
               </div>
@@ -169,7 +160,7 @@ export default function CreerMissions2Admin() {
                   5
                 </div>
 
-                <span className="mt-1.5 max-w-[80px] text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-20 text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
                   Conducteurs
                 </span>
               </div>
@@ -182,19 +173,6 @@ export default function CreerMissions2Admin() {
           ================================================== */}
 
           <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg sm:rounded-[28px]">
-
-            {/* Header */}
-            <div className="px-4 pb-5 pt-5 sm:px-8 sm:pb-6 sm:pt-7 lg:px-10">
-
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="inline-flex min-h-10 items-center text-sm font-medium text-blue-600 hover:underline"
-              >
-                &larr; Retour
-              </button>
-
-            </div>
 
             {/* Main grid */}
             <div className="grid min-w-0 grid-cols-1 items-start gap-4 p-4 sm:gap-5 sm:p-6 lg:gap-6 lg:p-8 xl:grid-cols-16">

@@ -86,27 +86,17 @@ function Creermissions1Admin() {
   return (
     <MainLayout>
       <div className="mx-auto w-full min-w-0 max-w-7xl">
-        {/* Retour */}
-        <div className="mb-5 sm:mb-8">
-          <button
-            type="button"
-            onClick={() => navigate("/admin/missions")}
-            className="inline-flex min-h-10 items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-50 sm:text-sm"
-          >
-            ← Retour
-          </button>
-        </div>
 
         {/* Barre de progression */}
 <div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm sm:mb-8">
-  <div className="flex min-w-[560px] items-start px-3 py-4 sm:mx-auto sm:min-w-0 sm:max-w-4xl sm:px-5 sm:py-5">
+  <div className="flex min-w-140 items-start px-3 py-4 sm:mx-auto sm:min-w-0 sm:max-w-4xl sm:px-5 sm:py-5">
     {/* Étape 1 */}
     <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
       <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-50 text-xs font-bold text-blue-700 sm:h-8 sm:w-8 sm:text-sm">
         1
       </div>
 
-      <span className="mt-1.5 max-w-[80px] text-center text-[9px] font-semibold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
         Infos
       </span>
     </div>
@@ -119,7 +109,7 @@ function Creermissions1Admin() {
         2
       </div>
 
-      <span className="mt-1.5 max-w-[95px] text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-23.75 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
         Affectations des compagnies
       </span>
     </div>
@@ -132,7 +122,7 @@ function Creermissions1Admin() {
         3
       </div>
 
-      <span className="mt-1.5 max-w-[95px] text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-23.75 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
         Désignation du OAL et du SOA
       </span>
     </div>
@@ -145,7 +135,7 @@ function Creermissions1Admin() {
         4
       </div>
 
-      <span className="mt-1.5 max-w-[80px] text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
         Véhicules
       </span>
     </div>
@@ -158,7 +148,7 @@ function Creermissions1Admin() {
         5
       </div>
 
-      <span className="mt-1.5 max-w-[80px] text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
         Conducteurs
       </span>
     </div>

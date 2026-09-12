@@ -7,6 +7,7 @@ import {
   oneUserService,
   addUserService,
   updateUserService,
+  updateMyProfileService,
   deleteUserService,
 } from "../services/user.service.js";
 export const allUsers = async (req, res) => {
@@ -178,6 +179,33 @@ export const updateUser = async (req, res) => {
     });
   }
 };
+
+export const updateMyProfile = async (req, res) => {
+  try {
+    const id = req.user.id
+
+    const data = await updateMyProfileService(
+      id,
+      req.body
+    )
+
+    return res.status(200).json(data)
+  } catch (error) {
+    console.error(
+      "Erreur lors de la modification du profil :",
+      error
+    )
+
+    const statusCode = error.statusCode || 500
+
+    return res.status(statusCode).json({
+      error:
+        statusCode === 500
+          ? "Erreur interne du serveur."
+          : error.message,
+    })
+  }
+}
 
 export const deleteUser = async (req, res) => {
   try {

@@ -17,25 +17,60 @@ function PageConnexion() {
     };
 
     try {
-      const result = await loginUser(data);
-      localStorage.setItem("token", result.token);
-      console.log("Connexion réussie :", result.user.roleId);
-
-      const role = result.user.role.roleName;
-
+      const result = await loginUser(data)
+    
+      console.log("Connexion réussie :", result)
+    
+      // Token d'authentification
+      localStorage.setItem("token", result.token)
+    
+      // Informations du profil
+      localStorage.setItem(
+        "user",
+        JSON.stringify(result.user)
+      )
+    
+      localStorage.setItem(
+        "userGrade",
+        result.user.grade ?? ""
+      )
+    
+      localStorage.setItem(
+        "userLastName",
+        result.user.lastName ?? ""
+      )
+    
+      localStorage.setItem(
+        "userRole",
+        result.user.role?.roleName ?? ""
+      )
+    
+      const role = result.user.role.roleName
+    
       if (role === "administrateur") {
-        navigate("/admin/tableau-de-bord");
+        navigate("/admin/tableau-de-bord")
       } else if (role === "OA") {
-        navigate("/admin/tableau-de-bord");
+        navigate("/admin/tableau-de-bord")
       } else if (role === "SOA") {
-        navigate("/soa");
+        navigate("/soa")
       } else if (role === "conducteur") {
-        navigate("/conducteur");
+        navigate("/conducteur")
       }
     } catch (error) {
-      console.error("Status :", error.response?.status);
-      console.error("Réponse backend :", error.response?.data);
-      console.error("Erreur :", error);
+      console.error(
+        "Status :",
+        error.response?.status
+      )
+    
+      console.error(
+        "Réponse backend :",
+        error.response?.data
+      )
+    
+      console.error(
+        "Erreur :",
+        error
+      )
     }
   };
 

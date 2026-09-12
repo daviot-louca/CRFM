@@ -155,7 +155,7 @@ function VisuelMissionsAdmin() {
   if (loading) {
     return (
       <MainLayout>
-        <div className="flex min-h-[300px] w-full items-center justify-center px-4">
+        <div className="flex min-h-75 w-full items-center justify-center px-4">
           <p className="text-sm font-medium text-gray-500">
             Chargement des missions...
           </p>
@@ -167,7 +167,7 @@ function VisuelMissionsAdmin() {
   if (error) {
     return (
       <MainLayout>
-        <div className="flex min-h-[300px] w-full items-center justify-center px-4">
+        <div className="flex min-h-75 w-full items-center justify-center px-4">
           <p className="text-center text-sm font-medium text-red-600">
             Impossible de charger les missions.
           </p>
@@ -249,7 +249,7 @@ function VisuelMissionsAdmin() {
                   onChange={(e) =>
                     setStatutFiltre(e.target.value)
                   }
-                  className="box-border block h-11 w-full min-w-0 max-w-full rounded-xl border border-gray-200 bg-white px-3 py-3 text-base text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200 sm:h-10 sm:px-4 sm:text-sm"
+                  className="box-border block h-11 w-full min-w-0 max-w-full rounded-xl border border-gray-200 bg-white px-3 text-base text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200 sm:h-10 sm:px-4 sm:text-sm"
                 >
                   <option value="Tous les statuts">
                     Tous les statuts
@@ -335,7 +335,7 @@ function VisuelMissionsAdmin() {
           <div className="w-full min-w-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left">
+              <table className="w-full min-w-190 text-left">
 
                 <thead className="border-b border-gray-200 bg-gray-50">
                   <tr>
@@ -371,7 +371,7 @@ function VisuelMissionsAdmin() {
 
                         {/* Mission */}
                         <td className="px-4 py-4 sm:px-5">
-                          <div className="max-w-[240px] font-semibold text-gray-900">
+                          <div className="max-w-60 font-semibold text-gray-900">
                             {mission.missionName ||
                               "Mission"}
                           </div>
@@ -522,7 +522,7 @@ function VisuelMissionsAdmin() {
                 Supprimer la mission ?
               </h2>
 
-              <div className="mb-3 break-words font-medium text-gray-900">
+              <div className="mb-3 wrap-break-words font-medium text-gray-900">
                 {missionASupprimer.missionName}
               </div>
 

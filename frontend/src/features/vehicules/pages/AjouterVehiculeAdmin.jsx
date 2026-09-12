@@ -126,7 +126,7 @@ function AjouterVehiculeAdmin() {
 
         {/* En-tête */}
         <div className="mb-5 sm:mb-8">
-          <h1 className="break-words text-xl font-semibold text-gray-900 sm:text-2xl">
+          <h1 className="wrap-break-word text-xl font-semibold text-gray-900 sm:text-2xl">
             Ajouter un véhicule
           </h1>
 

@@ -1,0 +1,13 @@
+"filename", "language", "JavaScript", "JavaScript JSX", "JSON", "comment", "blank", "total"
+"/Users/loucadaviot/Desktop/crfm/backend/controller/auth.controller.js", "JavaScript", 25, 0, 0, 0, 6, 31
+"/Users/loucadaviot/Desktop/crfm/backend/controller/user.controller.js", "JavaScript", 23, 0, 0, 0, 5, 28
+"/Users/loucadaviot/Desktop/crfm/backend/routes/auth.routes.js", "JavaScript", 7, 0, 0, 0, 4, 11
+"/Users/loucadaviot/Desktop/crfm/backend/services/user.service.js", "JavaScript", 74, 0, 0, -5, 18, 87
+"/Users/loucadaviot/Desktop/crfm/frontend/package-lock.json", "JSON", 0, 0, 17, 0, 0, 17
+"/Users/loucadaviot/Desktop/crfm/frontend/package.json", "JSON", 0, 0, 1, 0, 0, 1
+"/Users/loucadaviot/Desktop/crfm/frontend/src/App.jsx", "JavaScript JSX", 0, 30, 0, 1, 0, 31
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/ui/BoutonProfile.jsx", "JavaScript JSX", 0, 201, 0, 11, 40, 252
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/auth/api/auth.service.js", "JavaScript", 8, 0, 0, 0, 4, 12
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/auth/pages/PageConnexion.jsx", "JavaScript JSX", 0, 25, 0, 2, 8, 35
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/auth/pages/PageProfil.jsx", "JavaScript JSX", 0, 393, 0, 6, 82, 481
+"Total", "-", 137, 649, 18, 15, 167, 986

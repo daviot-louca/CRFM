@@ -421,7 +421,7 @@ function TableauCompagnie() {
                     htmlFor={`edit-oa-${compagnie.id}`}
                     className="mb-2 block text-sm font-semibold text-gray-700"
                   >
-                    OA de la compagnie
+                    OAL de la compagnie
                   </label>
 
                   <select
@@ -434,10 +434,10 @@ function TableauCompagnie() {
                         oaId: event.target.value,
                       }))
                     }
-                    className="box-border block h-11 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base outline-none focus:border-gray-500 sm:h-10 sm:text-sm"
+                    className="box-border block h-11 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-white px-4 text-base outline-none focus:border-gray-500 sm:h-10 sm:text-sm"
                   >
                     <option value="">
-                      Sélectionner un OA de cette compagnie
+                      Sélectionner un OAL de cette compagnie
                     </option>
 
                     {oaUsers.map((user) => (
@@ -485,7 +485,7 @@ function TableauCompagnie() {
                     Compagnie
                   </p>
 
-                  <h2 className="break-words text-lg font-bold text-gray-900 md:text-xl">
+                  <h2 className="wrap-break-words text-lg font-bold text-gray-900 md:text-xl">
                     {compagnie?.nom}
                   </h2>
                 </div>

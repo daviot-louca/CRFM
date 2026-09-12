@@ -304,7 +304,7 @@ function SectionsAdmin() {
                       onChange={(event) =>
                         setChefSectionId(event.target.value)
                       }
-                      className="box-border block h-11 w-full min-w-0 max-w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base outline-none focus:border-gray-500 focus:ring-2 focus:ring-gray-200 sm:h-10 sm:text-sm"
+                      className="box-border block h-11 w-full min-w-0 max-w-full rounded-xl border border-gray-300 bg-white px-4 text-base outline-none focus:border-gray-500 focus:ring-2 focus:ring-gray-200 sm:h-10 sm:text-sm"
                     >
                       <option value="">
                         Sélectionner un SOA de cette section
@@ -349,7 +349,7 @@ function SectionsAdmin() {
                 </form>
               ) : (
                 <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
-                  <h2 className="min-w-0 break-words text-base font-semibold text-gray-900 sm:text-lg">
+                  <h2 className="min-w-0 wrap-break-word text-base font-semibold text-gray-900 sm:text-lg">
                     {section.sectionName}
                   </h2>
 

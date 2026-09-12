@@ -21,7 +21,11 @@ function Navbar() {
                   location.pathname.startsWith("/admin/creer") ||
                   location.pathname.startsWith("/admin/validation")
                 ? "Missions"
-                : ""
+                : location.pathname === "/profil"
+                  ? "Profil utilisateur"
+                  : location.pathname === "/PageAide"
+                    ? "Page d'aide"
+                    : ""
 
   const description =
     location.pathname === "/admin/tableau-de-bord"
@@ -40,12 +44,16 @@ function Navbar() {
                   location.pathname.startsWith("/admin/creer") ||
                   location.pathname.startsWith("/admin/validation")
                 ? "Gérez, consultez et créez les missions."
-                : ""
+                : location.pathname === "/profil"
+                  ? "Consultez et modifiez vos informations personnelles"
+                  : location.pathname === "/PageAide"
+                    ? "Consultez la page d'aide pour obtenir des informations sur l'utilisation de l'application"
+                    : ""
 
   return (
     <div className="relative w-full py-3 sm:m-4 sm:flex sm:items-center sm:justify-between sm:gap-4 sm:py-0">
       <div className="min-w-0 flex-1 pr-2 pt-14 sm:pt-0">
-        <h1 className="break-words text-xl font-semibold leading-tight sm:text-xl md:text-2xl">
+        <h1 className="wrap-break-word text-xl font-semibold leading-tight sm:text-xl md:text-2xl">
           {titre}
         </h1>
 
@@ -54,7 +62,7 @@ function Navbar() {
         </h2>
       </div>
 
-      <div className="absolute right-0 top-3 shrink-0 sm:static sm:self-auto">
+      <div className="absolute right-0 mr-4 top-3 shrink-0 sm:static sm:self-auto">
         <BoutonProfile />
       </div>
     </div>

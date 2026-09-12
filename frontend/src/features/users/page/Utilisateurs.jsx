@@ -348,7 +348,7 @@ function Utilisateurs() {
                         Modification
                       </p>
 
-                      <h2 className="mt-1 break-words text-base font-bold text-gray-900">
+                      <h2 className="mt-1 wrap-break-wordword text-base font-bold text-gray-900">
                         {user.lastName || "Utilisateur"}
                       </h2>
                     </div>
@@ -478,7 +478,7 @@ function Utilisateurs() {
                           {user.grade || "Militaire"}
                         </p>
 
-                        <h2 className="mt-0.5 break-words text-base font-bold text-gray-900">
+                        <h2 className="mt-0.5 wrap-break-word text-base font-bold text-gray-900">
                           {user.lastName || "Nom non renseigné"}
                         </h2>
                       </div>
@@ -531,7 +531,7 @@ function Utilisateurs() {
             {/* TABLETTE / DESKTOP */}
             <div className="hidden w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm sm:block">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[700px] text-left">
+                <table className="w-full min-w-175 text-left">
                   <thead className="border-b border-gray-200 bg-gray-50">
                     <tr>
                       <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 sm:px-5">

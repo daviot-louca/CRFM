@@ -721,11 +721,98 @@ export const updateUserService = async (
   return userDataResponse;
 };
 
-/*
- * ==========================================
- * SUPPRESSION UTILISATEUR
- * ==========================================
- */
+export const updateMyProfileService = async (
+  id,
+  userData,
+) => {
+  const user = await User.findByPk(id, {
+    include: userContextIncludes,
+  });
+
+  if (!user) {
+    const error = new Error(
+      "Utilisateur non trouvé.",
+    );
+
+    error.statusCode = 404;
+
+    throw error;
+  }
+
+  const dataToUpdate = {};
+
+  if (
+    typeof userData.grade === "string"
+  ) {
+    dataToUpdate.grade =
+      userData.grade.trim();
+  }
+
+  if (
+    typeof userData.lastName === "string"
+  ) {
+    dataToUpdate.lastName =
+      userData.lastName.trim();
+  }
+
+  if (
+    typeof userData.email === "string"
+  ) {
+    dataToUpdate.email =
+      userData.email.trim();
+  }
+
+  if (
+    typeof userData.phoneNumber === "string"
+  ) {
+    dataToUpdate.phoneNumber =
+      userData.phoneNumber.trim();
+  }
+
+  if (
+    Object.keys(dataToUpdate).length === 0
+  ) {
+    const error = new Error(
+      "Aucune information valide à modifier.",
+    );
+
+    error.statusCode = 400;
+
+    throw error;
+  }
+
+  if (dataToUpdate.email) {
+    const existingUser =
+      await User.findOne({
+        where: {
+          email: dataToUpdate.email,
+          id: {
+            [Op.ne]: id,
+          },
+        },
+      });
+
+    if (existingUser) {
+      const error = new Error(
+        "Cette adresse e-mail est déjà utilisée.",
+      );
+
+      error.statusCode = 409;
+
+      throw error;
+    }
+  }
+
+  await user.update(dataToUpdate);
+
+  const userUpdated =
+    await User.findByPk(id, {
+      attributes: userAttributes,
+      include: userContextIncludes,
+    });
+
+  return formatUserResponse(userUpdated);
+};
 
 export const deleteUserService = async (
   id,

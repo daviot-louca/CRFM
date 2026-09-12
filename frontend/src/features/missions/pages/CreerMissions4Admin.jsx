@@ -196,37 +196,10 @@ function CreerMissions4Admin() {
     <MainLayout>
       <div className="h-[calc(100vh-2rem)] bg-slate-50 overflow-hidden">
         <div className="max-w-[1700px] h-full mx-auto px-8 py-4 flex flex-col min-h-0">
-          {/* Command Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="text-slate-400 hover:text-slate-600 transition"
-                aria-label="Retour"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
-              <div>
-                <h1 className="text-lg font-semibold text-slate-900">Affectation des véhicules</h1>
-                <p className="text-sm text-slate-500">Étape 4 sur 5 · Sélection des véhicules par compagnie</p>
-              </div>
-            </div>
-          </div>
 
           {/* Timeline des étapes */}
 <div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white px-3 py-4 shadow-sm sm:mb-7 sm:px-5 sm:py-5">
-  <div className="mx-auto flex min-w-[560px] max-w-5xl items-start">
+  <div className="mx-auto flex min-w-140 max-w-5xl items-start">
 
     {/* Étape 1 */}
     <div className="flex min-w-0 flex-1 flex-col items-center text-center">
@@ -234,7 +207,7 @@ function CreerMissions4Admin() {
         ✓
       </div>
 
-      <span className="mt-1.5 max-w-[80px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-20 text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
         Infos
       </span>
     </div>
@@ -248,7 +221,7 @@ function CreerMissions4Admin() {
         ✓
       </div>
 
-      <span className="mt-1.5 max-w-[100px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-20 text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
         Affectations des compagnies
       </span>
     </div>
@@ -262,7 +235,7 @@ function CreerMissions4Admin() {
         ✓
       </div>
 
-      <span className="mt-1.5 max-w-[105px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-20 text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
         Désignation du OAL et du SOA
       </span>
     </div>
@@ -276,7 +249,7 @@ function CreerMissions4Admin() {
         4
       </div>
 
-      <span className="mt-1.5 max-w-[80px] text-[9px] font-extrabold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-20 text-[9px] font-extrabold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
         Véhicules
       </span>
     </div>
@@ -290,7 +263,7 @@ function CreerMissions4Admin() {
         5
       </div>
 
-      <span className="mt-1.5 max-w-[80px] text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+      <span className="mt-1.5 max-w-20 text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
         Conducteurs
       </span>
     </div>

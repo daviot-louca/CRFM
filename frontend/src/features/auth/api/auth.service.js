@@ -5,3 +5,15 @@ export const login = async (data) => {
 
   return response.data;
 };
+
+export const modifierMotDePasse = async (data) => {
+  const response = await apiClient.put("/auth/password", data);
+
+  return response.data;
+};
+
+export const updateMyProfile = async (data) => {
+  const response = await apiClient.put("/auth/me", data);
+
+  return response.data;
+}

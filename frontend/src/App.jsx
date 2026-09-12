@@ -24,9 +24,23 @@ import { MissionsProvider } from "./features/missions/context/MissionsContext";
 import PageConnexion from "./features/auth/pages/PageConnexion"
 import ProtectedRoute from "../security/ProtectedRoute"
 import PageAccesRefuse from "../security/PageAccesRefuse"
+import PageAide from "./features/auth/pages/PageAide"
+import { Toaster } from "sonner"
+import PageProfil from "./features/auth/pages/PageProfil"
 function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        richColors
+        toastOptions={{
+          style: {
+            borderRadius: "8px",
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />
       <Routes>
         {/* ==================== ROUTES PUBLIQUES ==================== */}
         <Route
@@ -41,6 +55,28 @@ function App() {
           path="/403"
           element={<PageAccesRefuse />}
         />
+                {/* ==================== ROUTES autorisées a toutes les personnes dans le crfm ==================== */}
+        <Route
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "administrateur",
+                "OA",
+                "SOA",
+                "conducteur",
+              ]}
+            />
+          }
+        >
+          <Route
+            path="/profil"
+            element={<PageProfil />}
+          />
+          <Route
+            path="/PageAide"
+            element={<PageAide />}
+          />
+        </Route>
         {/* ==================== MISSIONS ==================== */}
         {/* ADMIN + OA + SOA */}
         <Route

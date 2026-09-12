@@ -330,24 +330,6 @@ export default function CreerMissions3Admin() {
       <div className="min-h-screen w-full min-w-0 bg-slate-50 px-4 pb-10 pt-4 text-slate-900 sm:px-6 sm:pb-12 sm:pt-6 lg:px-8">
         <div className="mx-auto w-full min-w-0 max-w-7xl">
 
-          {/* ==================================================
-              HEADER
-          ================================================== */}
-
-          <div className="mb-5 min-w-0 sm:mb-6">
-            <div className="mb-2 text-[10px] font-extrabold uppercase tracking-wider text-blue-600 sm:text-xs">
-              Création de mission · Étape 3 sur 5
-            </div>
-
-            <h1 className="break-words text-2xl font-extrabold leading-tight sm:text-3xl">
-              Commandement de la mission
-            </h1>
-
-            <p className="mt-2 max-w-3xl text-xs leading-relaxed text-slate-500 sm:text-sm">
-              Choisissez l'OA de la mission puis le SOA
-              responsable de chaque groupe.
-            </p>
-          </div>
 
           {/* ==================================================
               TIMELINE
@@ -620,39 +602,14 @@ export default function CreerMissions3Admin() {
           <section
             style={{
               ...cardStyle,
-              padding: "20px 16px",
+              padding: "10px 16px",
               marginBottom: "16px",
             }}
             className="sm:p-7"
           >
-            <div className="flex min-w-0 flex-col gap-5 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
-              <div className="min-w-0 flex-1">
-                <div
-                  style={{
-                    display: "inline-block",
-                    padding: "5px 9px",
-                    borderRadius: "999px",
-                    background: "#eff6ff",
-                    color: "#2563eb",
-                    fontSize: "10px",
-                    fontWeight: 800,
-                    marginBottom: "10px",
-                  }}
-                >
-                  01 · OAL
-                </div>
+            <div className="flex min-w-0 flex-col lg:flex-row lg:items-start lg:justify-between lg:gap-8">
 
-                <h2 className="break-words text-lg font-extrabold sm:text-xl">
-                  Officier d'Action de la mission
-                </h2>
-
-                <p className="mt-2 max-w-2xl text-xs leading-relaxed text-slate-500 sm:text-sm">
-                  Sélectionnez l'OAL responsable de la
-                  mission parmi les OA de toutes les
-                  compagnies.
-                </p>
-
-                <div className="mt-5 min-w-0 max-w-2xl">
+                <div className="min-w-0 max-w-2xl">
                   <label
                     htmlFor="mission-oa"
                     className="mb-2 block text-xs font-bold text-slate-700 sm:text-sm"
@@ -709,22 +666,6 @@ export default function CreerMissions3Admin() {
                   </div>
                 )}
               </div>
-
-              <div className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 lg:w-56 lg:shrink-0">
-                <div className="text-xs font-extrabold text-slate-700">
-                  OAL disponibles
-                </div>
-
-                <div className="mt-1 text-2xl font-extrabold text-blue-600">
-                  {oaMission.length}
-                </div>
-
-                <div className="mt-1 text-xs leading-relaxed text-slate-500">
-                  OAL disponibles parmi toutes
-                  les compagnies.
-                </div>
-              </div>
-            </div>
           </section>
 
           {/* ==================================================
@@ -739,45 +680,7 @@ export default function CreerMissions3Admin() {
             }}
             className="sm:p-7"
           >
-            <div className="mb-5 flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div className="min-w-0">
-                <div
-                  style={{
-                    display: "inline-block",
-                    padding: "5px 9px",
-                    borderRadius: "999px",
-                    background: "#f1f5f9",
-                    color: "#475569",
-                    fontSize: "10px",
-                    fontWeight: 800,
-                    marginBottom: "10px",
-                  }}
-                >
-                  02 · SOA
-                </div>
 
-                <h2 className="break-words text-lg font-extrabold sm:text-xl">
-                  Sous-Officier d'Action par groupe
-                </h2>
-
-                <p className="mt-2 max-w-3xl text-xs leading-relaxed text-slate-500 sm:text-sm">
-                  Chaque groupe doit avoir son SOA
-                  responsable. Tous les SOA affectés à la
-                  mission sont disponibles.
-                </p>
-              </div>
-
-              <div className="flex w-full flex-wrap gap-2 lg:w-auto lg:shrink-0">
-                <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-600">
-                  {soaMission.length} SOA disponibles
-                </div>
-
-                <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-600">
-                  {nombreSoaRenseignes}/
-                  {groupes.length} renseignés
-                </div>
-              </div>
-            </div>
 
             {groupes.length === 0 ? (
               <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-xs leading-relaxed text-slate-500 sm:text-sm">
@@ -812,7 +715,7 @@ export default function CreerMissions3Admin() {
                               Groupe {index + 1}
                             </div>
 
-                            <h3 className="break-words text-base font-extrabold text-slate-900">
+                            <h3 className="wrap-break-words text-base font-extrabold text-slate-900">
                               {groupe?.nom ??
                                 groupe?.nomGroupe ??
                                 `Groupe ${
@@ -958,7 +861,7 @@ export default function CreerMissions3Admin() {
                 </div>
 
                 <strong
-                  className={`mt-1 block break-words text-sm ${
+                  className={`mt-1 block wrap-break-words text-sm ${
                     oaId
                       ? "text-green-700"
                       : "text-slate-400"
