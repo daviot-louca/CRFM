@@ -133,40 +133,6 @@ function CreerMissions5Admin() {
 
   /*
    * ============================================================
-   * TIMELINE
-   * ============================================================
-   */
-
-  const etapes = [
-    {
-      numero: 1,
-      titre: "Mission",
-      active: false,
-    },
-    {
-      numero: 2,
-      titre: "Compagnies",
-      active: false,
-    },
-    {
-      numero: 3,
-      titre: "Commandement",
-      active: false,
-    },
-    {
-      numero: 4,
-      titre: "Véhicules",
-      active: false,
-    },
-    {
-      numero: 5,
-      titre: "Conducteurs",
-      active: true,
-    },
-  ];
-
-  /*
-   * ============================================================
    * NOM UTILISATEUR
    * ============================================================
    */
@@ -530,60 +496,78 @@ function CreerMissions5Admin() {
             TIMELINE
         ====================================================== */}
 
-        <div className="mb-10">
+{/* ======================================================
+    TIMELINE
+====================================================== */}
 
-          <div className="flex items-center justify-between">
+<div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white px-3 py-4 shadow-sm sm:mb-7 sm:px-5 sm:py-5">
+  <div className="mx-auto flex min-w-[560px] max-w-5xl items-start">
 
-            {etapes.map(
-              (etape, index) => (
-                <div
-                  key={etape.numero}
-                  className="flex flex-1 items-center"
-                >
+    {/* Étape 1 */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
+        ✓
+      </div>
 
-                  <div className="flex flex-col items-center">
+      <span className="mt-1.5 max-w-[80px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Infos
+      </span>
+    </div>
 
-                    <div
-                      className={`
-                        flex h-10 w-10 items-center justify-center
-                        rounded-full border-2 text-sm font-semibold
-                        ${
-                          etape.active
-                            ? "border-blue-600 bg-blue-600 text-white"
-                            : "border-gray-300 bg-white text-gray-500"
-                        }
-                      `}
-                    >
-                      {etape.numero}
-                    </div>
+    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
 
-                    <span
-                      className={`
-                        mt-2 whitespace-nowrap text-xs
-                        ${
-                          etape.active
-                            ? "font-semibold text-blue-600"
-                            : "text-gray-500"
-                        }
-                      `}
-                    >
-                      {etape.titre}
-                    </span>
+    {/* Étape 2 */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
+        ✓
+      </div>
 
-                  </div>
+      <span className="mt-1.5 max-w-[100px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Affectations des compagnies
+      </span>
+    </div>
 
-                  {index <
-                    etapes.length - 1 && (
-                    <div className="mx-3 h-0.5 flex-1 bg-gray-200" />
-                  )}
+    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
 
-                </div>
-              )
-            )}
+    {/* Étape 3 */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
+        ✓
+      </div>
 
-          </div>
+      <span className="mt-1.5 max-w-[105px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Désignation du OAL et du SOA
+      </span>
+    </div>
 
-        </div>
+    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+
+    {/* Étape 4 */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
+        ✓
+      </div>
+
+      <span className="mt-1.5 max-w-[80px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Véhicules
+      </span>
+    </div>
+
+    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+
+    {/* Étape 5 — ACTIVE */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-50 text-[10px] font-extrabold text-blue-700 sm:h-8 sm:w-8 sm:text-xs">
+        5
+      </div>
+
+      <span className="mt-1.5 max-w-[80px] text-[9px] font-extrabold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Conducteurs
+      </span>
+    </div>
+
+  </div>
+</div>
 
         {/* ======================================================
             TITRE

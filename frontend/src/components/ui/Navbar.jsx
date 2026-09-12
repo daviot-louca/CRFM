@@ -13,11 +13,15 @@ function Navbar() {
           ? "Gestion des véhicules tactiques"
           : /^\/admin\/compagnies\/[^/]+\/sections$/.test(location.pathname)
             ? "Sections de la compagnie"
-            : /^\/admin\/compagnies\/[^/]+\/sections\/[^/]+\/utilisateurs$/.test(location.pathname)
+            : /^\/admin\/compagnies\/[^/]+\/sections\/[^/]+\/utilisateurs$/.test(
+                  location.pathname
+                )
               ? "Utilisateurs de la section"
-              : location.pathname.startsWith("/admin/missions") || location.pathname.startsWith("/admin/creer") || location.pathname.startsWith("/admin/validation")
-              ? "Missions"
-              :""
+              : location.pathname.startsWith("/admin/missions") ||
+                  location.pathname.startsWith("/admin/creer") ||
+                  location.pathname.startsWith("/admin/validation")
+                ? "Missions"
+                : ""
 
   const description =
     location.pathname === "/admin/tableau-de-bord"
@@ -28,20 +32,31 @@ function Navbar() {
           ? "Gérez et suivez l’ensemble du parc de véhicules"
           : /^\/admin\/compagnies\/[^/]+\/sections$/.test(location.pathname)
             ? "Consultez et gérez les sections rattachées à cette compagnie"
-            : /^\/admin\/compagnies\/[^/]+\/sections\/[^/]+\/utilisateurs$/.test(location.pathname)
+            : /^\/admin\/compagnies\/[^/]+\/sections\/[^/]+\/utilisateurs$/.test(
+                  location.pathname
+                )
               ? "Consultez et gérez les utilisateurs rattachés à cette section"
-              : location.pathname.startsWith("/admin/missions") || location.pathname.startsWith("/admin/creer") || location.pathname.startsWith("/admin/validation")
-              ? "Gérez, consultez et créez les missions." 
-              :""
+              : location.pathname.startsWith("/admin/missions") ||
+                  location.pathname.startsWith("/admin/creer") ||
+                  location.pathname.startsWith("/admin/validation")
+                ? "Gérez, consultez et créez les missions."
+                : ""
 
   return (
-    <div className="m-4 flex items-center justify-between">
-      <div className="flex flex-col justify-between">
-        <h1 className="">{titre}</h1>
-        <h2>{description}</h2>
+    <div className="relative w-full py-3 sm:m-4 sm:flex sm:items-center sm:justify-between sm:gap-4 sm:py-0">
+      <div className="min-w-0 flex-1 pr-2 pt-14 sm:pt-0">
+        <h1 className="break-words text-xl font-semibold leading-tight sm:text-xl md:text-2xl">
+          {titre}
+        </h1>
+
+        <h2 className="mt-2 max-w-2xl text-xs leading-relaxed text-gray-500 sm:text-sm">
+          {description}
+        </h2>
       </div>
 
-      <BoutonProfile />
+      <div className="absolute right-0 top-3 shrink-0 sm:static sm:self-auto">
+        <BoutonProfile />
+      </div>
     </div>
   )
 }

@@ -1,36 +1,54 @@
 import { NavLink } from "react-router-dom"
 import logoBataillon from "/images/logoCompagnie/logoBataillon.webp"
+
 function Sidebar() {
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex justify-center items-center m-2">
-        <img src={logoBataillon} alt="logo du bataillon" width={100} />
+    <div className="flex h-full flex-col gap-3 overflow-y-auto px-3 py-4 sm:gap-4 sm:px-4 sm:py-5">
+      <div className="flex shrink-0 items-center justify-center py-1 sm:py-2">
+        <img
+          src={logoBataillon}
+          alt="logo du bataillon"
+          className="h-auto w-20 sm:w-24"
+        />
       </div>
-      <div className="bg-gris-fonce p-2 rounded-sm mx-4 hover:bg-gris-clair text-gris-clair hover:text-gris-fonce transition-all duration-300">
-        <NavLink to="/admin/missions">
-          <h2>Missions</h2>
+
+      <nav className="flex flex-col gap-2 sm:gap-3">
+        <NavLink
+          to="/admin/missions"
+          className="rounded-md bg-gris-fonce px-3 py-2.5 text-sm text-gris-clair transition-all duration-300 hover:bg-gris-clair hover:text-gris-fonce sm:px-4 sm:py-3 sm:text-base"
+        >
+          Missions
         </NavLink>
-      </div>
-      <div className="bg-gris-fonce p-2 rounded-sm mx-4 hover:bg-gris-clair text-gris-clair hover:text-gris-fonce transition-all duration-300">
-        <NavLink to="/admin/vehicules">
-          <h2>Véhicules</h2>
+
+        <NavLink
+          to="/admin/vehicules"
+          className="rounded-md bg-gris-fonce px-3 py-2.5 text-sm text-gris-clair transition-all duration-300 hover:bg-gris-clair hover:text-gris-fonce sm:px-4 sm:py-3 sm:text-base"
+        >
+          Véhicules
         </NavLink>
-      </div>
-      <div className="bg-gris-fonce p-2 rounded-sm mx-4 hover:bg-gris-clair text-gris-clair hover:text-gris-fonce transition-all duration-300">
-        <NavLink to="/admin/compagnies">
-          <h2>Compagnies/Personnel</h2>
+
+        <NavLink
+          to="/admin/compagnies"
+          className="rounded-md bg-gris-fonce px-3 py-2.5 text-sm text-gris-clair transition-all duration-300 hover:bg-gris-clair hover:text-gris-fonce sm:px-4 sm:py-3 sm:text-base"
+        >
+          <span className="block sm:hidden">Personnel</span>
+          <span className="hidden sm:block">Compagnies/Personnel</span>
         </NavLink>
-      </div>
-      <div className="bg-gris-fonce p-2 rounded-sm mx-4 hover:bg-gris-clair text-gris-clair hover:text-gris-fonce transition-all duration-300">
-        <NavLink to="/admin/tableau-de-bord">
-          <h2>Tableau de bord</h2>
+
+        <NavLink
+          to="/admin/tableau-de-bord"
+          className="rounded-md bg-gris-fonce px-3 py-2.5 text-sm text-gris-clair transition-all duration-300 hover:bg-gris-clair hover:text-gris-fonce sm:px-4 sm:py-3 sm:text-base"
+        >
+          Tableau de bord
         </NavLink>
-      </div>
-      <div className="bg-gris-fonce p-2 rounded-sm mx-4 hover:bg-gris-clair text-gris-clair hover:text-gris-fonce transition-all duration-300">
-        <NavLink to="/admin/messagerie">
-          <h2>Messagerie</h2>
+
+        <NavLink
+          to="/admin/messagerie"
+          className="rounded-md bg-gris-fonce px-3 py-2.5 text-sm text-gris-clair transition-all duration-300 hover:bg-gris-clair hover:text-gris-fonce sm:px-4 sm:py-3 sm:text-base"
+        >
+          Messagerie
         </NavLink>
-      </div>
+      </nav>
     </div>
   )
 }

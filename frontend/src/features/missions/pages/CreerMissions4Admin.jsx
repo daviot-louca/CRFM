@@ -219,58 +219,84 @@ function CreerMissions4Admin() {
               </button>
               <div>
                 <h1 className="text-lg font-semibold text-slate-900">Affectation des véhicules</h1>
-                <p className="text-sm text-slate-500">Étape 3 sur 4 · Sélection des véhicules par compagnie</p>
-              </div>
-            </div>
-            <div className="flex space-x-3">
-              <div className="rounded-full bg-slate-200 text-slate-700 px-3 py-1 text-xs font-semibold select-none">
-                {missions.compagniesSelectionneesGroupes?.length || 0} compagnies
-              </div>
-              <div className="rounded-full bg-slate-200 text-slate-700 px-3 py-1 text-xs font-semibold select-none">
-                {missions.vehiculesSelectionnes?.length || 0} véhicules sélectionnés
+                <p className="text-sm text-slate-500">Étape 4 sur 5 · Sélection des véhicules par compagnie</p>
               </div>
             </div>
           </div>
 
-          {/* Barre de progression */}
-          <div className="mb-4 rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-sm">
-            <div className="mx-auto flex max-w-3xl items-center justify-between">
-              {/* Étape 1 */}
-              <div className="flex flex-col items-center">
-                <div className="flex items-center justify-center h-9 w-9 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-400 font-bold">
-                  1
-                </div>
-                <span className="mt-2 text-xs font-semibold text-gray-400">Informations</span>
-              </div>
-              {/* Trait */}
-              <div className="h-0.5 w-16 bg-gray-200 mx-2" />
-              {/* Étape 2 */}
-              <div className="flex flex-col items-center">
-                <div className="flex items-center justify-center h-9 w-9 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-400 font-bold">
-                  2
-                </div>
-                <span className="mt-2 text-xs font-semibold text-gray-400">Affectations</span>
-              </div>
-              {/* Trait */}
-              <div className="h-0.5 w-16 bg-gray-200 mx-2" />
-              {/* Étape 3 (new) */}
-              <div className="flex flex-col items-center">
-                <div className="flex items-center justify-center h-9 w-9 rounded-full border-2 border-blue-600 bg-blue-50 text-blue-700 font-bold">
-                  3
-                </div>
-                <span className="mt-2 text-xs font-semibold text-blue-700">Véhicules</span>
-              </div>
-              {/* Trait */}
-              <div className="h-0.5 w-16 bg-gray-200 mx-2" />
-              {/* Étape 4 */}
-              <div className="flex flex-col items-center">
-                <div className="flex items-center justify-center h-9 w-9 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-400 font-bold">
-                  4
-                </div>
-                <span className="mt-2 text-xs font-semibold text-gray-400 whitespace-nowrap">Récapitulatif &amp; validation</span>
-              </div>
-            </div>
-          </div>
+          {/* Timeline des étapes */}
+<div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white px-3 py-4 shadow-sm sm:mb-7 sm:px-5 sm:py-5">
+  <div className="mx-auto flex min-w-[560px] max-w-5xl items-start">
+
+    {/* Étape 1 */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
+        ✓
+      </div>
+
+      <span className="mt-1.5 max-w-[80px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Infos
+      </span>
+    </div>
+
+    {/* Trait */}
+    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+
+    {/* Étape 2 */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
+        ✓
+      </div>
+
+      <span className="mt-1.5 max-w-[100px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Affectations des compagnies
+      </span>
+    </div>
+
+    {/* Trait */}
+    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+
+    {/* Étape 3 */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
+        ✓
+      </div>
+
+      <span className="mt-1.5 max-w-[105px] text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Désignation du OAL et du SOA
+      </span>
+    </div>
+
+    {/* Trait */}
+    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+
+    {/* Étape 4 — ACTIVE */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-50 text-[10px] font-extrabold text-blue-700 sm:h-8 sm:w-8 sm:text-xs">
+        4
+      </div>
+
+      <span className="mt-1.5 max-w-[80px] text-[9px] font-extrabold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+        Véhicules
+      </span>
+    </div>
+
+    {/* Trait */}
+    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+
+    {/* Étape 5 */}
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-[10px] font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-xs">
+        5
+      </div>
+
+      <span className="mt-1.5 max-w-[80px] text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+        Conducteurs
+      </span>
+    </div>
+
+  </div>
+</div>
 
           <div className="flex-1 min-h-0 rounded-[28px] shadow-lg border border-slate-200 bg-white flex flex-col overflow-hidden">
 
@@ -298,22 +324,23 @@ function CreerMissions4Admin() {
 
             {/* Footer */}
             <footer className="px-8 py-4 border-t border-slate-200 bg-white">
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  className="border border-slate-300 bg-white hover:bg-slate-50 rounded-2xl px-8 py-3 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 transition-all duration-200"
-                >
-                  Précédent
-                </button>
-                <button
-                  type="button"
-                  onClick={handleContinuer}
-                  className="bg-blue-600 hover:bg-blue-700 rounded-2xl px-8 py-3 text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 transition-all duration-200"
-                >
-                  Suivant
-                </button>
-              </div>
+            <div className="flex w-full items-center gap-2 sm:justify-between sm:gap-4">
+  <button
+    type="button"
+    onClick={() => navigate(-1)}
+    className="min-w-0 flex-1 rounded-2xl border border-slate-300 bg-white px-3 py-3 text-sm font-semibold text-slate-700 transition-all duration-200 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 active:scale-[0.98] sm:flex-none sm:px-8"
+  >
+    Précédent
+  </button>
+
+  <button
+    type="button"
+    onClick={handleContinuer}
+    className="min-w-0 flex-1 rounded-2xl bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-1 active:scale-[0.98] sm:flex-none sm:px-8"
+  >
+    Suivant
+  </button>
+</div>
             </footer>
           </div>
         </div>

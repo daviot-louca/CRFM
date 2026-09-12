@@ -1,0 +1,16 @@
+"filename", "language", "JavaScript JSX", "comment", "blank", "total"
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/layout/MainLayout.jsx", "JavaScript JSX", 40, 4, 4, 48
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/layout/admin/Sidebar.jsx", "JavaScript JSX", 12, 0, 5, 17
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/ui/BoutonProfile.jsx", "JavaScript JSX", 4, 0, 0, 4
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/ui/Navbar.jsx", "JavaScript JSX", 14, 0, 1, 15
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/auth/pages/PageConnexion.jsx", "JavaScript JSX", 4, 0, 5, 9
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/compagnies/components/TableauCompagnie.jsx", "JavaScript JSX", 226, 0, 34, 260
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/compagnies/pages/CompagniesAdmin.jsx", "JavaScript JSX", 1, 0, -1, 0
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape2/Etapes2Compagnies.jsx", "JavaScript JSX", 9, 0, 0, 9
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape2/Etapes2Groupes.jsx", "JavaScript JSX", -33, 0, 2, -31
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape2/Etapes2Personnel.jsx", "JavaScript JSX", 43, 0, 11, 54
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/components/etape2/Etapes2Sections.jsx", "JavaScript JSX", 19, 0, 2, 21
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions2Admin.jsx", "JavaScript JSX", -2, -8, -61, -71
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/Creermissions1Admin.jsx", "JavaScript JSX", 0, -13, 0, -13
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/users/page/Utilisateurs.jsx", "JavaScript JSX", 362, 2, 62, 426
+"Total", "-", 699, -15, 64, 748
