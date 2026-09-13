@@ -7,6 +7,7 @@ function ProtectedRoute({ allowedRoles = [] }) {
     return <Navigate to="/login" replace />;
   }
 
+  // eslint-disable-next-line no-useless-assignment
   let userRole = null;
 
   try {
@@ -16,7 +17,6 @@ function ProtectedRoute({ allowedRoles = [] }) {
 
     userRole = payload?.role?.roleName ?? null;
 
-    console.log("[AUTH] USER ROLE :", userRole);
   } catch (error) {
     console.error(
       "Impossible de lire le rôle du token :",

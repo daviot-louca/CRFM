@@ -14,10 +14,8 @@ const TEMP_PASSWORD = "ChangeMe123!";
 const gradesMilitairesDuRang = ["SDT", "1CL", "CPL", "CCH", "CC1"];
 
 // Grades → sous-officiers → SOA
-const gradesSousOfficiers = ["SGT", "SCH", "ADJ", "ADC", "MAJ"];
+const gradesSousOfficiers = ["SGT", "SCH", "ADJ", "ADC", "MAJ","SLT", "LTN", "CNE", "CDT", "LCL", "COL"];
 
-// Grades → officiers → OA
-const gradesOfficiers = ["SLT", "LTN", "CNE", "CDT", "LCL", "COL"];
 
 // Détermine le rôle à partir du grade
 function getRoleFromGrade(grade) {
@@ -28,10 +26,6 @@ function getRoleFromGrade(grade) {
   }
 
   if (gradesSousOfficiers.includes(gradeNormalise)) {
-    return "SOA";
-  }
-
-  if (gradesOfficiers.includes(gradeNormalise)) {
     return "SOA";
   }
 
@@ -55,11 +49,8 @@ async function getRoleId(roleName) {
 
 async function importPersonnels() {
   try {
-    console.log("Connexion à la base de données...");
 
     await sequelize.authenticate();
-
-    console.log("Connexion réussie.");
 
     // 1. Lecture du fichier Excel
     const workbook = XLSX.readFile(EXCEL_PATH);
@@ -72,7 +63,6 @@ async function importPersonnels() {
       defval: "",
     });
 
-    console.log(`${rows.length} lignes trouvées dans Excel.`);
 
     let imported = 0;
     let skipped = 0;
@@ -95,8 +85,7 @@ async function importPersonnels() {
         }
         // Une seule information manque → ligne ignorée
         if (!compagnieNom || !sectionNom || !nom || !grade) {
-          console.log(`Ligne ${i + 2} ignorée : données manquantes.`, row);
-
+ 
           skipped++;
           continue;
         }
@@ -105,7 +94,6 @@ async function importPersonnels() {
         const roleName = getRoleFromGrade(grade);
 
         if (!roleName) {
-          console.log(`Ligne ${i + 2} ignorée : grade inconnu "${grade}".`);
 
           skipped++;
           continue;
@@ -122,9 +110,6 @@ async function importPersonnels() {
         });
 
         if (!compagnie) {
-          console.log(
-            `Ligne ${i + 2} : compagnie introuvable "${compagnieNom}".`,
-          );
 
           errors++;
           continue;

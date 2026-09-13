@@ -23,7 +23,7 @@ const Compagnie = sequelize.define(
       type:DataTypes.INTEGER,
       allowNull:false,
     },
-    oaId: {
+    oalId: {
       type: DataTypes.UUID,
       allowNull: true,
       references: {

@@ -1,56 +1,102 @@
-import { ChevronRight, Gauge, MapPin } from "lucide-react";
+import {
+  ChevronRight,
+  Gauge,
+  MapPin,
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import { formatDate, getStatutClasses } from "../utils/conducteur.utils";
+import {
+  formatDate,
+  getStatutClasses,
+} from "../utils/conducteur.utils";
 
-function VehiculeMissionCard({ affectation }) {
+function VehiculeMissionCard({
+  affectation,
+}) {
   const mission = affectation?.mission;
-  const statut = affectation?.statutReleve ?? "À compléter";
+  const statut =
+    affectation?.statutReleve ??
+    "À compléter";
 
   return (
     <Link
       to={`/conducteur/vehicules/${affectation.missionVehiculeId}`}
-      className="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition active:scale-[0.99]"
+      className="group block w-full min-w-0 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:shadow-md active:scale-[0.99] sm:p-5"
       aria-label={`Ouvrir ${affectation.nom}`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="break-words text-sm font-semibold text-gray-600">
-            {mission?.missionName ?? "Mission"}
+      {/* En-tête */}
+      <div className="flex min-w-0 items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <p className="wrap-break-wordword text-sm font-semibold text-gray-600">
+            {mission?.missionName ??
+              "Mission"}
           </p>
-          <h2 className="mt-2 break-words text-lg font-bold text-gray-950">
+
+          <h2 className="mt-2 wrap-break-word text-lg font-bold text-gray-950 sm:text-xl">
             {affectation.nom}
           </h2>
-          <p className="mt-1 break-words text-sm text-gray-600">
-            {affectation.immatriculation}
+
+          <p className="mt-1 wrap-break-word text-sm font-medium text-gray-600">
+            {affectation.immatriculation ??
+              "Immatriculation non renseignée"}
           </p>
         </div>
 
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-bleu text-white">
-          <ChevronRight size={22} aria-hidden="true" />
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-bleu text-white transition group-hover:translate-x-0.5">
+          <ChevronRight
+            size={22}
+            aria-hidden="true"
+          />
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      {/* Informations principales */}
+      <div className="mt-4 flex min-w-0 flex-wrap gap-2">
         <span
-          className={`rounded-lg border px-2.5 py-1 text-xs font-semibold ${getStatutClasses(statut)}`}
+          className={`rounded-lg border px-2.5 py-1 text-xs font-semibold ${getStatutClasses(
+            statut,
+          )}`}
         >
           {statut}
         </span>
-        <span className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-600">
-          <Gauge size={14} aria-hidden="true" />
-          {affectation.type}
+
+        <span className="inline-flex max-w-full min-w-0 items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-600">
+          <Gauge
+            size={14}
+            className="shrink-0"
+            aria-hidden="true"
+          />
+
+          <span className="wrap-break-word">
+            {affectation.type ??
+              "Type non renseigné"}
+          </span>
         </span>
       </div>
 
-      <div className="mt-4 space-y-2 border-t border-gray-100 pt-3 text-sm text-gray-600">
+      {/* Informations mission */}
+      <div className="mt-4 grid grid-cols-1 gap-2 border-t border-gray-100 pt-3 text-sm text-gray-600 sm:grid-cols-2 sm:gap-4">
         {mission?.lieuMission && (
-          <p className="flex gap-2">
-            <MapPin size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
-            <span className="break-words">{mission.lieuMission}</span>
+          <p className="flex min-w-0 gap-2">
+            <MapPin
+              size={16}
+              className="mt-0.5 shrink-0"
+              aria-hidden="true"
+            />
+
+            <span className="wrap-break-word">
+              {mission.lieuMission}
+            </span>
           </p>
         )}
-        <p>
-          {formatDate(mission?.debutMission)} - {formatDate(mission?.finMission)}
+
+        <p className="wrap-break-word sm:text-right">
+          {formatDate(
+            mission?.debutMission,
+          )}{" "}
+          -{" "}
+          {formatDate(
+            mission?.finMission,
+          )}
         </p>
       </div>
     </Link>

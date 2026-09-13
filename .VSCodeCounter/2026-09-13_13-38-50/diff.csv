@@ -1,0 +1,36 @@
+"filename", "language", "JavaScript", "JavaScript JSX", "comment", "blank", "total"
+"/Users/loucadaviot/Desktop/crfm/backend/controller/missions.controller.js", "JavaScript", -58, 0, 0, -20, -78
+"/Users/loucadaviot/Desktop/crfm/backend/middlewares/permissions.middleware.js", "JavaScript", -1, 0, 0, 0, -1
+"/Users/loucadaviot/Desktop/crfm/backend/middlewares/validate.js", "JavaScript", 20, 0, 2, 1, 23
+"/Users/loucadaviot/Desktop/crfm/backend/routes/auth.routes.js", "JavaScript", 12, 0, 0, 2, 14
+"/Users/loucadaviot/Desktop/crfm/backend/routes/carburant.routes.js", "JavaScript", -3, 0, 0, -1, -4
+"/Users/loucadaviot/Desktop/crfm/backend/routes/compagnie.routes.js", "JavaScript", 3, 0, 0, 0, 3
+"/Users/loucadaviot/Desktop/crfm/backend/routes/conducteur.routes.js", "JavaScript", -10, 0, 0, 0, -10
+"/Users/loucadaviot/Desktop/crfm/backend/routes/missions.routes.js", "JavaScript", -18, 0, 0, -2, -20
+"/Users/loucadaviot/Desktop/crfm/backend/routes/missionsGroupes.routes.js", "JavaScript", -11, 0, 0, -1, -12
+"/Users/loucadaviot/Desktop/crfm/backend/routes/missionsUsers.routes.js", "JavaScript", -15, 0, 0, -2, -17
+"/Users/loucadaviot/Desktop/crfm/backend/routes/missionsVehicules.routes.js", "JavaScript", -10, 0, 0, -1, -11
+"/Users/loucadaviot/Desktop/crfm/backend/routes/sections.routes.js", "JavaScript", -12, 0, 0, 0, -12
+"/Users/loucadaviot/Desktop/crfm/backend/routes/user.routes.js", "JavaScript", 42, 0, 0, 8, 50
+"/Users/loucadaviot/Desktop/crfm/backend/routes/vehicules.routes.js", "JavaScript", 35, 0, 0, 6, 41
+"/Users/loucadaviot/Desktop/crfm/backend/schema/validation.zod.js", "JavaScript", 132, 0, 1, 61, 194
+"/Users/loucadaviot/Desktop/crfm/backend/scripts/import-cartes-carburant.js", "JavaScript", -5, 0, 0, -4, -9
+"/Users/loucadaviot/Desktop/crfm/backend/scripts/import-personnels.js", "JavaScript", -8, 0, 0, -1, -9
+"/Users/loucadaviot/Desktop/crfm/backend/seeders/20260720075125-create-users-test.js", "JavaScript", -76, 0, -5, -11, -92
+"/Users/loucadaviot/Desktop/crfm/backend/services/validation/missions-Access.service.js", "JavaScript", 34, 0, 10, 6, 50
+"/Users/loucadaviot/Desktop/crfm/backend/src/app.js", "JavaScript", 17, 0, 1, 2, 20
+"/Users/loucadaviot/Desktop/crfm/frontend/security/ProtectedRoute.jsx", "JavaScript JSX", 0, -1, 1, 0, 0
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/layout/MainLayout.jsx", "JavaScript JSX", 0, -4, 0, 0, -4
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/ui/Navbar.jsx", "JavaScript JSX", 0, 16, 0, 0, 16
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/auth/hooks/useAuth.js", "JavaScript", -1, 0, 0, -1, -2
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/auth/pages/PageConnexion.jsx", "JavaScript JSX", 0, -1, 0, -1, -2
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/compagnies/hooks/useCompagnies.js", "JavaScript", -1, 0, 0, 0, -1
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/context/MissionsContext.jsx", "JavaScript JSX", 0, -111, -5, -23, -139
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/hooks/useGroupesMissions2.js", "JavaScript", -43, 0, 0, -8, -51
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/hooks/useMissionCommandement.js", "JavaScript", -5, 0, 1, 0, -4
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/hooks/useMissions2.js", "JavaScript", -51, 0, -15, -10, -76
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/CreerMissions6Admin.jsx", "JavaScript JSX", 0, -16, 0, 1, -15
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/Creermissions1Admin.jsx", "JavaScript JSX", 0, -8, 0, -1, -9
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/pages/missionsDetail.jsx", "JavaScript JSX", 0, -19, 0, -5, -24
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/vehicules/api/vehicules.api.js", "JavaScript", -1, 0, 0, -1, -2
+"Total", "-", -34, -144, -9, -6, -193

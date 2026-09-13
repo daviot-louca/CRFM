@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/db.config.js";
 
-const MissionOA = sequelize.define(
-  "MissionOA",
+const MissionOAL = sequelize.define(
+  "MissionOAL",
   {
     id: {
       type: DataTypes.UUID,
@@ -20,7 +20,7 @@ const MissionOA = sequelize.define(
       },
     },
 
-    oaId: {
+    oalId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -30,9 +30,9 @@ const MissionOA = sequelize.define(
     },
   },
   {
-    tableName: "mission_oa",
+    tableName: "mission_oal",
     timestamps: true,
   },
 );
 
-export default MissionOA;
+export default MissionOAL;

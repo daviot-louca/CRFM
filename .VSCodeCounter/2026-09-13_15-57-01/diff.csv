@@ -1,0 +1,13 @@
+"filename", "language", "JavaScript", "HTML", "JavaScript JSX", "comment", "blank", "total"
+"/Users/loucadaviot/Desktop/crfm/backend/scripts/import-personnels.js", "JavaScript", -4, 0, 0, -1, -1, -6
+"/Users/loucadaviot/Desktop/crfm/backend/seeders/20260720075126-assign-chef-section.js", "JavaScript", -44, 0, 0, -1, -6, -51
+"/Users/loucadaviot/Desktop/crfm/backend/seeders/20260720075127-assign-oa-compagnie.js", "JavaScript", -47, 0, 0, -2, -5, -54
+"/Users/loucadaviot/Desktop/crfm/backend/services/missions.service.js", "JavaScript", 0, 0, 0, -18, 1, -17
+"/Users/loucadaviot/Desktop/crfm/backend/services/missionsConducteurs.service.js", "JavaScript", 0, 0, 0, -5, 0, -5
+"/Users/loucadaviot/Desktop/crfm/backend/services/user.service.js", "JavaScript", 0, 0, 0, -20, 0, -20
+"/Users/loucadaviot/Desktop/crfm/frontend/index.html", "HTML", 0, 7, 0, 0, 8, 15
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/layout/MainLayout.jsx", "JavaScript JSX", 0, 0, 6, 0, 0, 6
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/layout/admin/Sidebar.jsx", "JavaScript JSX", 0, 0, 3, 0, 0, 3
+"/Users/loucadaviot/Desktop/crfm/frontend/src/components/ui/BoutonProfile.jsx", "JavaScript JSX", 0, 0, 3, 1, 0, 4
+"/Users/loucadaviot/Desktop/crfm/frontend/src/features/missions/hooks/useMissionCommandement.js", "JavaScript", 0, 0, 0, -11, 0, -11
+"Total", "-", -95, 7, 12, -57, -3, -136

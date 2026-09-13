@@ -52,7 +52,7 @@ const fetchMissionUsers = async (userIds, transaction) => {
             include: [
               {
                 model: User,
-                as: "oa",
+                as: "oal",
                 attributes: userAttributes,
               },
             ],
@@ -70,7 +70,7 @@ const fetchMissionUsers = async (userIds, transaction) => {
 export const validateMissionCommandement = async ({
   groupesMission,
   idsUtilisateurs,
-  oaResponsableMissionId,
+  oalResponsableMissionId,
   affectationsVehicules = [],
   transaction,
 }) => {
@@ -167,12 +167,12 @@ export const validateMissionCommandement = async ({
 
       const role = roleNameOf(conducteur);
 
-      if (role !== "conducteur" && role !== "SOA" && role !== "OA") {
+      if (role !== "conducteur" && role !== "SOA" && role !== "OAL") {
         const error = new Error(
           `${getNomUtilisateur(
             conducteur,
             conducteurId,
-          )} doit avoir le rôle conducteur, SOA ou OA.`,
+          )} doit avoir le rôle conducteur, SOA ou OAL.`,
         );
 
         error.statusCode = 400;
@@ -210,12 +210,12 @@ export const validateMissionCommandement = async ({
 
       const role = roleNameOf(conducteur);
 
-      if (role !== "conducteur" && role !== "SOA" && role !== "OA") {
+      if (role !== "conducteur" && role !== "SOA" && role !== "OAL") {
         const error = new Error(
           `${getNomUtilisateur(
             conducteur,
             conducteurId,
-          )} doit avoir le rôle conducteur, SOA ou OA pour conduire ce véhicule.`,
+          )} doit avoir le rôle conducteur, SOA ou OAL pour conduire ce véhicule.`,
         );
 
         error.statusCode = 400;
@@ -231,12 +231,12 @@ export const validateMissionCommandement = async ({
    * ==========================================
    */
 
-  const oaId = normalizeId(oaResponsableMissionId);
+  const oalId = normalizeId(oalResponsableMissionId);
 
-  if (oaId) {
-    const oa =
-      usersById.get(oaId) ??
-      (await User.findByPk(oaId, {
+  if (oalId) {
+    const oal =
+      usersById.get(oalId) ??
+      (await User.findByPk(oalId, {
         attributes: userAttributes,
 
         include: [
@@ -250,17 +250,17 @@ export const validateMissionCommandement = async ({
         transaction,
       }));
 
-    if (!oa) {
-      const error = new Error("OA responsable introuvable.");
+    if (!oal) {
+      const error = new Error("OAL responsable introuvable.");
 
       error.statusCode = 404;
 
       throw error;
     }
 
-    if (roleNameOf(oa) !== "OA") {
+    if (roleNameOf(oal) !== "OAL") {
       const error = new Error(
-        "L'utilisateur responsable de la mission doit avoir le rôle OA.",
+        "L'utilisateur responsable de la mission doit avoir le rôle OAL.",
       );
 
       error.statusCode = 400;
@@ -269,7 +269,7 @@ export const validateMissionCommandement = async ({
     }
 
     return {
-      oaId: oa.id,
+      oalId: oal.id,
       usersById,
     };
   }
@@ -294,7 +294,7 @@ export const validateMissionCommandement = async ({
         include: [
           {
             model: User,
-            as: "oa",
+            as: "oal",
             attributes: userAttributes,
           },
         ],
@@ -302,9 +302,9 @@ export const validateMissionCommandement = async ({
         transaction,
       });
 
-      if (compagnie?.oa) {
+      if (compagnie?.oal) {
         return {
-          oaId: compagnie.oa.id,
+          oalId: compagnie.oal.id,
 
           usersById,
         };
@@ -327,7 +327,7 @@ export const validateMissionCommandement = async ({
       include: [
         {
           model: User,
-          as: "oa",
+          as: "oal",
           attributes: userAttributes,
         },
       ],
@@ -336,14 +336,14 @@ export const validateMissionCommandement = async ({
     });
 
     return {
-      oaId: compagnie?.oa?.id ?? null,
+      oalId: compagnie?.oal?.id ?? null,
 
       usersById,
     };
   }
 
   return {
-    oaId: null,
+    oalId: null,
     usersById,
   };
 };

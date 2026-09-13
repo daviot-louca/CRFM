@@ -56,7 +56,7 @@ const fetchMissionUsers = async (userIds, transaction) => {
             include: [
               {
                 model: User,
-                as: "oa",
+                as: "oal",
                 attributes: userAttributes,
               },
             ],
@@ -288,13 +288,13 @@ export const updateMissionGroupes = async (
         if (
           role !== "conducteur" &&
           role !== "SOA" &&
-          role !== "OA"
+          role !== "OAL"
         ) {
           const error = new Error(
             `${getNomUtilisateur(
               conducteur,
               conducteurId,
-            )} doit avoir le rôle conducteur, SOA ou OA.`,
+            )} doit avoir le rôle conducteur, SOA ou OAL.`,
           );
 
           error.statusCode = 400;

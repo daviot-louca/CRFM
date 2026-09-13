@@ -34,3 +34,13 @@ export const addConducteurPlein = async (missionVehiculeId, pleinData) => {
   );
   return response.data;
 };
+
+export const getCartesCarburant = async () => {
+  const response = await apiClient.get("/carburant");
+  return response.data;
+};
+
+export const getCarteCarburantCode = async (id) => {
+  const response = await apiClient.get(`/carburant/${id}`);
+  return response.data;
+};

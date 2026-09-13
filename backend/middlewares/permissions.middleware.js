@@ -14,7 +14,6 @@ const checkRole = (...rolesAutorises) => {
       });
     }
 
-    console.log(`Accès autorisé pour le rôle : ${role}`);
     next();
   };
 };

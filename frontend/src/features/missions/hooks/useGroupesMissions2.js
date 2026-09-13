@@ -131,22 +131,6 @@ export function useGroupesMissions2({
           groupes
         ).map(normalizeGroupe);
 
-        console.log(
-          "[GROUPES] Groupes récupérés depuis la BDD :",
-          groupesNormalises
-        );
-
-        console.log(
-          "[GROUPES] Utilisateurs des groupes :",
-          groupesNormalises.map((groupe) => ({
-            id: groupe.id,
-            nom: groupe.nom,
-            users: groupe.users,
-            soaId: groupe.soaId,
-            conducteurIds:
-              groupe.conducteurIds,
-          }))
-        );
 
         setGroupesManuels(
           groupesNormalises
@@ -312,21 +296,6 @@ export function useGroupesMissions2({
                   asArray(sections)
               );
 
-        console.log(
-          "sectionsSelectionnees",
-          sectionsSelectionnees
-        );
-
-        console.log(
-          "sectionsAPlat",
-          sectionsAPlat
-        );
-
-        console.log(
-          "usersSelectionnesIds",
-          usersSelectionnesIds
-        );
-
         sectionsAPlat.forEach(
           (section) => {
             const sectionId =
@@ -369,21 +338,6 @@ export function useGroupesMissions2({
                       userId
                     )
                 );
-
-            console.log(
-              "section",
-              sectionId
-            );
-
-            console.log(
-              "usersInSection",
-              usersInSection
-            );
-
-            console.log(
-              "selectedUsersInSection",
-              selectedUsersInSection
-            );
 
             if (
               selectedUsersInSection.length ===
@@ -432,11 +386,6 @@ export function useGroupesMissions2({
           ...groupesManuelsExistants,
           ...nouveauxGroupesAutomatiques,
         ];
-
-        console.log(
-          "Groupes générés :",
-          resultat
-        );
 
         const identiques =
           resultat.length ===

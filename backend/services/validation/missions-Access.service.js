@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 
 import MissionsGroupes from "../../models/missionsGroupes.model.js";
+import MissionsVehicule from "../../models/missionsVehicule.model.js";
 import Compagnie from "../../models/compagnie.model.js";
 import Section from "../../models/sections.model.js";
 import User from "../../models/user.model.js";
@@ -19,16 +20,33 @@ export const verifierAccesMission = async (mission, user) => {
     return true;
   }
 
-  // SOA → uniquement les missions où il est indiqué
+  // SOA →
+  // - mission où il est SOA d'un groupe
+  // OU
+  // - mission où il est conducteur d'un véhicule
   if (role === "SOA") {
-    const groupe = await MissionsGroupes.findOne({
-      where: {
-        missionId: mission.id,
-        soaId: user.id,
-      },
-    });
-    if (!groupe) {
-      const error = new Error("Vous n'avez pas accès à cette mission.");
+    const [groupe, vehicule] = await Promise.all([
+      MissionsGroupes.findOne({
+        where: {
+          missionId: mission.id,
+          soaId: user.id,
+        },
+        attributes: ["id"],
+      }),
+
+      MissionsVehicule.findOne({
+        where: {
+          missionId: mission.id,
+          conducteurId: user.id,
+        },
+        attributes: ["id"],
+      }),
+    ]);
+
+    if (!groupe && !vehicule) {
+      const error = new Error(
+        "Vous n'avez pas accès à cette mission."
+      );
 
       error.statusCode = 403;
       throw error;
@@ -38,21 +56,24 @@ export const verifierAccesMission = async (mission, user) => {
   }
 
   // OA
-  if (role === "OA") {
-    // 1. OA directement affecté à la mission
-    if (String(mission.oaId) === String(user.id)) {
+  if (role === "OAL") {
+    // 1. OAL directement affecté à la mission
+    if (String(mission.oalId) === String(user.id)) {
       return true;
     }
 
-    // 2. On récupère la compagnie dont cet utilisateur est OA
+    // 2. On récupère la compagnie dont cet utilisateur est OAL
     const compagnie = await Compagnie.findOne({
       where: {
-        oaId: user.id,
+        oalId: user.id,
       },
+      attributes: ["id"],
     });
 
     if (!compagnie) {
-      const error = new Error("Vous n'avez pas accès à cette mission.");
+      const error = new Error(
+        "Vous n'avez pas accès à cette mission."
+      );
 
       error.statusCode = 403;
       throw error;
@@ -93,63 +114,86 @@ export const verifierAccesMission = async (mission, user) => {
       return true;
     }
 
-    const error = new Error("Vous n'avez pas accès à cette mission.");
+    const error = new Error(
+      "Vous n'avez pas accès à cette mission."
+    );
 
     error.statusCode = 403;
     throw error;
   }
 
   // Conducteur ou autre rôle
-  const error = new Error("Vous n'avez pas accès aux missions.");
+  const error = new Error(
+    "Vous n'avez pas accès aux missions."
+  );
 
   error.statusCode = 403;
   throw error;
 };
 
-/** fonction pour getMissions */
 
+/**
+ * Filtre utilisé par getMissions()
+ */
 export const getMissionsAccessFilter = async (user) => {
   const role = user?.role?.roleName;
 
   if (!user?.id || !role) {
     const error = new Error("Utilisateur non authentifié.");
-
     error.statusCode = 401;
     throw error;
   }
+
+  // ADMIN → toutes les missions
   if (role === "administrateur") {
     return null;
   }
-  // SOA → uniquement les missions où il est indiqué
+
+  // SOA →
+  // - missions où il est SOA d'un groupe
+  // OU
+  // - missions où il est conducteur d'un véhicule
   if (role === "SOA") {
-    const groupes = await MissionsGroupes.findAll({
-      where: {
-        soaId: user.id,
-      },
-      attributes: ["missionId", "soaId"],
-    });
+    const [groupes, vehicules] = await Promise.all([
+      MissionsGroupes.findAll({
+        where: {
+          soaId: user.id,
+        },
+        attributes: ["missionId"],
+      }),
+
+      MissionsVehicule.findAll({
+        where: {
+          conducteurId: user.id,
+        },
+        attributes: ["missionId"],
+      }),
+    ]);
 
     const missionIds = [
-      ...new Set(groupes.map((groupe) => groupe.missionId).filter(Boolean)),
+      ...groupes.map((groupe) => groupe.missionId),
+      ...vehicules.map((vehicule) => vehicule.missionId),
+    ].filter(Boolean);
+
+    const uniqueMissionIds = [
+      ...new Set(missionIds),
     ];
 
-    const filter = {
+    return {
       id: {
-        [Op.in]: missionIds,
+        [Op.in]: uniqueMissionIds,
       },
     };
-
-    return filter;
   }
 
   // OA →
   // - missions où il est directement indiqué comme OA
   // OU
   // - missions où un SOA de sa compagnie est présent
-  if (role === "OA") {
+  if (role === "OAL") {
     const compagnie = await Compagnie.findOne({
       where: {
-        oaId: user.id,
+        oalId: user.id,
       },
       attributes: ["id"],
     });
@@ -175,12 +219,14 @@ export const getMissionsAccessFilter = async (user) => {
           as: "soa",
           required: true,
           attributes: [],
+
           include: [
             {
               model: Section,
               as: "section",
               required: true,
               attributes: [],
+
               where: {
                 compagnieId: compagnie.id,
               },
@@ -191,13 +237,17 @@ export const getMissionsAccessFilter = async (user) => {
     });
 
     const missionIds = [
-      ...new Set(groupes.map((groupe) => groupe.missionId).filter(Boolean)),
+      ...new Set(
+        groupes
+          .map((groupe) => groupe.missionId)
+          .filter(Boolean)
+      ),
     ];
 
-    const filter = {
+    return {
       [Op.or]: [
         {
-          oaId: user.id,
+          oalId: user.id,
         },
         {
           id: {
@@ -206,8 +256,9 @@ export const getMissionsAccessFilter = async (user) => {
         },
       ],
     };
-    return filter;
   }
+
+  // Conducteur ou autre rôle
   return {
     id: {
       [Op.in]: [],

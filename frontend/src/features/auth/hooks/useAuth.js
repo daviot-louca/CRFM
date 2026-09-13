@@ -12,8 +12,6 @@ const useAuth = () => {
 
       const result = await login(data);
 
-      console.log("Connexion réussie :", result);
-
       return result;
     } catch (error) {
       console.error("Erreur de connexion :", error);

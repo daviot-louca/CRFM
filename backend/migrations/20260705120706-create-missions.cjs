@@ -38,7 +38,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      oaId: {
+      oalId: {
         type: Sequelize.UUID,
         allowNull: true,
         references: {

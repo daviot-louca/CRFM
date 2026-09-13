@@ -38,19 +38,12 @@ const selectStyle = {
   borderRadius: "9px",
   background: "#ffffff",
   color: "#172033",
-
-  /*
-   * 16px minimum sur mobile :
-   * évite le zoom automatique de Safari iOS.
-   */
   fontSize: "16px",
-
   outline: "none",
 };
 
 export default function CreerMissions3Admin() {
   const navigate = useNavigate();
-
   const [searchParams] = useSearchParams();
 
   const missionId = searchParams.get("missionId");
@@ -58,8 +51,8 @@ export default function CreerMissions3Admin() {
   const {
     groupesManuels,
     compagniesSelectionneesIds,
-    oaId,
-    setOaId,
+    oalId,
+    setOalId,
   } = useMission();
 
   /*
@@ -80,10 +73,7 @@ export default function CreerMissions3Admin() {
    */
 
   const {
-    groupesCommandement = [],
-    soaMission = [],
-    selectOa,
-    selectSoa,
+    selectOal,
     saveCommandement,
     loading,
     saving,
@@ -112,8 +102,7 @@ export default function CreerMissions3Admin() {
    * ========================================================
    * COMPAGNIES DE LA MISSION
    *
-   * Cette liste sert uniquement au récapitulatif.
-   * Elle ne sert PAS à limiter les OA.
+   * Sert uniquement au récapitulatif.
    * ========================================================
    */
 
@@ -145,87 +134,47 @@ export default function CreerMissions3Admin() {
 
   /*
    * ========================================================
-   * OA DISPONIBLES
+   * OAL DISPONIBLES
    *
-   * On prend les OA de TOUTES les compagnies.
+   * On récupère les OAL de toutes les compagnies.
    * ========================================================
    */
 
-  const oaMission = useMemo(() => {
-    const oaMap = new Map();
+  const oalMission = useMemo(() => {
+    const oalMap = new Map();
 
     compagnies.forEach((compagnie) => {
-      const oa =
-        compagnie?.oa ??
-        compagnie?.OA ??
+      const oal =
+        compagnie?.oal ??
+        compagnie?.OAL ??
         null;
 
-      if (!oa?.id) {
+      if (!oal?.id) {
         return;
       }
 
-      oaMap.set(
-        String(oa.id),
-        oa,
+      oalMap.set(
+        String(oal.id),
+        oal,
       );
     });
 
     return Array.from(
-      oaMap.values(),
+      oalMap.values(),
     );
   }, [compagnies]);
 
   /*
    * ========================================================
-   * SOA
-   * ========================================================
-   */
-
-  const soaDisponibles = soaMission;
-
-  /*
-   * ========================================================
-   * SOA ACTUEL DU GROUPE
-   * ========================================================
-   */
-
-  const getSoaSelectionne = (groupeId) => {
-    const groupe =
-      groupesCommandement.find(
-        (item) =>
-          String(item?.groupeId) ===
-          String(groupeId),
-      );
-
-    return groupe?.soaId ?? "";
-  };
-
-  /*
-   * ========================================================
    * VALIDATION
+   *
+   * À cette étape, seul l'OAL est obligatoire.
+   * Le SOA sera désigné plus tard.
    * ========================================================
    */
-
-  const nombreSoaRenseignes =
-    groupes.filter((groupe) =>
-      Boolean(
-        getSoaSelectionne(
-          groupe?.id,
-        ),
-      ),
-    ).length;
 
   const commandementComplet =
-    Boolean(oaId) &&
-    groupes.length > 0 &&
-    soaMission.length > 0 &&
-    groupes.every((groupe) =>
-      Boolean(
-        getSoaSelectionne(
-          groupe?.id,
-        ),
-      ),
-    );
+    Boolean(oalId);
 
   /*
    * ========================================================
@@ -242,43 +191,9 @@ export default function CreerMissions3Admin() {
       return;
     }
 
-    if (!oaId) {
+    if (!oalId) {
       alert(
-        "Veuillez sélectionner l'OA responsable de la mission.",
-      );
-
-      return;
-    }
-
-    if (groupes.length === 0) {
-      alert(
-        "Aucun groupe n'est disponible pour cette mission.",
-      );
-
-      return;
-    }
-
-    if (soaMission.length === 0) {
-      alert(
-        "Aucun SOA affecté à cette mission n'est disponible.",
-      );
-
-      return;
-    }
-
-    const groupeIncomplet =
-      groupes.find((groupe) => {
-        const soaSelectionne =
-          getSoaSelectionne(
-            groupe?.id,
-          );
-
-        return !soaSelectionne;
-      });
-
-    if (groupeIncomplet) {
-      alert(
-        "Veuillez sélectionner un SOA pour chaque groupe avant de continuer.",
+        "Veuillez sélectionner l'OAL responsable de la mission.",
       );
 
       return;
@@ -330,346 +245,94 @@ export default function CreerMissions3Admin() {
       <div className="min-h-screen w-full min-w-0 bg-slate-50 px-4 pb-10 pt-4 text-slate-900 sm:px-6 sm:pb-12 sm:pt-6 lg:px-8">
         <div className="mx-auto w-full min-w-0 max-w-7xl">
 
-
           {/* ==================================================
               TIMELINE
           ================================================== */}
 
-          <div
-            style={{
-              ...cardStyle,
-              padding: "12px 10px",
-              marginBottom: "20px",
-              overflowX: "auto",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                minWidth: "560px",
-                width: "100%",
-                maxWidth: "1000px",
-                margin: "0 auto",
-              }}
-            >
-              {/* ÉTAPE 1 */}
+          <div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm sm:mb-8">
+            <div className="flex min-w-155 items-start px-3 py-4 sm:mx-auto sm:min-w-0 sm:max-w-5xl sm:px-5 sm:py-5">
 
-              <div
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    margin: "0 auto 5px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "#dcfce7",
-                    color: "#15803d",
-                    border: "2px solid #86efac",
-                    fontSize: "11px",
-                    fontWeight: 800,
-                  }}
-                >
+              {/* Étape 1 */}
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-600 bg-green-50 text-xs font-bold text-green-700 sm:h-8 sm:w-8 sm:text-sm">
                   ✓
                 </div>
 
-                <div
-                  style={{
-                    fontSize: "9px",
-                    lineHeight: 1.2,
-                    fontWeight: 700,
-                    color: "#15803d",
-                  }}
-                >
+                <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
                   Infos
-                </div>
+                </span>
               </div>
 
-              <div
-                style={{
-                  flex: 1,
-                  height: "2px",
-                  marginTop: "15px",
-                  background: "#86efac",
-                }}
-              />
+              <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-300 sm:mt-4 sm:min-w-6" />
 
-              {/* ÉTAPE 2 */}
-
-              <div
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    margin: "0 auto 5px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "#dcfce7",
-                    color: "#15803d",
-                    border: "2px solid #86efac",
-                    fontSize: "11px",
-                    fontWeight: 800,
-                  }}
-                >
-                  ✓
+              {/* Étape 2 - ACTIVE */}
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2  border-green-600 bg-green-50 text-xs font-bold text-green-700 shadow-sm sm:h-8 sm:w-8 sm:text-sm">
+                ✓
                 </div>
 
-                <div
-                  style={{
-                    fontSize: "9px",
-                    lineHeight: 1.2,
-                    fontWeight: 700,
-                    color: "#15803d",
-                  }}
-                >
-                  Affectations
-                  <br />
-                  des compagnies
-                </div>
+                <span className="mt-1.5 max-w-24 text-center text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                  Affectations des compagnies
+                </span>
               </div>
 
-              <div
-                style={{
-                  flex: 1,
-                  height: "2px",
-                  marginTop: "15px",
-                  background: "#2563eb",
-                }}
-              />
+              <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-300 sm:mt-4 sm:min-w-6" />
 
-              {/* ÉTAPE 3 */}
-
-              <div
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    margin: "0 auto 5px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "#2563eb",
-                    color: "#ffffff",
-                    border: "2px solid #2563eb",
-                    fontSize: "11px",
-                    fontWeight: 800,
-                  }}
-                >
+              {/* Étape 3 */}
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-600 text-xs font-bold text-white sm:h-8 sm:w-8 sm:text-sm">
                   3
                 </div>
 
-                <div
-                  style={{
-                    fontSize: "9px",
-                    lineHeight: 1.2,
-                    fontWeight: 800,
-                    color: "#2563eb",
-                  }}
-                >
-                  Désignation du
-                  <br />
-                  OAL et du SOA
-                </div>
+                <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                  Désignation de l'OAL
+                </span>
               </div>
 
-              <div
-                style={{
-                  flex: 1,
-                  height: "2px",
-                  marginTop: "15px",
-                  background: "#e2e8f0",
-                }}
-              />
+              <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-              {/* ÉTAPE 4 */}
-
-              <div
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    margin: "0 auto 5px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "#f8fafc",
-                    color: "#94a3b8",
-                    border: "2px solid #e2e8f0",
-                    fontSize: "11px",
-                    fontWeight: 800,
-                  }}
-                >
+              {/* Étape 4 */}
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
                   4
                 </div>
 
-                <div
-                  style={{
-                    fontSize: "9px",
-                    lineHeight: 1.2,
-                    fontWeight: 600,
-                    color: "#64748b",
-                  }}
-                >
+                <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
                   Véhicules
-                </div>
+                </span>
               </div>
 
-              <div
-                style={{
-                  flex: 1,
-                  height: "2px",
-                  marginTop: "15px",
-                  background: "#e2e8f0",
-                }}
-              />
+              <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-              {/* ÉTAPE 5 */}
-
-              <div
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    margin: "0 auto 5px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "#f8fafc",
-                    color: "#94a3b8",
-                    border: "2px solid #e2e8f0",
-                    fontSize: "11px",
-                    fontWeight: 800,
-                  }}
-                >
+              {/* Étape 5 */}
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
                   5
                 </div>
 
-                <div
-                  style={{
-                    fontSize: "9px",
-                    lineHeight: 1.2,
-                    fontWeight: 600,
-                    color: "#64748b",
-                  }}
-                >
-                  Conducteurs
-                </div>
+                <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                  Désignation du ou des SOA
+                </span>
               </div>
+
+              <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+
+              {/* Étape 6 */}
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                  6
+                </div>
+
+                <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                  Conducteurs
+                </span>
+              </div>
+
             </div>
           </div>
 
           {/* ==================================================
-              OA
-          ================================================== */}
-
-          <section
-            style={{
-              ...cardStyle,
-              padding: "10px 16px",
-              marginBottom: "16px",
-            }}
-            className="sm:p-7"
-          >
-            <div className="flex min-w-0 flex-col lg:flex-row lg:items-start lg:justify-between lg:gap-8">
-
-                <div className="min-w-0 max-w-2xl">
-                  <label
-                    htmlFor="mission-oa"
-                    className="mb-2 block text-xs font-bold text-slate-700 sm:text-sm"
-                  >
-                    OAL responsable{" "}
-                    <span className="text-red-600">
-                      *
-                    </span>
-                  </label>
-
-                  <select
-                    id="mission-oa"
-                    value={oaId ?? ""}
-                    onChange={(event) => {
-                      const value =
-                        event.target.value ||
-                        null;
-
-                      setOaId(value);
-                      selectOa(value);
-                    }}
-                    disabled={
-                      saving ||
-                      oaMission.length === 0
-                    }
-                    style={{
-                      ...selectStyle,
-                      opacity:
-                        saving ||
-                        oaMission.length === 0
-                          ? 0.6
-                          : 1,
-                    }}
-                  >
-                    <option value="">
-                      Sélectionner un OAL
-                    </option>
-
-                    {oaMission.map((oa) => (
-                      <option
-                        key={oa.id}
-                        value={oa.id}
-                      >
-                        {getUserName(oa)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {oaMission.length === 0 && (
-                  <div className="mt-3 rounded-xl border border-orange-200 bg-orange-50 p-3 text-xs leading-relaxed text-orange-800 sm:text-sm">
-                    Aucun OAL n'est associé aux
-                    compagnies disponibles.
-                  </div>
-                )}
-              </div>
-          </section>
-
-          {/* ==================================================
-              SOA
+              OAL
           ================================================== */}
 
           <section
@@ -680,7 +343,105 @@ export default function CreerMissions3Admin() {
             }}
             className="sm:p-7"
           >
+            <div className="mb-5">
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
+                Étape 3
+              </p>
 
+              <h1 className="mt-1 text-xl font-extrabold text-slate-900 sm:text-2xl">
+                Désignation de l'OAL
+              </h1>
+
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
+                Sélectionnez l'OAL responsable de
+                la mission. La désignation des SOA
+                sera effectuée lors d'une étape
+                ultérieure.
+              </p>
+            </div>
+
+            <div className="max-w-2xl">
+              <label
+                htmlFor="mission-oal"
+                className="mb-2 block text-xs font-bold text-slate-700 sm:text-sm"
+              >
+                OAL responsable{" "}
+                <span className="text-red-600">
+                  *
+                </span>
+              </label>
+
+              <select
+                id="mission-oal"
+                value={oalId ?? ""}
+                onChange={(event) => {
+                  const value =
+                    event.target.value ||
+                    null;
+
+                  setOalId(value);
+                  selectOal(value);
+                }}
+                disabled={
+                  saving ||
+                  oalMission.length === 0
+                }
+                style={{
+                  ...selectStyle,
+                  opacity:
+                    saving ||
+                      oalMission.length === 0
+                      ? 0.6
+                      : 1,
+                }}
+              >
+                <option value="">
+                  Sélectionner un OAL
+                </option>
+
+                {oalMission.map((oal) => (
+                  <option
+                    key={getUserId(oal)}
+                    value={getUserId(oal)}
+                  >
+                    {getUserName(oal)}
+                  </option>
+                ))}
+              </select>
+
+              {oalMission.length === 0 && (
+                <div className="mt-3 rounded-xl border border-orange-200 bg-orange-50 p-3 text-xs leading-relaxed text-orange-800 sm:text-sm">
+                  Aucun OAL n'est associé aux
+                  compagnies disponibles.
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* ==================================================
+              GROUPES
+          ================================================== */}
+
+          <section
+            style={{
+              ...cardStyle,
+              padding: "20px 16px",
+              marginBottom: "16px",
+            }}
+            className="sm:p-7"
+          >
+            <div className="mb-5">
+              <h2 className="text-base font-extrabold text-slate-900 sm:text-lg">
+                Groupes de la mission
+              </h2>
+
+              <p className="mt-1 text-xs leading-relaxed text-slate-500 sm:text-sm">
+                Les groupes affectés à la mission
+                sont récapitulés ci-dessous.
+                Les SOA seront désignés lors de
+                l'étape dédiée au commandement.
+              </p>
+            </div>
 
             {groupes.length === 0 ? (
               <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-xs leading-relaxed text-slate-500 sm:text-sm">
@@ -690,153 +451,53 @@ export default function CreerMissions3Admin() {
             ) : (
               <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
                 {groupes.map(
-                  (groupe, index) => {
-                    const groupeId =
-                      groupe?.id;
+                  (groupe, index) => (
+                    <div
+                      key={
+                        groupe?.id ??
+                        `groupe-${index}`
+                      }
+                      className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
+                    >
+                      <div className="mb-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                        Groupe {index + 1}
+                      </div>
 
-                    const soaSelectionne =
-                      getSoaSelectionne(
-                        groupeId,
-                      );
+                      <h3 className="wrap-break-words text-base font-extrabold text-slate-900">
+                        {groupe?.nom ??
+                          groupe?.nomGroupe ??
+                          `Groupe ${index + 1
+                          }`}
+                      </h3>
 
-                    return (
-                      <div
-                        key={
-                          groupeId ??
-                          `groupe-${index}`
-                        }
-                        className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
-                      >
-                        {/* GROUPE */}
+                      <div className="mt-3 flex min-w-0 flex-wrap gap-2">
+                        {groupe?.compagnieId && (
+                          <span className="max-w-full break-all rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] text-slate-500">
+                            Compagnie #
+                            {
+                              groupe.compagnieId
+                            }
+                          </span>
+                        )}
 
-                        <div className="mb-4 flex min-w-0 items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <div className="mb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                              Groupe {index + 1}
-                            </div>
-
-                            <h3 className="wrap-break-words text-base font-extrabold text-slate-900">
-                              {groupe?.nom ??
-                                groupe?.nomGroupe ??
-                                `Groupe ${
-                                  index + 1
-                                }`}
-                            </h3>
-                          </div>
-
-                          <div className="shrink-0 rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-extrabold text-blue-600">
-                            {soaMission.length} SOA
-                          </div>
-                        </div>
-
-                        {/* INFORMATIONS */}
-
-                        <div className="mb-4 flex min-w-0 flex-wrap gap-2">
-                          {groupe?.compagnieId && (
-                            <span className="max-w-full break-all rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] text-slate-500">
-                              Compagnie #
-                              {
-                                groupe.compagnieId
-                              }
-                            </span>
-                          )}
-
-                          {groupe?.sectionId && (
-                            <span className="max-w-full break-all rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] text-slate-500">
-                              Section #
-                              {
-                                groupe.sectionId
-                              }
-                            </span>
-                          )}
-                        </div>
-
-                        {/* SELECT SOA */}
-
-                        {soaDisponibles.length >
-                        0 ? (
-                          <>
-                            <label
-                              htmlFor={`soa-${groupeId ?? index}`}
-                              className="mb-2 block text-xs font-bold text-slate-700 sm:text-sm"
-                            >
-                              SOA responsable{" "}
-                              <span className="text-red-600">
-                                *
-                              </span>
-                            </label>
-
-                            <select
-                              id={`soa-${groupeId ?? index}`}
-                              value={
-                                soaSelectionne
-                              }
-                              onChange={(
-                                event,
-                              ) =>
-                                selectSoa(
-                                  groupeId,
-                                  event
-                                    .target
-                                    .value ||
-                                    null,
-                                )
-                              }
-                              disabled={
-                                saving
-                              }
-                              style={{
-                                ...selectStyle,
-                                opacity:
-                                  saving
-                                    ? 0.6
-                                    : 1,
-                              }}
-                            >
-                              <option value="">
-                                Sélectionner un SOA
-                              </option>
-
-                              {soaDisponibles.map(
-                                (soa) => (
-                                  <option
-                                    key={getUserId(
-                                      soa,
-                                    )}
-                                    value={getUserId(
-                                      soa,
-                                    )}
-                                  >
-                                    {getUserName(
-                                      soa,
-                                    )}
-                                  </option>
-                                ),
-                              )}
-                            </select>
-
-                            {soaSelectionne && (
-                              <div className="mt-2 text-[11px] font-bold text-green-700">
-                                ✓ SOA sélectionné
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <div className="rounded-xl border border-orange-200 bg-orange-50 p-3 text-xs leading-relaxed text-orange-800">
-                            Aucun SOA affecté à cette
-                            mission n'est disponible.
-                          </div>
+                        {groupe?.sectionId && (
+                          <span className="max-w-full break-all rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] text-slate-500">
+                            Section #
+                            {
+                              groupe.sectionId
+                            }
+                          </span>
                         )}
                       </div>
-                    );
-                  },
+                    </div>
+                  ),
                 )}
               </div>
             )}
           </section>
 
           {/* ==================================================
-              RECAPITULATIF
+              RÉCAPITULATIF
           ================================================== */}
 
           <section
@@ -852,7 +513,8 @@ export default function CreerMissions3Admin() {
               Récapitulatif
             </h3>
 
-            <div className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-3">
+
               {/* OAL */}
 
               <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-3">
@@ -861,13 +523,12 @@ export default function CreerMissions3Admin() {
                 </div>
 
                 <strong
-                  className={`mt-1 block wrap-break-words text-sm ${
-                    oaId
+                  className={`mt-1 block wrap-break-words text-sm ${oalId
                       ? "text-green-700"
                       : "text-slate-400"
-                  }`}
+                    }`}
                 >
-                  {oaId
+                  {oalId
                     ? "Sélectionné"
                     : "À sélectionner"}
                 </strong>
@@ -897,26 +558,6 @@ export default function CreerMissions3Admin() {
                 </strong>
               </div>
 
-              {/* SOA */}
-
-              <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-3">
-                <div className="text-[10px] text-slate-500">
-                  SOA renseignés
-                </div>
-
-                <strong
-                  className={`mt-1 block text-lg ${
-                    nombreSoaRenseignes ===
-                      groupes.length &&
-                    groupes.length > 0
-                      ? "text-green-700"
-                      : "text-slate-900"
-                  }`}
-                >
-                  {nombreSoaRenseignes}/
-                  {groupes.length}
-                </strong>
-              </div>
             </div>
           </section>
 
@@ -935,6 +576,7 @@ export default function CreerMissions3Admin() {
           ================================================== */}
 
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+
             <button
               type="button"
               onClick={() =>
@@ -961,6 +603,7 @@ export default function CreerMissions3Admin() {
                 ? "Enregistrement..."
                 : "Continuer vers les véhicules →"}
             </button>
+
           </div>
         </div>
       </div>

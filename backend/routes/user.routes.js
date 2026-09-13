@@ -9,23 +9,74 @@ import {
   deleteUser,
   getUserById,
 } from "../controller/user.controller.js";
+
 import { Router } from "express";
 import authJwt from "../middlewares/auth.middleware.js";
 import checkRole from "../middlewares/permissions.middleware.js";
 
 const router = Router();
 
-router.get("/",authJwt,checkRole("administrateur"),allUsers);
 router.get(
-  "/section/:sectionId/disponibilites",authJwt,checkRole("administrateur"),
-  allUsersBySectionWithAvailability,
+  "/",
+  authJwt,
+  checkRole("administrateur"),
+  allUsers
 );
-router.get("/section/:sectionId",authJwt,checkRole("administrateur","OA"), allUsersBySection);
-router.get("/compagnie/:compagnieId/oa",authJwt,checkRole("administrateur","OA"), allUsersByCompagnie);
-router.get("/section/:sectionId/soa",authJwt,checkRole("administrateur","OA"), allSoaBySection);
-router.post("/",authJwt,checkRole("administrateur"),addUser);
-router.put("/:id",authJwt,checkRole("administrateur","OA"),updateUser);
-router.delete("/:id",authJwt,checkRole("administrateur"),deleteUser);
-router.get("/:id",authJwt,checkRole("administrateur"),getUserById);
+
+router.get(
+  "/section/:sectionId/disponibilites",
+  authJwt,
+  checkRole("administrateur","OAL","SOA"),
+  allUsersBySectionWithAvailability
+);
+
+router.get(
+  "/section/:sectionId",
+  authJwt,
+  checkRole("administrateur", "OAL"),
+  allUsersBySection
+);
+
+router.get(
+  "/compagnie/:compagnieId/oal",
+  authJwt,
+  checkRole("administrateur", "OAL"),
+  allUsersByCompagnie
+);
+
+router.get(
+  "/section/:sectionId/soa",
+  authJwt,
+  checkRole("administrateur", "OAL"),
+  allSoaBySection
+);
+
+router.post(
+  "/",
+  authJwt,
+  checkRole("administrateur"),
+  addUser
+);
+
+router.put(
+  "/:id",
+  authJwt,
+  checkRole("administrateur", "OAL"),
+  updateUser
+);
+
+router.delete(
+  "/:id",
+  authJwt,
+  checkRole("administrateur"),
+  deleteUser
+);
+
+router.get(
+  "/:id",
+  authJwt,
+  checkRole("administrateur"),
+  getUserById
+);
 
 export default router;

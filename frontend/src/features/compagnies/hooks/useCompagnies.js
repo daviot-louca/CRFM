@@ -11,7 +11,6 @@ export function useCompagnies() {
       try {
         setLoading(true);
         const data = await getCompagnies();
-        console.log("COMPAGNIES :", data);
         setCompagnies(data);
       } catch (err) {
         console.error(err);

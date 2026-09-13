@@ -69,7 +69,7 @@ const missionIncludes = [
 
   {
     model: User,
-    as: "oa",
+    as: "oal",
     attributes: userAttributes,
   },
 
@@ -190,8 +190,14 @@ const missionListIncludes = [
 
   {
     model: User,
-    as: "oa",
+    as: "oal",
     attributes: userAttributes,
+  },
+
+  {
+    model: MissionsVehicule,
+    as: "missionsVehicules",
+    attributes: ["id", "vehiculeId", "conducteurId"],
   },
 ];
 
@@ -374,8 +380,8 @@ export const getMissionByIdService = async (id, user) => {
 
   missionData.statistiques = statistiques;
 
-  missionData.oaResponsable = missionData.oa
-    ? getNomUtilisateur(missionData.oa, missionData.oaId)
+  missionData.oalResponsable = missionData.oal
+    ? getNomUtilisateur(missionData.oal, missionData.oalId)
     : null;
 
   missionData.compagnies = compagniesMission;
@@ -417,41 +423,47 @@ export const getMissionByIdService = async (id, user) => {
 
     return {
       id: mv.vehicule?.id,
-
+    
       nom: mv.vehicule?.vehiculeName,
-
+    
       type: mv.vehicule?.vehiculeType?.typeName,
-
+    
+      categorie: mv.vehicule?.vehiculeType?.categorie,
+    
       immatriculation: mv.vehicule?.immatriculation,
-
+    
       compagnie: mv.compagnie,
-
+    
       section: mv.section,
-
+    
       groupe: mv.groupe?.nom ?? null,
-
+    
       conducteurId: mv.conducteurId ?? null,
-
+    
       conducteur: conducteur
         ? getNomUtilisateur(conducteur, conducteur.id)
         : null,
-
+    
       pleins: mv.pleins ?? [],
-
-      nombrePleins: Array.isArray(mv.pleins) ? mv.pleins.length : 0,
-
+    
+      nombrePleins: Array.isArray(mv.pleins)
+        ? mv.pleins.length
+        : 0,
+    
       litresPleins: Array.isArray(mv.pleins)
         ? mv.pleins.reduce(
-            (total, plein) => total + Number(plein?.litres ?? 0),
+            (total, plein) =>
+              total + Number(plein?.litres ?? 0),
             0,
           )
         : 0,
-        releve: mv.releve ?? null,
-
+    
+      releve: mv.releve ?? null,
+    
       x: statistiquesEquipage.x,
-
+    
       y: statistiquesEquipage.y,
-
+    
       z: statistiquesEquipage.z,
     };
   });
@@ -482,7 +494,7 @@ export const createMissionService = async (missionData) => {
   const {
     groupesMission = [],
     userIds = [],
-    oaResponsableMissionId = null,
+    oalResponsableMissionId = null,
     affectationsVehicules = [],
     ...missionPayload
   } = missionData;
@@ -548,7 +560,7 @@ export const createMissionService = async (missionData) => {
       throw error;
     }
 
-    let oaId = null;
+    let oalId = null;
     let usersById = new Map();
 
     /*
@@ -563,22 +575,22 @@ export const createMissionService = async (missionData) => {
       groupesMission.length > 0 ||
       idsUtilisateurs.length > 0 ||
       affectationsVehicules.length > 0 ||
-      Boolean(oaResponsableMissionId);
+      Boolean(oalResponsableMissionId);
 
     if (doitValiderCommandement) {
       const validation = await validateMissionCommandement({
         groupesMission,
         idsUtilisateurs,
-        oaResponsableMissionId,
+        oalResponsableMissionId,
         affectationsVehicules,
         transaction,
       });
 
-      oaId = validation.oaId;
+      oalId = validation.oalId;
       usersById = validation.usersById;
     }
 
-    missionPayload.oaId = oaId;
+    missionPayload.oalId = oalId;
 
     missionPayload.StatutMission = calculerStatutMission(
       missionPayload.debutMission,
@@ -773,7 +785,7 @@ export const updateMissionVehiculesService = async (
 export const updateMissionConducteursService = async (
   id,
   affectationsVehicules = [],
-  oaId = null,
+  oalId = null,
   user,
 ) => {
   const mission = await Mission.findByPk(id);
@@ -787,7 +799,7 @@ export const updateMissionConducteursService = async (
   const missionUpdated = await updateMissionConducteurs(
     mission,
     affectationsVehicules,
-    oaId,
+    oalId,
     user,
     verifierAccesMission,
   );
@@ -801,7 +813,7 @@ export const updateMissionConducteursService = async (
 
 export const updateMissionCommandementService = async (
   id,
-  oaId = null,
+  oalId = null,
   groupesCommandement = [],
   user,
 ) => {
@@ -824,16 +836,12 @@ export const updateMissionCommandementService = async (
   }
 
   return sequelize.transaction(async (transaction) => {
-    /*
-     * ======================================================
-     * 1. OA RESPONSABLE
-     * ======================================================
-     */
 
-    let oa = null;
 
-    if (oaId) {
-      oa = await User.findByPk(oaId, {
+    let oal = null;
+
+    if (oalId) {
+      oal = await User.findByPk(oalId, {
         include: [
           {
             model: Role,
@@ -844,33 +852,29 @@ export const updateMissionCommandementService = async (
         transaction,
       });
 
-      if (!oa) {
-        const error = new Error("OA responsable introuvable.");
+      if (!oal) {
+        const error = new Error("OAL responsable introuvable.");
         error.statusCode = 404;
         throw error;
       }
 
-      if (oa.role?.roleName !== "OA") {
-        const error = new Error("L'utilisateur sélectionné n'est pas un OA.");
+      if (oal.role?.roleName !== "OAL") {
+        const error = new Error("L'utilisateur sélectionné n'est pas un OAL.");
         error.statusCode = 400;
         throw error;
       }
 
-      /*
-       * L'OA doit appartenir à une compagnie
-       * utilisée par la mission.
-       */
 
-      const compagnieAvecCetOA = await Compagnie.findOne({
+      const compagnieAvecCetOAL = await Compagnie.findOne({
         where: {
-          oaId: oaId,
+          oalId: oalId,
         },
         transaction,
       });
 
-      if (!compagnieAvecCetOA) {
+      if (!compagnieAvecCetOAL) {
         const error = new Error(
-          "L'OA sélectionné n'est désigné dans aucune compagnie.",
+          "L'OAL sélectionné n'est désigné dans aucune compagnie.",
         );
 
         error.statusCode = 400;
@@ -896,11 +900,6 @@ export const updateMissionCommandementService = async (
       groupes.map((groupe) => [String(groupe.id), groupe]),
     );
 
-    /*
-     * ======================================================
-     * 3. SOA DE CHAQUE GROUPE
-     * ======================================================
-     */
 
     for (const commandement of groupesCommandement) {
       const groupeId = commandement?.groupeId;
@@ -962,10 +961,6 @@ export const updateMissionCommandementService = async (
         throw error;
       }
 
-      /*
-       * Le SOA doit être affecté
-       * au groupe concerné.
-       */
 
       const missionUser = await MissionsUsers.findOne({
         where: {
@@ -1003,7 +998,7 @@ export const updateMissionCommandementService = async (
 
     await mission.update(
       {
-        oaId: oaId || null,
+        oalId: oalId || null,
       },
       {
         transaction,

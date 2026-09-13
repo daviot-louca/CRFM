@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("mission_oa", {
+    await queryInterface.createTable("mission_oal", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -22,7 +22,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
 
-      oaId: {
+      oalId: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
@@ -47,26 +47,26 @@ module.exports = {
     });
 
     await queryInterface.addIndex(
-      "mission_oa",
+      "mission_oal",
       ["missionId"],
     );
 
     await queryInterface.addIndex(
-      "mission_oa",
-      ["oaId"],
+      "mission_oal",
+      ["oalId"],
     );
 
     await queryInterface.addIndex(
-      "mission_oa",
-      ["missionId", "oaId"],
+      "mission_oal",
+      ["missionId", "oalId"],
       {
         unique: true,
-        name: "missions_oa_mission_id_oa_id_unique",
+        name: "missions_oal_mission_id_oal_id_unique",
       },
     );
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable("mission_oa");
+    await queryInterface.dropTable("mission_oal");
   },
 };

@@ -37,7 +37,7 @@ const createEmptyDraft = () => ({
 
   sectionsIgnorees: [],
 
-  oaId: null,
+  oalId: null,
 });
 
 const asArray = (value) => {
@@ -125,9 +125,9 @@ const serializeDraft = (draft) => ({
   informations:
     draft.informations ?? {},
 
-  oaId:
-    draft.oaId ??
-    draft.informations?.oaId ??
+  oalId:
+    draft.oalId ??
+    draft.informations?.oalId ??
     null,
 
   compagniesSelectionneesIds:
@@ -175,9 +175,9 @@ const deserializeDraft = (
       draft?.compagniesSelectionneesIds,
     ),
 
-  oaId:
-    draft?.oaId ??
-    draft?.informations?.oaId ??
+  oalId:
+    draft?.oalId ??
+    draft?.informations?.oalId ??
     null,
 
   sectionsSelectionnees:
@@ -261,10 +261,6 @@ const writeStoredDraft = (
 export function MissionsProvider({
   children,
 }) {
-  console.log(
-    "[MISSIONS CONTEXT] PROVIDER MONTÉ",
-  );
-
   const [searchParams] =
     useSearchParams();
 
@@ -300,10 +296,10 @@ export function MissionsProvider({
       initialDraft.informations,
     );
 
-  const [oaId, setOaId] =
+  const [oalId, setOalId] =
     useState(
-      initialDraft.oaId ??
-      initialDraft.informations?.oaId ??
+      initialDraft.oalId ??
+      initialDraft.informations?.oalId ??
       null,
     );
 
@@ -418,65 +414,11 @@ export function MissionsProvider({
 
     const chargerMission = async () => {
       try {
-        console.log(
-          "[MISSIONS CONTEXT] Chargement de la mission :",
-          missionIdFromUrl,
-        );
 
         const mission =
           await getMissionById(
             missionIdFromUrl,
           );
-
-        console.log(
-          "========== [MISSIONS CONTEXT] MISSION API ==========",
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] mission complète :",
-          mission,
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] mission JSON :",
-          JSON.parse(
-            JSON.stringify(
-              mission,
-            ),
-          ),
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] mission.vehicules :",
-          mission?.vehicules,
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] mission.vehicules JSON :",
-          JSON.parse(
-            JSON.stringify(
-              mission?.vehicules ?? [],
-            ),
-          ),
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] mission.missionsVehicules :",
-          mission?.missionsVehicules,
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] mission.missionsVehicules JSON :",
-          JSON.parse(
-            JSON.stringify(
-              mission?.missionsVehicules ?? [],
-            ),
-          ),
-        );
-
-        console.log(
-          "====================================================",
-        );
 
         if (!mission) {
           console.warn(
@@ -532,15 +474,15 @@ export function MissionsProvider({
             mission.StatutMission ??
             "En préparation",
 
-          oaId:
-            mission.oaId ??
-            mission.oa?.id ??
+          oalId:
+            mission.oalId ??
+            mission.oal?.id ??
             null,
         });
 
-        setOaId(
-          mission.oaId ??
-          mission.oa?.id ??
+        setOalId(
+          mission.oalId ??
+          mission.oal?.id ??
           null,
         );
 
@@ -591,10 +533,6 @@ export function MissionsProvider({
           usersMissionComplets,
         );
 
-        console.log(
-          "[MISSIONS CONTEXT] Utilisateurs complets de la mission :",
-          usersMissionComplets,
-        );
 
         const usersParSection =
           {};
@@ -705,28 +643,6 @@ export function MissionsProvider({
           sectionsParCompagnie,
         );
 
-        console.log(
-          "[MISSIONS CONTEXT] Personnel restauré :",
-          Object.fromEntries(
-            Object.entries(
-              usersParSection,
-            ).map(
-              ([
-                sectionId,
-                userIds,
-              ]) => [
-                sectionId,
-                [...userIds],
-              ],
-            ),
-          ),
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] Sections restaurées :",
-          sectionsParCompagnie,
-        );
-
         /*
          * ==========================================
          * ÉTAPE 3 + 4
@@ -742,16 +658,6 @@ export function MissionsProvider({
           asArray(
             mission.missionsVehicules,
           );
-
-        console.log(
-          "[MISSIONS CONTEXT] Véhicules API :",
-          vehiculesApi,
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] MissionsVehicules API :",
-          missionsVehiculesApi,
-        );
 
         /*
          * Index des relations missions_vehicules
@@ -775,10 +681,6 @@ export function MissionsProvider({
             ),
           );
 
-        console.log(
-          "[MISSIONS CONTEXT] Index missionsVehicules :",
-          missionsVehiculesByVehiculeId,
-        );
 
         /*
          * Reconstruction des véhicules.
@@ -891,31 +793,11 @@ export function MissionsProvider({
                   vehicule,
                 };
 
-              console.log(
-                "[MISSIONS CONTEXT] Véhicule restauré :",
-                {
-                  vehiculeId,
-
-                  missionVehicule,
-
-                  groupeIdApi,
-
-                  groupeCorrespondant,
-
-                  vehiculeNormalise,
-                },
-              );
-
               return vehiculeNormalise;
             },
           );
 
         setVehiculesSelectionnes(
-          vehicules,
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] Véhicules restaurés dans le contexte :",
           vehicules,
         );
 
@@ -939,27 +821,6 @@ export function MissionsProvider({
 
         setCompagniesSelectionneesIds(
           compagniesIds,
-        );
-
-        /*
-         * ==========================================
-         * FIN CHARGEMENT
-         * ==========================================
-         */
-
-        console.log(
-          "[MISSIONS CONTEXT] Mission chargée avec succès :",
-          mission.id,
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] Groupes :",
-          groupes,
-        );
-
-        console.log(
-          "[MISSIONS CONTEXT] Véhicules :",
-          vehicules,
         );
       } catch (error) {
         console.error(
@@ -987,7 +848,7 @@ export function MissionsProvider({
 
       informations,
 
-      oaId,
+      oalId,
 
       compagniesSelectionneesIds,
 
@@ -1016,7 +877,7 @@ export function MissionsProvider({
 
     groupesManuels,
 
-    oaId,
+    oalId,
 
     vehiculesSelectionnes,
   ]);
@@ -1041,8 +902,8 @@ export function MissionsProvider({
           emptyDraft.informations,
         );
 
-        setOaId(
-          emptyDraft.oaId,
+        setOalId(
+          emptyDraft.oalId,
         );
 
         setCompagniesSelectionneesIds(
@@ -1093,9 +954,9 @@ export function MissionsProvider({
 
         missionId,
 
-        oaId,
+        oalId,
 
-        setOaId,
+        setOalId,
 
         setMissionId,
 
@@ -1164,7 +1025,7 @@ export function MissionsProvider({
 
         informations,
 
-        oaId,
+        oalId,
 
         compagniesSelectionneesIds,
 

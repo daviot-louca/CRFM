@@ -38,7 +38,7 @@ const Missions = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    oaId: {
+    oalId: {
       type: DataTypes.UUID,
       allowNull: true,
       references: {

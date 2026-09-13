@@ -1,0 +1,15 @@
+"filename", "language", "JavaScript", "comment", "blank", "total"
+"/Users/loucadaviot/Desktop/crfm/backend/middlewares/validate.js", "JavaScript", 17, 0, 4, 21
+"/Users/loucadaviot/Desktop/crfm/backend/routes/auth.routes.js", "JavaScript", 18, 0, 2, 20
+"/Users/loucadaviot/Desktop/crfm/backend/routes/carburant.routes.js", "JavaScript", 14, 0, 0, 14
+"/Users/loucadaviot/Desktop/crfm/backend/routes/compagnie.routes.js", "JavaScript", 2, 0, -1, 1
+"/Users/loucadaviot/Desktop/crfm/backend/routes/conducteur.routes.js", "JavaScript", 35, 0, 5, 40
+"/Users/loucadaviot/Desktop/crfm/backend/routes/missions.routes.js", "JavaScript", 38, 0, 1, 39
+"/Users/loucadaviot/Desktop/crfm/backend/routes/missionsGroupes.routes.js", "JavaScript", 31, 0, 3, 34
+"/Users/loucadaviot/Desktop/crfm/backend/routes/missionsUsers.routes.js", "JavaScript", 55, 0, 9, 64
+"/Users/loucadaviot/Desktop/crfm/backend/routes/missionsVehicules.routes.js", "JavaScript", 35, 0, 6, 41
+"/Users/loucadaviot/Desktop/crfm/backend/routes/role.routes.js", "JavaScript", 5, 0, -2, 3
+"/Users/loucadaviot/Desktop/crfm/backend/routes/sections.routes.js", "JavaScript", 36, 0, 5, 41
+"/Users/loucadaviot/Desktop/crfm/backend/routes/typeVehicules.routes.js", "JavaScript", 35, 0, 5, 40
+"/Users/loucadaviot/Desktop/crfm/backend/schema/validation.zod.js", "JavaScript", 379, 74, 182, 635
+"Total", "-", 700, 74, 219, 993

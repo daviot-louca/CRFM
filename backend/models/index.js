@@ -14,7 +14,7 @@ import UserToken from "./userToken.model.js";
 import Vehicule from "./vehicule.model.js";
 import VehiculeType from "./vehicules-types.model.js";
 import Compagnie from "./compagnie.model.js";
-import MissionOA from "./missionOA.model.js";
+import MissionOAL from "./missionOA.model.js";
 
 const db = {
   Sequelize,
@@ -25,7 +25,7 @@ const db = {
   MissionsVehicule,
   MissionsVehiculesPlein,
   MissionsVehiculesReleve,
-  MissionOA,
+  MissionOAL,
   Role,
   Section,
   User,
@@ -67,14 +67,14 @@ Section.belongsTo(Compagnie, {
 });
 
 User.hasOne(Compagnie, {
-  foreignKey: "oaId",
-  as: "compagnieOA",
+  foreignKey: "oalId",
+  as: "compagnieOAL",
   onDelete: "RESTRICT",
 });
 
 Compagnie.belongsTo(User, {
-  foreignKey: "oaId",
-  as: "oa",
+  foreignKey: "oalId",
+  as: "oal",
 });
 
 Section.hasMany(User, {
@@ -154,27 +154,27 @@ MissionsGroupes.belongsTo(Mission, {
   as: "mission",
 });
 
-Mission.hasMany(MissionOA, {
+Mission.hasMany(MissionOAL, {
   foreignKey: "missionId",
-  as: "missionsOA",
+  as: "missionsOAL",
   onDelete: "CASCADE",
 });
 
-MissionOA.belongsTo(Mission, {
+MissionOAL.belongsTo(Mission, {
   foreignKey: "missionId",
   as: "mission",
   onDelete: "CASCADE",
 });
 
-User.hasMany(MissionOA, {
-  foreignKey: "oaId",
-  as: "missionsOA",
+User.hasMany(MissionOAL, {
+  foreignKey: "oalId",
+  as: "missionsOAL",
   onDelete: "CASCADE",
 });
 
-MissionOA.belongsTo(User, {
-  foreignKey: "oaId",
-  as: "oa",
+MissionOAL.belongsTo(User, {
+  foreignKey: "oalId",
+  as: "oal",
   onDelete: "CASCADE",
 });
 
@@ -300,13 +300,13 @@ MissionsVehiculesPlein.belongsTo(MissionsVehicule, {
 });
 
 User.hasMany(Mission, {
-  foreignKey: "oaId",
+  foreignKey: "oalId",
   as: "missionsCommandees",
 });
 
 Mission.belongsTo(User, {
-  foreignKey: "oaId",
-  as: "oa",
+  foreignKey: "oalId",
+  as: "oal",
 });
 
 User.hasMany(MissionsGroupes, {
@@ -322,7 +322,7 @@ export {
   sequelize,
   Mission,
   MissionsGroupes,
-  MissionOA,
+  MissionOAL,
   MissionsUsers,
   MissionsVehicule,
   MissionsVehiculesPlein,

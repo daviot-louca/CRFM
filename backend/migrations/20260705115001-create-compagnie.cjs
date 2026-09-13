@@ -23,7 +23,7 @@ module.exports = {
         type:Sequelize.INTEGER,
         allowNull:false,
       },
-      oaId: {
+      oalId: {
         type: Sequelize.UUID,
         allowNull: true,
       },

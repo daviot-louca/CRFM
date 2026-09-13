@@ -3,8 +3,8 @@ import User from "../models/user.model.js";
 import Section from "../models/sections.model.js";
 import Role from "../models/roles.model.js";
 
-const verifierUtilisateurOA = async (oaId, compagnieId = null) => {
-  const oa = await User.findByPk(oaId, {
+const verifierUtilisateurOAL = async (oalId, compagnieId = null) => {
+  const oal = await User.findByPk(oalId, {
     include: {
       model: Role,
       as: "role",
@@ -12,29 +12,29 @@ const verifierUtilisateurOA = async (oaId, compagnieId = null) => {
     },
   });
 
-  if (!oa) {
-    const error = new Error("OA introuvable.");
+  if (!oal) {
+    const error = new Error("OAL introuvable.");
     error.statusCode = 404;
     throw error;
   }
 
-  if (oa.role?.roleName !== "OA") {
-    const error = new Error("L'utilisateur sélectionné doit avoir le rôle OA.");
+  if (oal.role?.roleName !== "OAL") {
+    const error = new Error("L'utilisateur sélectionné doit avoir le rôle OAL.");
     error.statusCode = 400;
     throw error;
   }
 
   const compagnieExistante = await Compagnie.findOne({
-    where: { oaId },
+    where: { oalId },
   });
 
   if (compagnieExistante && compagnieExistante.id !== compagnieId) {
-    const error = new Error("Cet OA est déjà affecté à une autre compagnie.");
+    const error = new Error("Cet OAL est déjà affecté à une autre compagnie.");
     error.statusCode = 409;
     throw error;
   }
 
-  return oa;
+  return oal;
 };
 
 export const getAllCompagniesService = async () => {
@@ -61,7 +61,7 @@ export const getAllCompagniesService = async () => {
       },
       {
         model: User,
-        as: "oa",
+        as: "oal",
         attributes: ["id", "grade", "lastName", "sectionId", "roleId"],
         include: [
           {
@@ -95,8 +95,8 @@ export const createCompagnieService = async (compagnieData) => {
   }
   compagnieData.nom = compagnieData.nom.trim();
 
-  if (compagnieData.oaId) {
-    await verifierUtilisateurOA(compagnieData.oaId);
+  if (compagnieData.oalId) {
+    await verifierUtilisateurOAL(compagnieData.oalId);
   }
 
   const existingCompagnie = await Compagnie.findOne({
@@ -118,8 +118,8 @@ export const updateCompagnieService = async (id, compagnieData) => {
     error.statusCode = 400;
     throw error;
   }
-  if (compagnieData.oaId) {
-    await verifierUtilisateurOA(compagnieData.oaId, id);
+  if (compagnieData.oalId) {
+    await verifierUtilisateurOAL(compagnieData.oalId, id);
   }
   if (compagnieData.nom) {
     compagnieData.nom = compagnieData.nom.trim();

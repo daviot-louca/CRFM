@@ -143,67 +143,11 @@ export function useMissions2() {
           roleName ===
             "CONDUCTEUR" ||
           roleName === "SOA" ||
-          roleName === "OA"
+          roleName === "OAL"
         );
       },
     );
 
-  console.log(
-    "[useMissions2] usersMission :",
-    usersMission,
-  );
-
-  console.log(
-    "[useMissions2] usersDisponibles :",
-    usersDisponibles,
-  );
-
-  console.log(
-    "[useMissions2] conducteurs :",
-    conducteurs,
-  );
-
-  console.log(
-    "[ÉTAPE 5] PREMIER USER :",
-    usersMission?.[0],
-  );
-
-  console.log(
-    "[ÉTAPE 5] PREMIER ROLE :",
-    usersMission?.[0]?.role,
-  );
-
-  console.log(
-    "[ÉTAPE 5] PREMIER ROLE NAME :",
-    usersMission?.[0]?.role?.roleName ??
-      usersMission?.[0]?.roleName,
-  );
-  console.log(
-    "[ÉTAPE 5] PREMIER USER KEYS :",
-    usersMission?.[0]
-      ? Object.keys(usersMission[0])
-      : [],
-  );
-  
-  console.log(
-    "[ÉTAPE 5] PREMIER USER JSON :",
-    usersMission?.[0]
-      ? JSON.parse(JSON.stringify(usersMission[0]))
-      : null,
-  );console.log(
-    "[ÉTAPE 5] KEYS PREMIER USER :",
-    Object.keys(usersMission?.[0] ?? {})
-  );
-  
-  console.log(
-    "[ÉTAPE 5] PREMIER USER COMPLET :",
-    usersMission?.[0]
-  );
-  /*
-   * ==========================================
-   * VÉHICULES
-   * ==========================================
-   */
 
   const {
     vehicules:
@@ -441,26 +385,6 @@ export function useMissions2() {
       ).values(),
     ];
 
-  /*
-   * ==========================================
-   * DEBUG
-   * ==========================================
-   */
-
-  console.log(
-    "mission.vehicules",
-    vehiculesMission,
-  );
-
-  console.log(
-    "==============================================",
-  );
-
-  /*
-   * ==========================================
-   * RETOUR
-   * ==========================================
-   */
 
   return {
     ...mission,

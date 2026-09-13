@@ -84,8 +84,8 @@ export default function CreerMissions2Admin() {
 
       alert(
         error?.response?.data?.message ??
-          error?.message ??
-          "Impossible de sauvegarder l'étape 2."
+        error?.message ??
+        "Impossible de sauvegarder l'étape 2."
       );
     }
   };
@@ -95,33 +95,30 @@ export default function CreerMissions2Admin() {
       <div className="min-h-screen min-w-0 bg-slate-50">
         <div className="mx-auto w-full max-w-[1900px] px-3 py-4 sm:px-5 sm:py-6 lg:px-8">
 
-          {/* ==================================================
-              TIMELINE DES ÉTAPES
-          ================================================== */}
 
-          <div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white px-3 py-4 shadow-sm sm:mb-7 sm:px-5 sm:py-5">
-            <div className="mx-auto flex min-w-140 max-w-5xl items-start">
+          <div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm sm:mb-8">
+            <div className="flex min-w-155 items-start px-3 py-4 sm:mx-auto sm:min-w-0 sm:max-w-5xl sm:px-5 sm:py-5">
 
               {/* Étape 1 */}
-              <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-600 bg-green-50 text-xs font-bold text-green-700 sm:h-8 sm:w-8 sm:text-sm">
                   ✓
                 </div>
 
-                <span className="mt-1.5 max-w-20 text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
                   Infos
                 </span>
               </div>
 
-              <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+              <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-300 sm:mt-4 sm:min-w-6" />
 
-              {/* Étape 2 */}
-              <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-50 text-[10px] font-extrabold text-blue-700 sm:h-8 sm:w-8 sm:text-xs">
+              {/* Étape 2 - ACTIVE */}
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-600 text-xs font-bold text-white shadow-sm sm:h-8 sm:w-8 sm:text-sm">
                   2
                 </div>
 
-                <span className="mt-1.5 max-w-25 text-[9px] font-extrabold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-24 text-center text-[9px] font-bold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
                   Affectations des compagnies
                 </span>
               </div>
@@ -129,25 +126,25 @@ export default function CreerMissions2Admin() {
               <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
               {/* Étape 3 */}
-              <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-[10px] font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-xs">
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
                   3
                 </div>
 
-                <span className="mt-1.5 max-w-26.25 text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
-                  Désignation du OAL et du SOA
+                <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                  Désignation de l'OAL
                 </span>
               </div>
 
               <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
               {/* Étape 4 */}
-              <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-[10px] font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-xs">
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
                   4
                 </div>
 
-                <span className="mt-1.5 max-w-20 text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
                   Véhicules
                 </span>
               </div>
@@ -155,12 +152,25 @@ export default function CreerMissions2Admin() {
               <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
               {/* Étape 5 */}
-              <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-[10px] font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-xs">
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
                   5
                 </div>
 
-                <span className="mt-1.5 max-w-20 text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                  Désignation du ou des SOA
+                </span>
+              </div>
+
+              <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+
+              {/* Étape 6 */}
+              <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                  6
+                </div>
+
+                <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
                   Conducteurs
                 </span>
               </div>
@@ -267,11 +277,10 @@ export default function CreerMissions2Admin() {
               <button
                 type="button"
                 disabled={!peutContinuer}
-                className={`w-full rounded-xl px-8 py-3 text-sm font-semibold text-white transition sm:w-auto ${
-                  peutContinuer
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "cursor-not-allowed bg-slate-300"
-                }`}
+                className={`w-full rounded-xl px-8 py-3 text-sm font-semibold text-white transition sm:w-auto ${peutContinuer
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "cursor-not-allowed bg-slate-300"
+                  }`}
                 onClick={handleContinuer}
               >
                 Suivant

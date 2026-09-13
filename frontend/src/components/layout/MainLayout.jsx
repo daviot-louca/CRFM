@@ -1,18 +1,80 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./admin/Sidebar";
 import Navbar from "../ui/Navbar";
+import { getMissions } from "../../features/missions/api/missions.api";
 
 function MainLayout({ children }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const [missions, setMissions] = useState([]);
+
+  const userRole =
+    localStorage.getItem("userRole") || "";
+
+  const recupererUserId = () => {
+    try {
+      const user = JSON.parse(
+        localStorage.getItem("user") || "null",
+      );
+
+      return user?.id ?? null;
+    } catch (error) {
+      console.error(
+        "Impossible de récupérer l'utilisateur :",
+        error,
+      );
+
+      return null;
+    }
+  };
+
+  const userId = recupererUserId();
+
+  useEffect(() => {
+    const role = String(userRole).toLowerCase();
+
+    if (
+      ![
+        "administrateur",
+        "oal",
+        "soa",
+        "conducteur",
+      ].includes(role)
+    ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMissions([]);
+      return;
+    }
+
+    const chargerMissions = async () => {
+      try {
+        const data = await getMissions();
+
+        setMissions(data ?? []);
+      } catch (error) {
+        console.error(
+          "[MAIN LAYOUT] Erreur récupération missions :",
+          error,
+        );
+
+        setMissions([]);
+      }
+    };
+
+    chargerMissions();
+  }, [userRole]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-10">
       {/* Sidebar desktop */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 bg-bleu lg:block">
-        <Sidebar />
+        <Sidebar
+          userRole={userRole}
+          userId={userId}
+          missions={missions}
+        />
       </aside>
 
-      {/* Menu mobile plein écran */}
+      {/* Menu mobile */}
       {menuOuvert && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
@@ -35,17 +97,20 @@ function MainLayout({ children }) {
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 pb-8 sm:px-6">
-              <Sidebar />
+              <Sidebar
+                userRole={userRole}
+                userId={userId}
+                missions={missions}
+              />
             </div>
           </div>
         </div>
       )}
 
-      {/* Contenu principal */}
+      {/* Contenu */}
       <div className="flex min-h-screen flex-col lg:ml-64">
         <header className="px-4 sm:px-6">
           <div className="flex items-start gap-3">
-            {/* Burger mobile */}
             <button
               type="button"
               aria-label="Ouvrir le menu"

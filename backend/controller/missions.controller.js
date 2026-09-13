@@ -42,19 +42,13 @@ export const getMissionById = async (req, res) => {
   }
 };
 export const createMission = async (req, res) => {
-  console.log("[POST /api/missions] REQUETE RECUE");
 
-  console.log(
-    "[POST /api/missions] BODY:",
-
-    JSON.stringify(req.body, null, 2),
-  );
 
   try {
     const {
       groupesMission = [],
 
-      oaResponsableMissionId = null,
+      oalResponsableMissionId = null,
 
       affectationsVehicules = [],
 
@@ -71,30 +65,6 @@ export const createMission = async (req, res) => {
       ),
     ];
 
-    console.log(
-      "[POST /api/missions] userIds:",
-
-      userIds,
-    );
-
-    console.log(
-      "[POST /api/missions] groupesMission:",
-
-      groupesMission.length,
-    );
-
-    console.log(
-      "[POST /api/missions] affectationsVehicules:",
-
-      affectationsVehicules.length,
-    );
-
-    console.log(
-      "[POST /api/missions] affectations:",
-
-      affectations.length,
-    );
-
     const mission = await createMissionService({
       ...missionData,
 
@@ -102,17 +72,12 @@ export const createMission = async (req, res) => {
 
       userIds,
 
-      oaResponsableMissionId,
+      oalResponsableMissionId,
 
       affectationsVehicules:
         affectationsVehicules.length > 0 ? affectationsVehicules : affectations,
     });
 
-    console.log(
-      "[POST /api/missions] CREATION REUSSIE:",
-
-      mission?.id,
-    );
 
     res.status(201).json(mission);
   } catch (error) {
@@ -158,16 +123,7 @@ export const updateMissionGroupes = async (req, res) => {
 
     const { groupesMission = [] } = req.body;
 
-    console.log(`[PUT /api/missions/${id}/groupes] REQUETE RECUE`);
-
-    console.log(
-      `[PUT /api/missions/${id}/groupes] groupesMission:`,
-      JSON.stringify(groupesMission, null, 2),
-    );
-
     const mission = await updateMissionGroupesService(id, groupesMission,user);
-
-    console.log(`[PUT /api/missions/${id}/groupes] SAUVEGARDE REUSSIE`);
 
     return res.status(200).json({
       message: "Les groupes de la mission ont été sauvegardés.",
@@ -188,20 +144,12 @@ export const updateMissionVehicules = async (req, res) => {
     const user = req.user
     const { affectationsVehicules = [] } = req.body;
 
-    console.log(`[PUT /api/missions/${id}/vehicules] REQUETE RECUE`);
-
-    console.log(
-      `[PUT /api/missions/${id}/vehicules] affectationsVehicules:`,
-      JSON.stringify(affectationsVehicules, null, 2),
-    );
 
     const mission = await updateMissionVehiculesService(
       id,
       affectationsVehicules,
       user
     );
-
-    console.log(`[PUT /api/missions/${id}/vehicules] SAUVEGARDE REUSSIE`);
 
     return res.status(200).json({
       message: "Les véhicules de la mission ont été sauvegardés.",
@@ -220,30 +168,15 @@ export const updateMissionConducteurs = async (req, res) => {
   try {
     const { id } = req.params;
     const user = req.user
-    const { affectationsVehicules = [], oaId = null } = req.body;
+    const { affectationsVehicules = [], oalId = null } = req.body;
 
-    console.log(`[PUT /api/missions/${id}/conducteurs] REQUETE RECUE`);
-
-    console.log(
-      `[PUT /api/missions/${id}/conducteurs] affectationsVehicules:`,
-      JSON.stringify(affectationsVehicules, null, 2),
-    );
-
-    console.log(`[PUT /api/missions/${id}/conducteurs] oaId:`, oaId);
-
-    console.log(
-      `[PUT /api/missions/${id}/conducteurs] BODY COMPLET:`,
-      JSON.stringify(req.body, null, 2),
-    );
 
     const mission = await updateMissionConducteursService(
       id,
       affectationsVehicules,
-      oaId,
+      oalId,
       user
     );
-
-    console.log(`[PUT /api/missions/${id}/conducteurs] SAUVEGARDE REUSSIE`);
 
     return res.status(200).json({
       message: "Les conducteurs de la mission ont été sauvegardés.",
@@ -264,30 +197,19 @@ export const updateMissionCommandement = async (req, res) => {
     const user = req.user;
 
     const {
-      oaId = null,
+      oalId = null,
       groupesCommandement = [],
     } = req.body;
 
-    console.log(
-      `[PUT /api/missions/${id}/commandement] REQUETE RECUE`,
-    );
-
-    console.log(
-      `[PUT /api/missions/${id}/commandement] BODY:`,
-      JSON.stringify(req.body, null, 2),
-    );
 
     const mission =
       await updateMissionCommandementService(
         id,
-        oaId,
+        oalId,
         groupesCommandement,
         user,
       );
 
-    console.log(
-      `[PUT /api/missions/${id}/commandement] SAUVEGARDE REUSSIE`,
-    );
 
     return res.status(200).json({
       message:

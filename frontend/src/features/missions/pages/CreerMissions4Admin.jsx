@@ -30,20 +30,6 @@ function CreerMissions4Admin() {
       const groupesMission =
         missions.compagniesSelectionneesGroupes ?? [];
   
-      console.group(
-        "========== [ÉTAPE 3] PRÉPARATION =========="
-      );
-  
-      console.log(
-        "[ÉTAPE 3] Groupes disponibles :",
-        groupesMission
-      );
-  
-      console.log(
-        "[ÉTAPE 3] Véhicules sélectionnés :",
-        missions.vehiculesSelectionnes
-      );
-  
       const affectationsVehicules = (
         missions.vehiculesSelectionnes ?? []
       ).map((vehicule) => {
@@ -107,26 +93,6 @@ function CreerMissions4Admin() {
           groupeIdFinal = groupeIdActuel;
         }
   
-        console.log(
-          "[ÉTAPE 3] Véhicule :",
-          vehicule.vehiculeId
-        );
-  
-        console.log(
-          "[ÉTAPE 3] Groupe actuel :",
-          groupeIdActuel
-        );
-  
-        console.log(
-          "[ÉTAPE 3] Groupe mission trouvé :",
-          groupeMission
-        );
-  
-        console.log(
-          "[ÉTAPE 3] Groupe final envoyé :",
-          groupeIdFinal
-        );
-  
         if (!groupeIdFinal) {
           throw new Error(
             `Impossible de déterminer le groupe de mission du véhicule ${vehicule.vehiculeId}.`
@@ -158,20 +124,9 @@ function CreerMissions4Admin() {
         };
       });
   
-      console.log(
-        "[ÉTAPE 3] Affectations finales :",
-        affectationsVehicules
-      );
-  
-      console.groupEnd();
-  
       await updateMissionVehicules(
         missions.missionId,
         affectationsVehicules
-      );
-  
-      console.log(
-        "[ÉTAPE 3] Véhicules sauvegardés avec succès"
       );
   
       navigate(
@@ -179,11 +134,6 @@ function CreerMissions4Admin() {
       );
   
     } catch (error) {
-  
-      console.error(
-        "[ÉTAPE 3] Erreur lors de la sauvegarde :",
-        error
-      );
   
       alert(
         error?.response?.data?.message ??
@@ -197,79 +147,87 @@ function CreerMissions4Admin() {
       <div className="h-[calc(100vh-2rem)] bg-slate-50 overflow-hidden">
         <div className="max-w-[1700px] h-full mx-auto px-8 py-4 flex flex-col min-h-0">
 
-          {/* Timeline des étapes */}
-<div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white px-3 py-4 shadow-sm sm:mb-7 sm:px-5 sm:py-5">
-  <div className="mx-auto flex min-w-140 max-w-5xl items-start">
+          <div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm sm:mb-8">
+          <div className="flex min-w-155 items-start px-3 py-4 sm:mx-auto sm:min-w-0 sm:max-w-5xl sm:px-5 sm:py-5">
 
-    {/* Étape 1 */}
-    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
-        ✓
-      </div>
+            {/* Étape 1 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-600 bg-green-50 text-xs font-bold text-green-700 sm:h-8 sm:w-8 sm:text-sm">
+                ✓
+              </div>
 
-      <span className="mt-1.5 max-w-20 text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
-        Infos
-      </span>
-    </div>
+              <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                Infos
+              </span>
+            </div>
 
-    {/* Trait */}
-    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-300 sm:mt-4 sm:min-w-6" />
 
-    {/* Étape 2 */}
-    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
-        ✓
-      </div>
+            {/* Étape 2 - ACTIVE */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-600 bg-green-50 text-xs font-bold text-green-700 shadow-sm sm:h-8 sm:w-8 sm:text-sm">
+              ✓
+              </div>
 
-      <span className="mt-1.5 max-w-20 text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
-        Affectations des compagnies
-      </span>
-    </div>
+              <span className="mt-1.5 max-w-24 text-center text-[9px] font-bold leading-tight textgreen-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                Affectations des compagnies
+              </span>
+            </div>
 
-    {/* Trait */}
-    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-    {/* Étape 3 */}
-    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-400 bg-green-50 text-[10px] font-extrabold text-green-700 sm:h-8 sm:w-8 sm:text-xs">
-        ✓
-      </div>
+            {/* Étape 3 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-green-600 bg-green-50 text-xs font-bold text-green-700 sm:h-8 sm:w-8 sm:text-sm">
+              ✓
+              </div>
 
-      <span className="mt-1.5 max-w-20 text-[9px] font-bold leading-tight text-green-700 sm:mt-2 sm:max-w-none sm:text-xs">
-        Désignation du OAL et du SOA
-      </span>
-    </div>
+              <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight textgreen-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                Désignation de l'OAL
+              </span>
+            </div>
 
-    {/* Trait */}
-    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-green-400 sm:mt-4 sm:min-w-6" />
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-    {/* Étape 4 — ACTIVE */}
-    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-50 text-[10px] font-extrabold text-blue-700 sm:h-8 sm:w-8 sm:text-xs">
-        4
-      </div>
+            {/* Étape 4 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-600 text-xs font-bold text-white sm:h-8 sm:w-8 sm:text-sm">
+                4
+              </div>
 
-      <span className="mt-1.5 max-w-20 text-[9px] font-extrabold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
-        Véhicules
-      </span>
-    </div>
+              <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                Véhicules
+              </span>
+            </div>
 
-    {/* Trait */}
-    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-    {/* Étape 5 */}
-    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-[10px] font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-xs">
-        5
-      </div>
+            {/* Étape 5 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                5
+              </div>
 
-      <span className="mt-1.5 max-w-20 text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
-        Conducteurs
-      </span>
-    </div>
+              <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                Désignation du ou des SOA
+              </span>
+            </div>
 
-  </div>
-</div>
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+
+            {/* Étape 6 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                6
+              </div>
+
+              <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                Conducteurs
+              </span>
+            </div>
+
+          </div>
+          </div>
 
           <div className="flex-1 min-h-0 rounded-[28px] shadow-lg border border-slate-200 bg-white flex flex-col overflow-hidden">
 

@@ -24,7 +24,7 @@ const userContextIncludes = [
       {
         model: Compagnie,
         as: 'compagnie',
-        attributes: ['id', 'nom', 'oaId'],
+        attributes: ['id', 'nom', 'oalId'],
       },
     ],
   },
@@ -191,19 +191,19 @@ export const allUsersByCompagnieService =
       return [];
     }
 
-    const oaRole = await Role.findOne({
-      where: { roleName: 'OA' },
+    const oalRole = await Role.findOne({
+      where: { roleName: 'OAL' },
       attributes: ['id'],
     });
 
-    if (!oaRole) {
+    if (!oalRole) {
       return [];
     }
 
     const users = await User.findAll({
       where: {
         sectionId: sectionIds,
-        roleId: oaRole.id,
+        roleId: oalRole.id,
       },
       attributes: userAttributes,
       include: userContextIncludes,
@@ -349,7 +349,7 @@ const verifierSectionPourSoa = async (
  * ==========================================
  */
 
-const synchroniserOaCompagnie = async (
+const synchroniserOalCompagnie = async (
   userId,
   roleName,
   nouvelleSectionId,
@@ -357,13 +357,8 @@ const synchroniserOaCompagnie = async (
 ) => {
   if (!userId) return;
 
-  /*
-   * Si l'utilisateur devient OA,
-   * on associe automatiquement son compte
-   * à la compagnie de sa section.
-   */
 
-  if (roleName === 'OA') {
+  if (roleName === 'OAL') {
     if (!nouvelleSectionId) {
       return;
     }
@@ -386,17 +381,14 @@ const synchroniserOaCompagnie = async (
       return;
     }
 
-    /*
-     * Une compagnie ne peut avoir
-     * qu'un seul OA.
-     */
+
 
     if (
-      compagnie.oaId &&
-      compagnie.oaId !== userId
+      compagnie.oalId &&
+      compagnie.oalId !== userId
     ) {
       const error = new Error(
-        "Cette compagnie possède déjà un OA.",
+        "Cette compagnie possède déjà un OAL.",
       );
 
       error.statusCode = 409;
@@ -404,26 +396,17 @@ const synchroniserOaCompagnie = async (
       throw error;
     }
 
-    /*
-     * Association de l'OA à la compagnie.
-     */
-
     if (
-      compagnie.oaId !== userId
+      compagnie.oalId !== userId
     ) {
       await compagnie.update({
-        oaId: userId,
+        oalId: userId,
       });
     }
 
     return;
   }
 
-  /*
-   * Si l'utilisateur n'est plus OA,
-   * on retire son association avec
-   * son ancienne compagnie.
-   */
 
   if (!ancienneSectionId) {
     return;
@@ -448,10 +431,10 @@ const synchroniserOaCompagnie = async (
   }
 
   if (
-    ancienneCompagnie.oaId === userId
+    ancienneCompagnie.oalId === userId
   ) {
     await ancienneCompagnie.update({
-      oaId: null,
+      oalId: null,
     });
   }
 };
@@ -538,8 +521,8 @@ export const addUserService = async (
    * Association OA → compagnie
    */
 
-  if (roleName === 'OA') {
-    await synchroniserOaCompagnie(
+  if (roleName === 'OAL') {
+    await synchroniserOalCompagnie(
       user.id,
       roleName,
       user.sectionId,
@@ -657,11 +640,8 @@ export const updateUserService = async (
 
   await user.update(userData);
 
-  /*
-   * Synchronisation OA / compagnie
-   */
 
-  await synchroniserOaCompagnie(
+  await synchroniserOalCompagnie(
     user.id,
     nouveauRoleName,
     nouvelleSectionId,
@@ -853,11 +833,11 @@ export const deleteUserService = async (
 
   await Compagnie.update(
     {
-      oaId: null,
+      oalId: null,
     },
     {
       where: {
-        oaId: user.id,
+        oalId: user.id,
       },
     },
   );

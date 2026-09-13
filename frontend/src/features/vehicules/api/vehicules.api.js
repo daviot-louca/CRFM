@@ -3,8 +3,6 @@ import apiClient from "../../../api/apiClient";
 export const getVehicules = async () => {
   const response = await apiClient.get("/vehicules");
 
-  console.log("RÉPONSE API :", response.data);
-
   return response.data;
 };
 

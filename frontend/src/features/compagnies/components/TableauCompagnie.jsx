@@ -20,14 +20,14 @@ function TableauCompagnie() {
     nom: "",
     imageUrl: "",
     ordre: "",
-    oaId: "",
+    oalId: "",
   });
 
   const [actionError, setActionError] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const [oaUsers, setOaUsers] = useState([]);
-  const [oaError, setOaError] = useState(null);
+  const [oalUsers, setOalUsers] = useState([]);
+  const [oalError, setOalError] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -52,7 +52,7 @@ function TableauCompagnie() {
       nom: "",
       imageUrl: "",
       ordre: "",
-      oaId: "",
+      oalId: "",
     });
 
     setShowAddForm(false);
@@ -93,24 +93,24 @@ function TableauCompagnie() {
       nom: compagnie.nom || "",
       imageUrl: compagnie.imageUrl || "",
       ordre: compagnie.ordre ?? "",
-      oaId: compagnie.oaId || "",
+      oalId: compagnie.oalId || "",
     });
 
     setActionError(null);
-    setOaError(null);
-    setOaUsers([]);
+    setOalError(null);
+    setOalUsers([]);
 
     try {
       const users = await getOaByCompagnie(compagnie.id);
-      setOaUsers(users);
+      setOalUsers(users);
     } catch (err) {
       console.error(
-        "Impossible de charger les OA de la compagnie :",
+        "Impossible de charger les OAL de la compagnie :",
         err
       );
 
-      setOaError(
-        "Impossible de charger les OA de cette compagnie."
+      setOalError(
+        "Impossible de charger les OAL de cette compagnie."
       );
     }
   };
@@ -190,12 +190,12 @@ function TableauCompagnie() {
                   nom: "",
                   imageUrl: "",
                   ordre: "",
-                  oaId: "",
+                  oalId: "",
                 });
 
                 setActionError(null);
-                setOaUsers([]);
-                setOaError(null);
+                setOalUsers([]);
+                setOalError(null);
                 setShowAddForm(true);
               }
             }}
@@ -216,10 +216,10 @@ function TableauCompagnie() {
         </div>
       )}
 
-      {oaError && (
+      {oalError && (
         <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-medium text-red-700">
-            {oaError}
+            {oalError}
           </p>
         </div>
       )}
@@ -305,11 +305,11 @@ function TableauCompagnie() {
 
             <div className="min-w-0">
               <label className="mb-2 block text-sm font-semibold text-gray-700">
-                OA de la compagnie
+                OAL de la compagnie
               </label>
 
               <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-500">
-                L'OA pourra être affecté après la création de
+                L'OAL pourra être affecté après la création de
                 la compagnie, lorsque ses sections et
                 utilisateurs auront été ajoutés.
               </div>
@@ -418,20 +418,20 @@ function TableauCompagnie() {
 
                 <div className="min-w-0">
                   <label
-                    htmlFor={`edit-oa-${compagnie.id}`}
+                    htmlFor={`edit-oal-${compagnie.id}`}
                     className="mb-2 block text-sm font-semibold text-gray-700"
                   >
                     OAL de la compagnie
                   </label>
 
                   <select
-                    id={`edit-oa-${compagnie.id}`}
+                    id={`edit-oal-${compagnie.id}`}
                     required
-                    value={formData.oaId}
+                    value={formData.oalId}
                     onChange={(event) =>
                       setFormData((current) => ({
                         ...current,
-                        oaId: event.target.value,
+                        oalId: event.target.value,
                       }))
                     }
                     className="box-border block h-11 w-full min-w-0 max-w-full rounded-lg border border-gray-300 bg-white px-4 text-base outline-none focus:border-gray-500 sm:h-10 sm:text-sm"
@@ -440,7 +440,7 @@ function TableauCompagnie() {
                       Sélectionner un OAL de cette compagnie
                     </option>
 
-                    {oaUsers.map((user) => (
+                    {oalUsers.map((user) => (
                       <option key={user.id} value={user.id}>
                         {[user.grade, user.lastName]
                           .filter(Boolean)

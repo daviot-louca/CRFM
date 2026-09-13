@@ -255,10 +255,9 @@ const extractUser = (missionUser) => {
 
 export default function useMissionCommandement(
   missionId,
-  groupesMission = [],
   compagnies = [],
 ) {
-  const [oaId, setOaId] =
+  const [oalId, setOalId] =
     useState(null);
 
   const [
@@ -278,35 +277,24 @@ export default function useMissionCommandement(
   const [error, setError] =
     useState(null);
 
-  /* ==========================================================
-     OA DISPONIBLES
 
-     IMPORTANT :
-     Toutes les compagnies sont utilisées.
-
-     Exemple :
-     18 compagnies
-     → 18 OA possibles
-     → 1 seul OA choisi pour la mission.
-  ========================================================== */
-
-  const oaDisponibles = useMemo(() => {
+  const oalDisponibles = useMemo(() => {
     const map = new Map();
 
     compagnies.forEach(
       (compagnie) => {
-        const oa =
-          compagnie?.oa ??
-          compagnie?.OA ??
+        const oal =
+          compagnie?.oal ??
+          compagnie?.OAL ??
           compagnie?.officierAction ??
           compagnie?.officierActionResponsable ??
           null;
 
-        if (!oa) {
+        if (!oal) {
           return;
         }
 
-        const id = getId(oa);
+        const id = getId(oal);
 
         if (!id) {
           return;
@@ -314,7 +302,7 @@ export default function useMissionCommandement(
 
         map.set(
           String(id),
-          oa,
+          oal,
         );
       },
     );
@@ -330,9 +318,10 @@ export default function useMissionCommandement(
 
   useEffect(() => {
     if (!missionId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSoaMission([]);
       setGroupesCommandement([]);
-      setOaId(null);
+      setOalId(null);
       return;
     }
 
@@ -365,10 +354,10 @@ export default function useMissionCommandement(
            OA ACTUEL
         ------------------------------------------------------ */
 
-        setOaId(
-          mission?.oaId
+        setOalId(
+          mission?.oalId
             ? String(
-                mission.oaId,
+                mission.oalId,
               )
             : null,
         );
@@ -524,10 +513,6 @@ export default function useMissionCommandement(
             soaMap.values(),
           );
 
-        console.log(
-          "[MISSION COMMANDEMENT] SOA trouvés :",
-          soaFinal,
-        );
 
         setSoaMission(
           soaFinal,
@@ -564,8 +549,8 @@ export default function useMissionCommandement(
      SÉLECTION OA
   ========================================================== */
 
-  const selectOa = (value) => {
-    setOaId(
+  const selectOal = (value) => {
+    setOalId(
       value
         ? String(value)
         : null,
@@ -617,9 +602,9 @@ export default function useMissionCommandement(
         );
       }
 
-      if (!oaId) {
+      if (!oalId) {
         throw new Error(
-          "Veuillez sélectionner l'OA responsable de la mission.",
+          "Veuillez sélectionner l'OAL responsable de la mission.",
         );
       }
 
@@ -629,7 +614,7 @@ export default function useMissionCommandement(
       try {
         return await updateMissionCommandement(
           missionId,
-          oaId,
+          oalId,
           groupesCommandement,
         );
       } catch (err) {
@@ -652,9 +637,9 @@ export default function useMissionCommandement(
   ========================================================== */
 
   return {
-    oaId,
+    oalId,
 
-    oaDisponibles,
+    oalDisponibles,
 
     soaMission,
 
@@ -664,7 +649,7 @@ export default function useMissionCommandement(
     saving,
     error,
 
-    selectOa,
+    selectOal,
     selectSoa,
 
     saveCommandement,

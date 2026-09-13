@@ -11,52 +11,72 @@ import {
   updateMissionCommandement,
   deleteMission,
 } from "../controller/missions.controller.js";
+
 import authJwt from "../middlewares/auth.middleware.js";
 import checkRole from "../middlewares/permissions.middleware.js";
-
 const router = express.Router();
 
-router.get("/", authJwt, checkRole("administrateur", "OA", "SOA"), getMissions);
+router.get(
+  "/",
+  authJwt,
+  checkRole("administrateur", "OAL", "SOA"),
+  getMissions
+);
 
-router.post("/", authJwt, checkRole("administrateur"), createMission);
+router.post(
+  "/",
+  authJwt,
+  checkRole("administrateur"),
+  createMission
+);
 
 router.get(
   "/:id",
   authJwt,
-  checkRole("administrateur", "OA", "SOA"),
-  getMissionById,
+  checkRole("administrateur", "OAL", "SOA"),
+  getMissionById
 );
 
-router.put("/:id", authJwt, checkRole("administrateur"), updateMission);
+router.put(
+  "/:id",
+  authJwt,
+  checkRole("administrateur", "OAL", "SOA"),
+  updateMission
+);
 
 router.put(
   "/:id/groupes",
   authJwt,
-  checkRole("administrateur"),
-  updateMissionGroupes,
+  checkRole("administrateur", "OAL", "SOA"),
+  updateMissionGroupes
 );
 
 router.put(
   "/:id/vehicules",
   authJwt,
-  checkRole("administrateur", "OA", "SOA"),
-  updateMissionVehicules,
+  checkRole("administrateur", "OAL", "SOA"),
+  updateMissionVehicules
 );
 
 router.put(
   "/:id/conducteurs",
   authJwt,
-  checkRole("administrateur", "OA", "SOA"),
-  updateMissionConducteurs,
+  checkRole("administrateur", "OAL", "SOA"),
+  updateMissionConducteurs
 );
 
 router.put(
   "/:id/commandement",
   authJwt,
-  checkRole("administrateur"),
-  updateMissionCommandement,
+  checkRole("administrateur", "OAL", "SOA"),
+  updateMissionCommandement
 );
 
-router.delete("/:id", authJwt, checkRole("administrateur"), deleteMission);
+router.delete(
+  "/:id",
+  authJwt,
+  checkRole("administrateur"),
+  deleteMission
+);
 
 export default router;

@@ -43,7 +43,7 @@ function PageAide() {
             sousTitre:
                 "Retrouvez les différentes étapes de préparation et de suivi d'une mission.",
             introduction:
-                "En tant qu'administrateur, vous êtes responsable de la préparation initiale de la mission. Vous intervenez sur les premières étapes avant que les OA, SOA et conducteurs prennent le relais.",
+                "En tant qu'administrateur, vous êtes responsable de la préparation initiale de la mission. Vous intervenez sur les premières étapes avant que les OAL, SOA et conducteurs prennent le relais.",
 
             etapes: [
                 {
@@ -78,7 +78,7 @@ function PageAide() {
                 },
                 {
                     numero: "03",
-                    titre: "Désignation des OA et SOA",
+                    titre: "Désignation des OAL et SOA",
                     responsable: "Administrateur",
                     icon: <UserCheck size={22} />,
                     description:
@@ -86,19 +86,19 @@ function PageAide() {
                     contenu: [
                         "Désigner obligatoirement un OAL pour la mission",
                         "Désigner au minimum un SOA pour chaque groupe",
-                        "Un OA peut être responsable de plusieurs groupes",
+                        "Un OAL peut être responsable de plusieurs groupes",
                         "Un SOA est responsable d'un seul groupe",
                     ],
                 },
                 {
                     numero: "04",
                     titre: "Choix des véhicules",
-                    responsable: "OA",
+                    responsable: "OAL",
                     icon: <Truck size={22} />,
                     description:
-                        "Après votre intervention, les OA affectent les véhicules nécessaires à leurs groupes.",
+                        "Après votre intervention, les OAL affectent les véhicules nécessaires à leurs groupes.",
                     contenu: [
-                        "L'OA accède uniquement aux groupes dont il est responsable",
+                        "Le OAL accède uniquement aux groupes dont il est responsable",
                         "Les véhicules disponibles sont proposés pour chaque groupe",
                         "Plusieurs véhicules peuvent être affectés à un même groupe",
                         "La disponibilité des véhicules est contrôlée par l'application",
@@ -137,12 +137,12 @@ function PageAide() {
             ],
         },
 
-        oa: {
+        oal: {
             titre: "Votre fonctionnement dans le CRFM",
             sousTitre:
                 "Retrouvez les étapes qui concernent votre intervention dans une mission.",
             introduction:
-                "En tant qu'OA, vous intervenez après la préparation initiale de la mission par l'administrateur. Votre rôle principal est de choisir les véhicules nécessaires pour votre ou vos groupes et de suivre les informations de la mission.",
+                "En tant qu'OAL, vous intervenez après la préparation initiale de la mission par l'administrateur. Votre rôle principal est de choisir les véhicules nécessaires pour votre ou vos groupes et de suivre les informations de la mission.",
 
             etapes: [
                 {
@@ -624,7 +624,7 @@ function PageAide() {
                                 {role === "administrateur" &&
                                     "Vous préparez la mission et désignez les responsables qui poursuivront sa préparation."}
 
-                                {role === "oa" &&
+                                {role === "oal" &&
                                     "Vous intervenez principalement pour affecter les véhicules à votre ou vos groupes et suivre les informations de la mission."}
 
                                 {role === "soa" &&

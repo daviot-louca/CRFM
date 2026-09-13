@@ -1,0 +1,12 @@
+"filename", "language", "JavaScript", "JSON", "comment", "blank", "total"
+"/Users/loucadaviot/Desktop/crfm/backend/middlewares/validate.js", "JavaScript", -37, 0, -2, -5, -44
+"/Users/loucadaviot/Desktop/crfm/backend/package-lock.json", "JSON", 0, 5602, 0, 0, 5602
+"/Users/loucadaviot/Desktop/crfm/backend/package.json", "JSON", 0, 1, 0, 0, 1
+"/Users/loucadaviot/Desktop/crfm/backend/routes/auth.routes.js", "JavaScript", -7, 0, 0, -1, -8
+"/Users/loucadaviot/Desktop/crfm/backend/routes/compagnie.routes.js", "JavaScript", -5, 0, 0, 1, -4
+"/Users/loucadaviot/Desktop/crfm/backend/routes/typeVehicules.routes.js", "JavaScript", -10, 0, 0, -2, -12
+"/Users/loucadaviot/Desktop/crfm/backend/schema/validation.zod.js", "JavaScript", -511, 0, -75, -243, -829
+"/Users/loucadaviot/Desktop/crfm/frontend/package-lock.json", "JSON", 0, 4114, 0, 0, 4114
+"/Users/loucadaviot/Desktop/crfm/frontend/package.json", "JSON", 0, 1, 0, 0, 1
+"/Users/loucadaviot/Desktop/crfm/frontend/vite.config.js", "JavaScript", 38, 0, 0, 8, 46
+"Total", "-", -532, 9718, -77, -242, 8867

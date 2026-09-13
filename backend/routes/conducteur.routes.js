@@ -11,10 +11,40 @@ import checkRole from "../middlewares/permissions.middleware.js";
 
 const router = Router();
 
-router.get("/vehicules",authJwt,checkRole("conducteur"), getConducteurVehicules);
-router.get("/vehicules/:missionVehiculeId",authJwt,checkRole("conducteur"), getConducteurVehiculeDetail);
-router.put("/vehicules/:missionVehiculeId/releve",authJwt,checkRole("conducteur"), saveConducteurReleve);
-router.get("/vehicules/:missionVehiculeId/pleins",authJwt,checkRole("conducteur"), getConducteurPleins);
-router.post("/vehicules/:missionVehiculeId/pleins",authJwt,checkRole("conducteur"), addConducteurPlein);
+router.get(
+  "/vehicules",
+  authJwt,
+  checkRole("administrateur", "OAL", "SOA", "conducteur"),
+  getConducteurVehicules
+);
+
+router.get(
+  "/vehicules/:missionVehiculeId",
+  authJwt,
+  checkRole("administrateur", "OAL", "SOA", "conducteur"),
+
+  getConducteurVehiculeDetail
+);
+
+router.put(
+  "/vehicules/:missionVehiculeId/releve",
+  authJwt,
+  checkRole("administrateur", "OAL", "SOA", "conducteur"),
+  saveConducteurReleve
+);
+
+router.get(
+  "/vehicules/:missionVehiculeId/pleins",
+  authJwt,
+  checkRole("administrateur", "OAL", "SOA", "conducteur"),
+  getConducteurPleins
+);
+
+router.post(
+  "/vehicules/:missionVehiculeId/pleins",
+  authJwt,
+  checkRole("administrateur", "OAL", "SOA", "conducteur"),
+  addConducteurPlein
+);
 
 export default router;

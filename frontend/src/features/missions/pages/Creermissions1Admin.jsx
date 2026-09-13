@@ -37,17 +37,8 @@ function Creermissions1Admin() {
         StatutMission: "En préparation",
       };
 
-      console.log(
-        "[ÉTAPE 1] Création de la mission :",
-        missionData
-      );
-
       const mission = await createMission(missionData);
 
-      console.log(
-        "[ÉTAPE 1] Mission créée :",
-        mission
-      );
 
       if (!mission?.id) {
         throw new Error(
@@ -88,72 +79,87 @@ function Creermissions1Admin() {
       <div className="mx-auto w-full min-w-0 max-w-7xl">
 
         {/* Barre de progression */}
-<div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm sm:mb-8">
-  <div className="flex min-w-140 items-start px-3 py-4 sm:mx-auto sm:min-w-0 sm:max-w-4xl sm:px-5 sm:py-5">
-    {/* Étape 1 */}
-    <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-50 text-xs font-bold text-blue-700 sm:h-8 sm:w-8 sm:text-sm">
-        1
-      </div>
+        <div className="mb-5 w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm sm:mb-8">
+          <div className="flex min-w-155 items-start px-3 py-4 sm:mx-auto sm:min-w-0 sm:max-w-5xl sm:px-5 sm:py-5">
 
-      <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
-        Infos
-      </span>
-    </div>
+            {/* Étape 1 - ACTIVE */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-600 text-xs font-bold text-white shadow-sm sm:h-8 sm:w-8 sm:text-sm">
+                1
+              </div>
 
-    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+              <span className="mt-1.5 max-w-20 text-center text-[9px] font-bold leading-tight text-blue-700 sm:mt-2 sm:max-w-none sm:text-xs">
+                Infos
+              </span>
+            </div>
 
-    {/* Étape 2 */}
-    <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
-        2
-      </div>
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-      <span className="mt-1.5 max-w-23.75 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
-        Affectations des compagnies
-      </span>
-    </div>
+            {/* Étape 2 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                2
+              </div>
 
-    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+              <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                Affectations des compagnies
+              </span>
+            </div>
 
-    {/* Étape 3 */}
-    <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
-        3
-      </div>
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-      <span className="mt-1.5 max-w-23.75 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
-        Désignation du OAL et du SOA
-      </span>
-    </div>
+            {/* Étape 3 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                3
+              </div>
 
-    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+              <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                Désignation de l'OAL
+              </span>
+            </div>
 
-    {/* Étape 4 */}
-    <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
-        4
-      </div>
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-      <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
-        Véhicules
-      </span>
-    </div>
+            {/* Étape 4 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                4
+              </div>
 
-    <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+              <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                Véhicules
+              </span>
+            </div>
 
-    {/* Étape 5 */}
-    <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
-        5
-      </div>
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
 
-      <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
-        Conducteurs
-      </span>
-    </div>
-  </div>
-</div>
+            {/* Étape 5 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                5
+              </div>
+
+              <span className="mt-1.5 max-w-24 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                Désignation du ou des SOA
+              </span>
+            </div>
+
+            <div className="mt-3 h-0.5 min-w-4 flex-1 bg-gray-200 sm:mt-4 sm:min-w-6" />
+
+            {/* Étape 6 */}
+            <div className="flex min-w-0 shrink-0 flex-1 flex-col items-center">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-50 text-xs font-bold text-gray-400 sm:h-8 sm:w-8 sm:text-sm">
+                6
+              </div>
+
+              <span className="mt-1.5 max-w-20 text-center text-[9px] font-semibold leading-tight text-gray-400 sm:mt-2 sm:max-w-none sm:text-xs">
+                Conducteurs
+              </span>
+            </div>
+
+          </div>
+        </div>
 
         {/* Formulaire */}
         <form

@@ -85,7 +85,7 @@ export const getMissionConducteurs = async (
 export const updateMissionConducteurs = async (
   mission,
   affectationsVehicules = [],
-  oaId = null,
+  oalId = null,
   user,
 ) => {
   if (!mission) {
@@ -240,19 +240,14 @@ export const updateMissionConducteurs = async (
         );
 
 
-      /*
-       * ======================================================
-       * 3. OA RESPONSABLE
-       * ======================================================
-       */
 
-      if (oaId) {
-        const oa =
+      if (oalId) {
+        const oal =
           usersById.get(
-            String(oaId),
+            String(oalId),
           ) ??
           (await User.findByPk(
-            oaId,
+            oalId,
             {
               attributes: {
                 exclude: [
@@ -276,9 +271,9 @@ export const updateMissionConducteurs = async (
           ));
 
 
-        if (!oa) {
+        if (!oal) {
           const error = new Error(
-            "OA responsable introuvable.",
+            "OAL responsable introuvable.",
           );
 
           error.statusCode = 404;
@@ -288,11 +283,11 @@ export const updateMissionConducteurs = async (
 
 
         if (
-          oa.role?.roleName !==
-          "OA"
+          oal.role?.roleName !==
+          "OAL"
         ) {
           const error = new Error(
-            "L'utilisateur responsable de la mission doit avoir le rôle OA.",
+            "L'utilisateur responsable de la mission doit avoir le rôle OAL.",
           );
 
           error.statusCode = 400;
@@ -303,8 +298,8 @@ export const updateMissionConducteurs = async (
 
         await mission.update(
           {
-            oaId:
-              oa.id,
+            oalId:
+              oal.id,
           },
           {
             transaction,
@@ -444,7 +439,7 @@ export const updateMissionConducteurs = async (
         if (
           role !== "conducteur" &&
           role !== "SOA" &&
-          role !== "OA"
+          role !== "OAL"
         ) {
           const error = new Error(
             `${getNomUtilisateur(

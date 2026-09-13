@@ -11,7 +11,7 @@ export default {
       },
       {
         id: Sequelize.literal('gen_random_uuid()'),
-        roleName: 'OA',
+        roleName: 'OAL',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -41,7 +41,7 @@ export default {
       roleName: {
         [Sequelize.Op.in]: [
           'administrateur',
-          'OA',
+          'OAL',
           'SOA',
           'conducteur',
           'soldat'

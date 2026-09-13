@@ -6,6 +6,7 @@ import CreerMissions2Admin from "./features/missions/pages/CreerMissions2Admin"
 import CreerMissions3Admin from "./features/missions/pages/CreerMissions3Admin"
 import CreerMissions4Admin from "./features/missions/pages/CreerMissions4Admin"
 import CreerMissions5Admin from "./features/missions/pages/CreerMissions5Admin"
+import CreerMissions6Admin from "./features/missions/pages/CreerMissions6Admin"
 import VisuelMissionsAdmin from "./features/missions/pages/VisuelMissionsAdmin"
 import MissionDetail from "./features/missions/pages/missionsDetail"
 
@@ -55,13 +56,13 @@ function App() {
           path="/403"
           element={<PageAccesRefuse />}
         />
-                {/* ==================== ROUTES autorisées a toutes les personnes dans le crfm ==================== */}
+        {/* ==================== ROUTES autorisées a toutes les personnes dans le crfm ==================== */}
         <Route
           element={
             <ProtectedRoute
               allowedRoles={[
                 "administrateur",
-                "OA",
+                "OAL",
                 "SOA",
                 "conducteur",
               ]}
@@ -84,7 +85,7 @@ function App() {
             <ProtectedRoute
               allowedRoles={[
                 "administrateur",
-                "OA",
+                "OAL",
                 "SOA",
               ]}
             />
@@ -100,25 +101,59 @@ function App() {
           />
           <Route element={<MissionsProvider />}>
             <Route
-              path="/admin/creer-missions-1"
-              element={<Creermissions1Admin />}
-            />
+              element={
+                <ProtectedRoute
+                  allowedRoles={[
+                    "administrateur",
+                  ]}
+                />
+              }
+            >
+              <Route
+                path="/admin/creer-missions-1"
+                element={<Creermissions1Admin />}
+              />
+              <Route
+                path="/admin/creer-missions-2"
+                element={<CreerMissions2Admin />}
+              />
+              <Route
+                path="/admin/creer-missions-3"
+                element={<CreerMissions3Admin />}
+              />
+            </Route>
             <Route
-              path="/admin/creer-missions-2"
-              element={<CreerMissions2Admin />}
-            />
+              element={
+                <ProtectedRoute
+                  allowedRoles={[
+                    "administrateur", "OAL"
+                  ]}
+                />
+              }
+            >
+              <Route
+                path="/admin/creer-missions-4"
+                element={<CreerMissions4Admin />}
+              />
+              <Route
+                path="/admin/creer-missions-5"
+                element={<CreerMissions5Admin />}
+              />
+            </Route>
             <Route
-              path="/admin/creer-missions-3"
-              element={<CreerMissions3Admin />}
-            />
-            <Route
-              path="/admin/creer-missions-4"
-              element={<CreerMissions4Admin />}
-            />
-            <Route
-              path="/admin/creer-missions-5"
-              element={<CreerMissions5Admin />}
-            />
+              element={
+                <ProtectedRoute
+                  allowedRoles={[
+                    "administrateur", "OAL", "SOA"
+                  ]}
+                />
+              }
+            >
+              <Route
+                path="/admin/creer-missions-6"
+                element={<CreerMissions6Admin />}
+              />
+            </Route>
             <Route
               path="/admin/tableau-de-bord"
               element={<TableauDeBordAdmin />}
@@ -149,12 +184,10 @@ function App() {
 
           </Route>
         </Route>
-        {/* ==================== CONDUCTEUR ==================== */}
-        {/* UNIQUEMENT SON INTERFACE */}
         <Route
           element={
             <ProtectedRoute
-              allowedRoles={["conducteur"]}
+              allowedRoles={["conducteur", "OAL", "SOA", 'administrateur']}
             />
           }
         >

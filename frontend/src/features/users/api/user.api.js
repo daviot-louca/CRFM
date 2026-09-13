@@ -16,7 +16,7 @@ export const getUsersBySection = async (sectionId) => {
 };
 
 export const getOaByCompagnie = async (compagnieId) => {
-  const response = await apiClient.get(`/users/compagnie/${compagnieId}/oa`);
+  const response = await apiClient.get(`/users/compagnie/${compagnieId}/oal`);
   return response.data;
 };
 

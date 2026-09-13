@@ -14,18 +14,26 @@ function Navbar() {
           : /^\/admin\/compagnies\/[^/]+\/sections$/.test(location.pathname)
             ? "Sections de la compagnie"
             : /^\/admin\/compagnies\/[^/]+\/sections\/[^/]+\/utilisateurs$/.test(
-                  location.pathname
-                )
+              location.pathname
+            )
               ? "Utilisateurs de la section"
               : location.pathname.startsWith("/admin/missions") ||
-                  location.pathname.startsWith("/admin/creer") ||
-                  location.pathname.startsWith("/admin/validation")
+                location.pathname.startsWith("/admin/creer") ||
+                location.pathname.startsWith("/admin/validation")
                 ? "Missions"
                 : location.pathname === "/profil"
                   ? "Profil utilisateur"
                   : location.pathname === "/PageAide"
                     ? "Page d'aide"
-                    : ""
+                    : location.pathname === "/admin/vehicules/ajouter"
+                      ? "Ajouter un véhicule"
+                      : location.pathname.startsWith("/admin/vehicules/")
+                        ? "Détails du véhicule"
+                        : location.pathname.startsWith("/admin/missions/")
+                          ? "Détails de la mission"
+                          : location.pathname.startsWith("/conducteur/vehicules")
+                            ? "Données conducteur"
+                            : ""
 
   const description =
     location.pathname === "/admin/tableau-de-bord"
@@ -37,18 +45,26 @@ function Navbar() {
           : /^\/admin\/compagnies\/[^/]+\/sections$/.test(location.pathname)
             ? "Consultez et gérez les sections rattachées à cette compagnie"
             : /^\/admin\/compagnies\/[^/]+\/sections\/[^/]+\/utilisateurs$/.test(
-                  location.pathname
-                )
+              location.pathname
+            )
               ? "Consultez et gérez les utilisateurs rattachés à cette section"
               : location.pathname.startsWith("/admin/missions") ||
-                  location.pathname.startsWith("/admin/creer") ||
-                  location.pathname.startsWith("/admin/validation")
+                location.pathname.startsWith("/admin/creer") ||
+                location.pathname.startsWith("/admin/validation")
                 ? "Gérez, consultez et créez les missions."
                 : location.pathname === "/profil"
                   ? "Consultez et modifiez vos informations personnelles"
                   : location.pathname === "/PageAide"
                     ? "Consultez la page d'aide pour obtenir des informations sur l'utilisation de l'application"
-                    : ""
+                    : location.pathname === "/admin/vehicules/ajouter"
+                      ? "Ajoutez un nouveau véhicule au parc"
+                      : location.pathname.startsWith("/admin/vehicules/")
+                        ? "Consultez et modifiez les informations du véhicule"
+                        : location.pathname.startsWith("/admin/missions/")
+                          ? "Consultez et modifiez les informations de la mission"
+                          : location.pathname.startsWith("/conducteur/vehicules")
+                            ? "Consultez les informations de vos missions et véhicules"
+                            : ""
 
   return (
     <div className="relative w-full py-3 sm:m-4 sm:flex sm:items-center sm:justify-between sm:gap-4 sm:py-0">

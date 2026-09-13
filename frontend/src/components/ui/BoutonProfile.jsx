@@ -55,6 +55,11 @@ function BoutonProfile() {
         typeof payload?.role?.roleName === "string"
       ) {
         role = payload.role.roleName
+
+        // Si le rôle est OA, on l'affiche comme OAL
+        if (role.toLowerCase() === "oal") {
+          role = "OAL"
+        }
       }
     } catch (error) {
       console.error(
@@ -122,16 +127,15 @@ function BoutonProfile() {
           </p>
 
           <p className="truncate text-xs text-gray-500 sm:text-sm">
-            {role.slice(0,5)}
+            {role.slice(0, 5)}
           </p>
         </div>
 
         <ChevronRight
           size={17}
-          className={`shrink-0 text-gray-500 transition-transform duration-200 ${menuOuvert
-              ? "rotate-90"
-              : ""
-            }`}
+          className={`shrink-0 text-gray-500 transition-transform duration-200 ${
+            menuOuvert ? "rotate-90" : ""
+          }`}
         />
       </button>
 
@@ -151,24 +155,24 @@ function BoutonProfile() {
           >
 
             {/* En-tête du profil */}
-            <button 
-            className="mb-1 flex items-center gap-3 rounded-xl bg-gray-50 px-3 py-3 w-full"
-            onClick={handleProfil}>
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gris-fonce text-sm font-bold uppercase text-white">
-                  {initiales}
-                </div>
+            <button
+              className="mb-1 flex w-full items-center gap-3 rounded-xl bg-gray-50 px-3 py-3"
+              onClick={handleProfil}
+            >
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gris-fonce text-sm font-bold uppercase text-white">
+                {initiales}
+              </div>
 
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-slate-900">
-                    {nomComplet}
-                  </p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-slate-900">
+                  {nomComplet}
+                </p>
 
-                  <p className="truncate text-xs text-slate-500">
-                    {role}
-                  </p>
-                </div>
+                <p className="truncate text-xs text-slate-500">
+                  {role}
+                </p>
+              </div>
             </button>
-
 
             {/* Séparateur */}
             <div className="my-1 border-t border-gray-100" />
