@@ -1,10 +1,10 @@
 # Details
 
-Date : 2026-09-12 20:42:00
+Date : 2026-09-20 02:56:55
 
 Directory /Users/loucadaviot/Desktop/crfm
 
-Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
+Total : 186 files,  44361 codes, 1421 comments, 4534 blanks, all 50316 lines
 
 [Summary](results.md) / Details / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
@@ -18,7 +18,7 @@ Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
 | [backend/controller/compagnie.controller.js](/backend/controller/compagnie.controller.js) | JavaScript | 86 | 0 | 13 | 99 |
 | [backend/controller/conducteur.controller.js](/backend/controller/conducteur.controller.js) | JavaScript | 66 | 0 | 11 | 77 |
 | [backend/controller/missionUser.controller.js](/backend/controller/missionUser.controller.js) | JavaScript | 95 | 0 | 9 | 104 |
-| [backend/controller/missions.controller.js](/backend/controller/missions.controller.js) | JavaScript | 256 | 0 | 69 | 325 |
+| [backend/controller/missions.controller.js](/backend/controller/missions.controller.js) | JavaScript | 198 | 0 | 49 | 247 |
 | [backend/controller/missionsGroupes.controller.js](/backend/controller/missionsGroupes.controller.js) | JavaScript | 53 | 0 | 13 | 66 |
 | [backend/controller/missionsVehicules.controller.js](/backend/controller/missionsVehicules.controller.js) | JavaScript | 64 | 0 | 10 | 74 |
 | [backend/controller/role.controller.js](/backend/controller/role.controller.js) | JavaScript | 12 | 0 | 3 | 15 |
@@ -28,7 +28,7 @@ Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
 | [backend/controller/vehicule.controller.js](/backend/controller/vehicule.controller.js) | JavaScript | 89 | 0 | 7 | 96 |
 | [backend/eslint.config.js](/backend/eslint.config.js) | JavaScript | 39 | 0 | 3 | 42 |
 | [backend/middlewares/auth.middleware.js](/backend/middlewares/auth.middleware.js) | JavaScript | 28 | 0 | 9 | 37 |
-| [backend/middlewares/permissions.middleware.js](/backend/middlewares/permissions.middleware.js) | JavaScript | 18 | 0 | 4 | 22 |
+| [backend/middlewares/permissions.middleware.js](/backend/middlewares/permissions.middleware.js) | JavaScript | 17 | 0 | 4 | 21 |
 | [backend/migrations/20260705114038-create-roles.cjs](/backend/migrations/20260705114038-create-roles.cjs) | JavaScript | 31 | 1 | 3 | 35 |
 | [backend/migrations/20260705115001-create-compagnie.cjs](/backend/migrations/20260705115001-create-compagnie.cjs) | JavaScript | 41 | 1 | 2 | 44 |
 | [backend/migrations/20260705120633-create-sections.cjs](/backend/migrations/20260705120633-create-sections.cjs) | JavaScript | 44 | 1 | 3 | 48 |
@@ -61,30 +61,27 @@ Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
 | [backend/models/userToken.model.js](/backend/models/userToken.model.js) | JavaScript | 30 | 0 | 3 | 33 |
 | [backend/models/vehicule.model.js](/backend/models/vehicule.model.js) | JavaScript | 59 | 0 | 3 | 62 |
 | [backend/models/vehicules-types.model.js](/backend/models/vehicules-types.model.js) | JavaScript | 46 | 0 | 3 | 49 |
-| [backend/package-lock.json](/backend/package-lock.json) | JSON | 4,165 | 0 | 1 | 4,166 |
-| [backend/package.json](/backend/package.json) | JSON | 57 | 0 | 1 | 58 |
-| [backend/routes/auth.routes.js](/backend/routes/auth.routes.js) | JavaScript | 12 | 0 | 6 | 18 |
-| [backend/routes/carburant.routes.js](/backend/routes/carburant.routes.js) | JavaScript | 7 | 0 | 6 | 13 |
+| [backend/package-lock.json](/backend/package-lock.json) | JSON | 9,767 | 0 | 1 | 9,768 |
+| [backend/package.json](/backend/package.json) | JSON | 58 | 0 | 1 | 59 |
+| [backend/routes/auth.routes.js](/backend/routes/auth.routes.js) | JavaScript | 35 | 0 | 9 | 44 |
+| [backend/routes/carburant.routes.js](/backend/routes/carburant.routes.js) | JavaScript | 18 | 0 | 5 | 23 |
 | [backend/routes/compagnie.routes.js](/backend/routes/compagnie.routes.js) | JavaScript | 19 | 0 | 4 | 23 |
-| [backend/routes/conducteur.routes.js](/backend/routes/conducteur.routes.js) | JavaScript | 17 | 0 | 3 | 20 |
+| [backend/routes/conducteur.routes.js](/backend/routes/conducteur.routes.js) | JavaScript | 42 | 0 | 8 | 50 |
 | [backend/routes/index.routes.js](/backend/routes/index.routes.js) | JavaScript | 29 | 0 | 2 | 31 |
-| [backend/routes/missions.routes.js](/backend/routes/missions.routes.js) | JavaScript | 50 | 0 | 13 | 63 |
-| [backend/routes/missionsGroupes.routes.js](/backend/routes/missionsGroupes.routes.js) | JavaScript | 15 | 0 | 4 | 19 |
-| [backend/routes/missionsUsers.routes.js](/backend/routes/missionsUsers.routes.js) | JavaScript | 23 | 0 | 3 | 26 |
-| [backend/routes/missionsVehicules.routes.js](/backend/routes/missionsVehicules.routes.js) | JavaScript | 17 | 0 | 3 | 20 |
-| [backend/routes/role.routes.js](/backend/routes/role.routes.js) | JavaScript | 7 | 0 | 5 | 12 |
-| [backend/routes/sections.routes.js](/backend/routes/sections.routes.js) | JavaScript | 25 | 0 | 4 | 29 |
-| [backend/routes/typeVehicules.routes.js](/backend/routes/typeVehicules.routes.js) | JavaScript | 17 | 0 | 4 | 21 |
-| [backend/routes/user.routes.js](/backend/routes/user.routes.js) | JavaScript | 28 | 0 | 4 | 32 |
-| [backend/routes/vehicules.routes.js](/backend/routes/vehicules.routes.js) | JavaScript | 21 | 0 | 4 | 25 |
-| [backend/scripts/import-cartes-carburant.js](/backend/scripts/import-cartes-carburant.js) | JavaScript | 48 | 3 | 17 | 68 |
-| [backend/scripts/import-personnels.js](/backend/scripts/import-personnels.js) | JavaScript | 140 | 14 | 47 | 201 |
+| [backend/routes/missions.routes.js](/backend/routes/missions.routes.js) | JavaScript | 70 | 0 | 12 | 82 |
+| [backend/routes/missionsGroupes.routes.js](/backend/routes/missionsGroupes.routes.js) | JavaScript | 35 | 0 | 6 | 41 |
+| [backend/routes/missionsUsers.routes.js](/backend/routes/missionsUsers.routes.js) | JavaScript | 63 | 0 | 10 | 73 |
+| [backend/routes/missionsVehicules.routes.js](/backend/routes/missionsVehicules.routes.js) | JavaScript | 42 | 0 | 8 | 50 |
+| [backend/routes/role.routes.js](/backend/routes/role.routes.js) | JavaScript | 12 | 0 | 3 | 15 |
+| [backend/routes/sections.routes.js](/backend/routes/sections.routes.js) | JavaScript | 49 | 0 | 9 | 58 |
+| [backend/routes/typeVehicules.routes.js](/backend/routes/typeVehicules.routes.js) | JavaScript | 42 | 0 | 7 | 49 |
+| [backend/routes/user.routes.js](/backend/routes/user.routes.js) | JavaScript | 70 | 0 | 12 | 82 |
+| [backend/routes/vehicules.routes.js](/backend/routes/vehicules.routes.js) | JavaScript | 56 | 0 | 10 | 66 |
+| [backend/scripts/import-cartes-carburant.js](/backend/scripts/import-cartes-carburant.js) | JavaScript | 43 | 3 | 13 | 59 |
+| [backend/scripts/import-personnels.js](/backend/scripts/import-personnels.js) | JavaScript | 128 | 13 | 45 | 186 |
 | [backend/seeders/20260720075121-create-roles.js](/backend/seeders/20260720075121-create-roles.js) | JavaScript | 50 | 0 | 2 | 52 |
 | [backend/seeders/20260720075122-create-compagnies.js](/backend/seeders/20260720075122-create-compagnies.js) | JavaScript | 85 | 0 | 2 | 87 |
 | [backend/seeders/20260720075123-create-sections.js](/backend/seeders/20260720075123-create-sections.js) | JavaScript | 71 | 2 | 9 | 82 |
-| [backend/seeders/20260720075125-create-users-test.js](/backend/seeders/20260720075125-create-users-test.js) | JavaScript | 76 | 5 | 11 | 92 |
-| [backend/seeders/20260720075126-assign-chef-section.js](/backend/seeders/20260720075126-assign-chef-section.js) | JavaScript | 44 | 1 | 6 | 51 |
-| [backend/seeders/20260720075127-assign-oa-compagnie.js](/backend/seeders/20260720075127-assign-oa-compagnie.js) | JavaScript | 47 | 2 | 5 | 54 |
 | [backend/seeders/20260720075128-create-vehicules-types.js](/backend/seeders/20260720075128-create-vehicules-types.js) | JavaScript | 338 | 1 | 5 | 344 |
 | [backend/seeders/20260720075129-create-vehicules.js](/backend/seeders/20260720075129-create-vehicules.js) | JavaScript | 358 | 10 | 64 | 432 |
 | [backend/seeders/20260720075130-create-missions.js](/backend/seeders/20260720075130-create-missions.js) | JavaScript | 7 | 16 | 3 | 26 |
@@ -97,18 +94,18 @@ Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
 | [backend/services/compagnie.service.js](/backend/services/compagnie.service.js) | JavaScript | 174 | 0 | 17 | 191 |
 | [backend/services/conducteur.service.js](/backend/services/conducteur.service.js) | JavaScript | 385 | 0 | 70 | 455 |
 | [backend/services/missionUser.service.js](/backend/services/missionUser.service.js) | JavaScript | 294 | 0 | 46 | 340 |
-| [backend/services/missions.service.js](/backend/services/missions.service.js) | JavaScript | 794 | 117 | 221 | 1,132 |
-| [backend/services/missionsConducteurs.service.js](/backend/services/missionsConducteurs.service.js) | JavaScript | 409 | 70 | 142 | 621 |
+| [backend/services/missions.service.js](/backend/services/missions.service.js) | JavaScript | 794 | 99 | 222 | 1,115 |
+| [backend/services/missionsConducteurs.service.js](/backend/services/missionsConducteurs.service.js) | JavaScript | 409 | 65 | 142 | 616 |
 | [backend/services/missionsGroupes.service.js](/backend/services/missionsGroupes.service.js) | JavaScript | 415 | 69 | 120 | 604 |
 | [backend/services/missionsVehicules.service.js](/backend/services/missionsVehicules.service.js) | JavaScript | 454 | 88 | 155 | 697 |
 | [backend/services/role.service.js](/backend/services/role.service.js) | JavaScript | 7 | 0 | 3 | 10 |
 | [backend/services/section.service.js](/backend/services/section.service.js) | JavaScript | 186 | 0 | 32 | 218 |
 | [backend/services/typeVehicules.service.js](/backend/services/typeVehicules.service.js) | JavaScript | 110 | 0 | 29 | 139 |
-| [backend/services/user.service.js](/backend/services/user.service.js) | JavaScript | 642 | 62 | 162 | 866 |
-| [backend/services/validation/missions-Access.service.js](/backend/services/validation/missions-Access.service.js) | JavaScript | 170 | 15 | 32 | 217 |
+| [backend/services/user.service.js](/backend/services/user.service.js) | JavaScript | 642 | 42 | 162 | 846 |
+| [backend/services/validation/missions-Access.service.js](/backend/services/validation/missions-Access.service.js) | JavaScript | 204 | 25 | 38 | 267 |
 | [backend/services/validation/missions-commandement.service.js](/backend/services/validation/missions-commandement.service.js) | JavaScript | 236 | 31 | 83 | 350 |
 | [backend/services/vehicule.service.js](/backend/services/vehicule.service.js) | JavaScript | 193 | 0 | 38 | 231 |
-| [backend/src/app.js](/backend/src/app.js) | JavaScript | 28 | 6 | 9 | 43 |
+| [backend/src/app.js](/backend/src/app.js) | JavaScript | 45 | 7 | 11 | 63 |
 | [backend/src/server.js](/backend/src/server.js) | JavaScript | 19 | 0 | 6 | 25 |
 | [backend/test/database.integration.test.js](/backend/test/database.integration.test.js) | JavaScript | 61 | 0 | 6 | 67 |
 | [backend/test/model-and-service.test.js](/backend/test/model-and-service.test.js) | JavaScript | 282 | 0 | 33 | 315 |
@@ -117,27 +114,27 @@ Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
 | [frontend/README.md](/frontend/README.md) | Markdown | 9 | 0 | 8 | 17 |
 | [frontend/components.json](/frontend/components.json) | JSON | 25 | 0 | 1 | 26 |
 | [frontend/eslint.config.js](/frontend/eslint.config.js) | JavaScript | 20 | 0 | 2 | 22 |
-| [frontend/index.html](/frontend/index.html) | HTML | 13 | 0 | 1 | 14 |
+| [frontend/index.html](/frontend/index.html) | HTML | 20 | 0 | 9 | 29 |
 | [frontend/jsconfig.json](/frontend/jsconfig.json) | JSON with Comments | 8 | 0 | 0 | 8 |
-| [frontend/package-lock.json](/frontend/package-lock.json) | JSON | 6,669 | 0 | 1 | 6,670 |
-| [frontend/package.json](/frontend/package.json) | JSON | 48 | 0 | 1 | 49 |
+| [frontend/package-lock.json](/frontend/package-lock.json) | JSON | 10,783 | 0 | 1 | 10,784 |
+| [frontend/package.json](/frontend/package.json) | JSON | 49 | 0 | 1 | 50 |
 | [frontend/security/PageAccesRefuse.jsx](/frontend/security/PageAccesRefuse.jsx) | JavaScript JSX | 32 | 0 | 7 | 39 |
-| [frontend/security/ProtectedRoute.jsx](/frontend/security/ProtectedRoute.jsx) | JavaScript JSX | 30 | 0 | 11 | 41 |
+| [frontend/security/ProtectedRoute.jsx](/frontend/security/ProtectedRoute.jsx) | JavaScript JSX | 29 | 1 | 11 | 41 |
 | [frontend/src/App.jsx](/frontend/src/App.jsx) | JavaScript JSX | 227 | 9 | 8 | 244 |
 | [frontend/src/api/apiClient.js](/frontend/src/api/apiClient.js) | JavaScript | 41 | 0 | 20 | 61 |
-| [frontend/src/components/layout/MainLayout.jsx](/frontend/src/components/layout/MainLayout.jsx) | JavaScript JSX | 112 | 4 | 20 | 136 |
-| [frontend/src/components/layout/admin/Sidebar.jsx](/frontend/src/components/layout/admin/Sidebar.jsx) | JavaScript JSX | 79 | 3 | 14 | 96 |
-| [frontend/src/components/ui/BoutonProfile.jsx](/frontend/src/components/ui/BoutonProfile.jsx) | JavaScript JSX | 162 | 10 | 33 | 205 |
-| [frontend/src/components/ui/Navbar.jsx](/frontend/src/components/ui/Navbar.jsx) | JavaScript JSX | 65 | 0 | 7 | 72 |
+| [frontend/src/components/layout/MainLayout.jsx](/frontend/src/components/layout/MainLayout.jsx) | JavaScript JSX | 114 | 4 | 20 | 138 |
+| [frontend/src/components/layout/admin/Sidebar.jsx](/frontend/src/components/layout/admin/Sidebar.jsx) | JavaScript JSX | 82 | 3 | 14 | 99 |
+| [frontend/src/components/ui/BoutonProfile.jsx](/frontend/src/components/ui/BoutonProfile.jsx) | JavaScript JSX | 165 | 11 | 33 | 209 |
+| [frontend/src/components/ui/Navbar.jsx](/frontend/src/components/ui/Navbar.jsx) | JavaScript JSX | 81 | 0 | 7 | 88 |
 | [frontend/src/components/ui/button.jsx](/frontend/src/components/ui/button.jsx) | JavaScript JSX | 51 | 0 | 5 | 56 |
 | [frontend/src/features/auth/api/auth.service.js](/frontend/src/features/auth/api/auth.service.js) | JavaScript | 13 | 0 | 6 | 19 |
-| [frontend/src/features/auth/hooks/useAuth.js](/frontend/src/features/auth/hooks/useAuth.js) | JavaScript | 27 | 0 | 8 | 35 |
+| [frontend/src/features/auth/hooks/useAuth.js](/frontend/src/features/auth/hooks/useAuth.js) | JavaScript | 26 | 0 | 7 | 33 |
 | [frontend/src/features/auth/pages/PageAide.jsx](/frontend/src/features/auth/pages/PageAide.jsx) | JavaScript JSX | 538 | 5 | 126 | 669 |
-| [frontend/src/features/auth/pages/PageConnexion.jsx](/frontend/src/features/auth/pages/PageConnexion.jsx) | JavaScript JSX | 103 | 2 | 20 | 125 |
+| [frontend/src/features/auth/pages/PageConnexion.jsx](/frontend/src/features/auth/pages/PageConnexion.jsx) | JavaScript JSX | 102 | 2 | 19 | 123 |
 | [frontend/src/features/auth/pages/PageProfil.jsx](/frontend/src/features/auth/pages/PageProfil.jsx) | JavaScript JSX | 627 | 0 | 134 | 761 |
 | [frontend/src/features/compagnies/api/compagnies.api.js](/frontend/src/features/compagnies/api/compagnies.api.js) | JavaScript | 21 | 0 | 5 | 26 |
 | [frontend/src/features/compagnies/components/TableauCompagnie.jsx](/frontend/src/features/compagnies/components/TableauCompagnie.jsx) | JavaScript JSX | 480 | 0 | 62 | 542 |
-| [frontend/src/features/compagnies/hooks/useCompagnies.js](/frontend/src/features/compagnies/hooks/useCompagnies.js) | JavaScript | 28 | 0 | 5 | 33 |
+| [frontend/src/features/compagnies/hooks/useCompagnies.js](/frontend/src/features/compagnies/hooks/useCompagnies.js) | JavaScript | 27 | 0 | 5 | 32 |
 | [frontend/src/features/compagnies/pages/CompagniesAdmin.jsx](/frontend/src/features/compagnies/pages/CompagniesAdmin.jsx) | JavaScript JSX | 12 | 0 | 2 | 14 |
 | [frontend/src/features/conducteur/api/conducteur.api.js](/frontend/src/features/conducteur/api/conducteur.api.js) | JavaScript | 39 | 0 | 7 | 46 |
 | [frontend/src/features/conducteur/components/CarteCarburant.jsx](/frontend/src/features/conducteur/components/CarteCarburant.jsx) | JavaScript JSX | 166 | 3 | 28 | 197 |
@@ -155,24 +152,24 @@ Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
 | [frontend/src/features/missions/components/etape2/Etapes2Personnel.jsx](/frontend/src/features/missions/components/etape2/Etapes2Personnel.jsx) | JavaScript JSX | 151 | 0 | 15 | 166 |
 | [frontend/src/features/missions/components/etape2/Etapes2Sections.jsx](/frontend/src/features/missions/components/etape2/Etapes2Sections.jsx) | JavaScript JSX | 99 | 0 | 9 | 108 |
 | [frontend/src/features/missions/components/etape4/Etapes4CompagnieVehicules.jsx](/frontend/src/features/missions/components/etape4/Etapes4CompagnieVehicules.jsx) | JavaScript JSX | 179 | 2 | 25 | 206 |
-| [frontend/src/features/missions/context/MissionsContext.jsx](/frontend/src/features/missions/context/MissionsContext.jsx) | JavaScript JSX | 809 | 155 | 230 | 1,194 |
+| [frontend/src/features/missions/context/MissionsContext.jsx](/frontend/src/features/missions/context/MissionsContext.jsx) | JavaScript JSX | 698 | 150 | 207 | 1,055 |
 | [frontend/src/features/missions/context/MissionsContextValue.js](/frontend/src/features/missions/context/MissionsContextValue.js) | JavaScript | 16 | 0 | 4 | 20 |
 | [frontend/src/features/missions/context/useMission.js](/frontend/src/features/missions/context/useMission.js) | JavaScript | 9 | 0 | 4 | 13 |
 | [frontend/src/features/missions/hooks/useCompagniesMissions2.js](/frontend/src/features/missions/hooks/useCompagniesMissions2.js) | JavaScript | 102 | 0 | 22 | 124 |
-| [frontend/src/features/missions/hooks/useGroupesMissions2.js](/frontend/src/features/missions/hooks/useGroupesMissions2.js) | JavaScript | 622 | 56 | 114 | 792 |
-| [frontend/src/features/missions/hooks/useMissionCommandement.js](/frontend/src/features/missions/hooks/useMissionCommandement.js) | JavaScript | 460 | 100 | 116 | 676 |
+| [frontend/src/features/missions/hooks/useGroupesMissions2.js](/frontend/src/features/missions/hooks/useGroupesMissions2.js) | JavaScript | 579 | 56 | 106 | 741 |
+| [frontend/src/features/missions/hooks/useMissionCommandement.js](/frontend/src/features/missions/hooks/useMissionCommandement.js) | JavaScript | 455 | 90 | 116 | 661 |
 | [frontend/src/features/missions/hooks/useMissions.js](/frontend/src/features/missions/hooks/useMissions.js) | JavaScript | 48 | 0 | 10 | 58 |
-| [frontend/src/features/missions/hooks/useMissions2.js](/frontend/src/features/missions/hooks/useMissions2.js) | JavaScript | 308 | 111 | 64 | 483 |
+| [frontend/src/features/missions/hooks/useMissions2.js](/frontend/src/features/missions/hooks/useMissions2.js) | JavaScript | 257 | 96 | 54 | 407 |
 | [frontend/src/features/missions/hooks/useMissionsVehicules.js](/frontend/src/features/missions/hooks/useMissionsVehicules.js) | JavaScript | 83 | 46 | 31 | 160 |
 | [frontend/src/features/missions/hooks/usePersonnelMissions2.js](/frontend/src/features/missions/hooks/usePersonnelMissions2.js) | JavaScript | 127 | 11 | 18 | 156 |
 | [frontend/src/features/missions/pages/CreerMissions2Admin.jsx](/frontend/src/features/missions/pages/CreerMissions2Admin.jsx) | JavaScript JSX | 227 | 16 | 53 | 296 |
 | [frontend/src/features/missions/pages/CreerMissions3Admin.jsx](/frontend/src/features/missions/pages/CreerMissions3Admin.jsx) | JavaScript JSX | 439 | 79 | 95 | 613 |
 | [frontend/src/features/missions/pages/CreerMissions4Admin.jsx](/frontend/src/features/missions/pages/CreerMissions4Admin.jsx) | JavaScript JSX | 196 | 41 | 46 | 283 |
 | [frontend/src/features/missions/pages/CreerMissions5Admin.jsx](/frontend/src/features/missions/pages/CreerMissions5Admin.jsx) | JavaScript JSX | 380 | 10 | 62 | 452 |
-| [frontend/src/features/missions/pages/CreerMissions6Admin.jsx](/frontend/src/features/missions/pages/CreerMissions6Admin.jsx) | JavaScript JSX | 588 | 70 | 131 | 789 |
-| [frontend/src/features/missions/pages/Creermissions1Admin.jsx](/frontend/src/features/missions/pages/Creermissions1Admin.jsx) | JavaScript JSX | 268 | 15 | 53 | 336 |
+| [frontend/src/features/missions/pages/CreerMissions6Admin.jsx](/frontend/src/features/missions/pages/CreerMissions6Admin.jsx) | JavaScript JSX | 572 | 70 | 132 | 774 |
+| [frontend/src/features/missions/pages/Creermissions1Admin.jsx](/frontend/src/features/missions/pages/Creermissions1Admin.jsx) | JavaScript JSX | 260 | 15 | 52 | 327 |
 | [frontend/src/features/missions/pages/VisuelMissionsAdmin.jsx](/frontend/src/features/missions/pages/VisuelMissionsAdmin.jsx) | JavaScript JSX | 476 | 16 | 84 | 576 |
-| [frontend/src/features/missions/pages/missionsDetail.jsx](/frontend/src/features/missions/pages/missionsDetail.jsx) | JavaScript JSX | 1,205 | 51 | 332 | 1,588 |
+| [frontend/src/features/missions/pages/missionsDetail.jsx](/frontend/src/features/missions/pages/missionsDetail.jsx) | JavaScript JSX | 1,186 | 51 | 327 | 1,564 |
 | [frontend/src/features/missions/services/personnel.service.js](/frontend/src/features/missions/services/personnel.service.js) | JavaScript | 0 | 0 | 1 | 1 |
 | [frontend/src/features/missions/utils/compagnies.utils.js](/frontend/src/features/missions/utils/compagnies.utils.js) | JavaScript | 0 | 0 | 1 | 1 |
 | [frontend/src/features/missions/utils/groupes.utils.js](/frontend/src/features/missions/utils/groupes.utils.js) | JavaScript | 0 | 0 | 1 | 1 |
@@ -186,7 +183,7 @@ Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
 | [frontend/src/features/users/api/user.api.js](/frontend/src/features/users/api/user.api.js) | JavaScript | 33 | 0 | 9 | 42 |
 | [frontend/src/features/users/hooks/useUser.api.js](/frontend/src/features/users/hooks/useUser.api.js) | JavaScript | 58 | 0 | 10 | 68 |
 | [frontend/src/features/users/page/Utilisateurs.jsx](/frontend/src/features/users/page/Utilisateurs.jsx) | JavaScript JSX | 604 | 17 | 83 | 704 |
-| [frontend/src/features/vehicules/api/vehicules.api.js](/frontend/src/features/vehicules/api/vehicules.api.js) | JavaScript | 28 | 0 | 9 | 37 |
+| [frontend/src/features/vehicules/api/vehicules.api.js](/frontend/src/features/vehicules/api/vehicules.api.js) | JavaScript | 27 | 0 | 8 | 35 |
 | [frontend/src/features/vehicules/components/CartesVehicules.jsx](/frontend/src/features/vehicules/components/CartesVehicules.jsx) | JavaScript JSX | 89 | 0 | 12 | 101 |
 | [frontend/src/features/vehicules/hooks/useAllVehicule.js](/frontend/src/features/vehicules/hooks/useAllVehicule.js) | JavaScript | 25 | 0 | 4 | 29 |
 | [frontend/src/features/vehicules/hooks/useVehiculesdispo.js](/frontend/src/features/vehicules/hooks/useVehiculesdispo.js) | JavaScript | 25 | 0 | 4 | 29 |
@@ -199,6 +196,6 @@ Total : 189 files,  34729 codes, 1490 comments, 4566 blanks, all 40785 lines
 | [frontend/src/pages/admin/PageContactMessagerieAdmin.jsx](/frontend/src/pages/admin/PageContactMessagerieAdmin.jsx) | JavaScript JSX | 7 | 0 | 4 | 11 |
 | [frontend/src/pages/admin/TableauDeBordAdmin.jsx](/frontend/src/pages/admin/TableauDeBordAdmin.jsx) | JavaScript JSX | 829 | 10 | 113 | 952 |
 | [frontend/src/utils/utils.js](/frontend/src/utils/utils.js) | JavaScript | 5 | 0 | 2 | 7 |
-| [frontend/vite.config.js](/frontend/vite.config.js) | JavaScript | 15 | 0 | 1 | 16 |
+| [frontend/vite.config.js](/frontend/vite.config.js) | JavaScript | 53 | 0 | 9 | 62 |
 
 [Summary](results.md) / Details / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
